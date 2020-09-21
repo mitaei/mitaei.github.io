@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="joseph.tingiris@mastechinfotrellis.com">
+  <link rel="canonical" href="https://mitaei.github.io/atc/ipm-on-azure/verify-test-step-0/">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title><center>Azure Red Hat OpenShift<br>for<br>IBM Product Master</center> - IPM on Azure</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../docs/css/extra.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "<center>Azure Red Hat OpenShift<br>for<br>IBM Product Master</center>";
+    var mkdocs_page_input_path = "verify-test-step-0.md";
+    var mkdocs_page_url = "/atc/ipm-on-azure/verify-test-step-0/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> IPM on Azure</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">IPM on Azure</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li><center>Azure Red Hat OpenShift<br>for<br>IBM Product Master</center></li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="azure-red-hat-openshiftforibm-product-master"><center>Azure Red Hat OpenShift<br>for<br>IBM Product Master</center></h1>
+<h3 id="authors">Authors:</h3>
+<ul>
+<li>Joseph Tingiris (joseph.tingiris@mastechinfotrellis.com)</li>
+<li>Arun Babu (arun.babu@mastechinfotrellis.com)</li>
+<li>SivaPrasad Konduru (sivaprasad.k@mastechinfotrellis.com)</li>
+</ul>
+<p>Sun 20 Sep 2020 10:47:40 PM EDT</p>
+<h1 id="introduction">Introduction</h1>
+<p>This document details the steps required to build Azure Red Hat OpenShift for IBM Product Master.</p>
+<h2 id="azure-red-hat-openshift-aro">Azure Red Hat OpenShift (ARO)</h2>
+<p>Azure Red Hat OpenShift is a fully managed offering of Red Hat OpenShift running in Microsoft Azure. This service is jointly managed and supported by both Microsoft and Red Hat.  To provide support, certain limitations apply.  For more details, see the Azure Red Hat OpenShift Service documentation.</p>
+<h2 id="microsoft-azure">Microsoft Azure</h2>
+<p>Microsoft Azure is a comprehensive cloud computing service managed by Microsoft. It provides software as a service (SaaS), platform as a service (PaaS), and infrastructure as a service (IaaS).</p>
+<h2 id="red-hat-openshift-container-platform-ocp">Red Hat OpenShift Container Platform (OCP)</h2>
+<p>Red Hat's OpenShift Container Platform is a hybrid cloud, enterprise Kubernetes application platform.  It is a platform as a service (Paas) built on Red Hat Enterprise Linux (RHEL), with Docker containers managed by Kubernetes.</p>
+<h2 id="ibm-product-master-ipm">IBM Product Master (IPM)</h2>
+<p>IBM Product Master provides trusted product information management (PIM) and collaborative master data management (MDM) capabilities. It creates an accurate and up-to-date repository of product and service information that can be used throughout organizations for strategic business initiatives</p>
+<p><strong><em>References:</em></strong></p>
+<ul>
+<li>https://azure.microsoft.com/</li>
+<li>https://www.openshift.com/</li>
+<li>https://www.docker.com/</li>
+<li>https://kubernetes.io/</li>
+<li>https://docs.microsoft.com/en-us/azure/openshift/openshift-faq</li>
+<li>https://docs.microsoft.com/en-us/azure/openshift/support-lifecycle</li>
+<li>https://www.ibm.com/products/product-master</li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>2020 Mastech InfoTrellis</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
