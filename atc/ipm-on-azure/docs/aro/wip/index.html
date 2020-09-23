@@ -63,17 +63,9 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">WIP</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#101-register-provider-microsoftcompute">10.1 - Register Provider Microsoft.Compute</a>
+    <li class="toctree-l2"><a class="reference internal" href="#111-create-resource-group">11.1 - Create Resource Group</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#102-verify-provider-microsoftcompute">10.2 - Verify Provider Microsoft.Compute</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#103-register-provider-microsoftredhatopenshift">10.3 - Register Provider Microsoft.RedHatOpenShift</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#104-verify-provider-microsoftredhatopenshift">10.4 - Verify Provider Microsoft.RedHatOpenShift</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#105-register-provider-microsoftstorage">10.5 - Register Provider Microsoft.Storage</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#106-verify-provider-microsoftstorage">10.6 - Verify Provider Microsoft.Storage</a>
+    <li class="toctree-l2"><a class="reference internal" href="#112-verify-resource-group">11.2 - Verify Resource Group</a>
     </li>
     </ul>
                     </li>
@@ -110,95 +102,66 @@
           <div role="main">
             <div class="section">
               
-                <h3 id="10-setup-azure-resource-providers">10 - Setup Azure Resource Providers</h3>
-<p>Make sure you are logged in to Azure via az (az login) with a Contributor or Owner role.</p>
-<p>This step will fail for OpenShift Admins with only the User Access Administrator.  They will receive a message saying they do not have authorization.</p>
+                <h3 id="11-setup-resource-group">11 - Setup Resource Group</h3>
+<p>An Azure resource group is a logical group in which Azure resources are deployed and managed.</p>
+<p>To create ARO resources, a resource group location must be specified. This is where the physical datacenter is located, where resource group metadata is stored, and where the Azure resources are hosted.</p>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
-<li><a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types">https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types</a></li>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest">https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest</a></li>
 </ul>
-<h4 id="101-register-provider-microsoftcompute">10.1 - Register Provider Microsoft.Compute</h4>
-<p><strong><em>References:</em></strong></p>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">env | egrep '^ARO_RESOURCE_GROUP_NAME|^ARO_LOCATION_NAME'
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>ARO_LOCATION_NAME=eastus
+ARO_RESOURCE_GROUP_NAME=test-eastus
+</code></pre>
+
+<h4 id="111-create-resource-group">11.1 - Create Resource Group</h4>
+<p><strong><em>Reference(s):</em></strong></p>
 <ul>
-<li><a href="https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register">https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register</a></li>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-create">https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-create</a></li>
 </ul>
-<p><strong><em>Commands:</em></strong></p>
-<pre><code>az provider register -n Microsoft.Compute --wait
-
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az group create --name ${ARO_RESOURCE_GROUP_NAME} --location ${ARO_LOCATION_NAME}
 </code></pre>
 
-<pre><code class="diff">+ success does not produce any output
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>{
+  &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/test-eastus&quot;,
+  &quot;location&quot;: &quot;eastus&quot;,
+  &quot;managedBy&quot;: null,
+  &quot;name&quot;: &quot;test-eastus&quot;,
+  &quot;properties&quot;: {
+    &quot;provisioningState&quot;: &quot;Succeeded&quot;
+  },
+  &quot;tags&quot;: null,
+  &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;
+}
 </code></pre>
 
-<h4 id="102-verify-provider-microsoftcompute">10.2 - Verify Provider Microsoft.Compute</h4>
-<p><strong><em>References:</em></strong></p>
+<h4 id="112-verify-resource-group">11.2 - Verify Resource Group</h4>
+<p><strong><em>Reference(s):</em></strong></p>
 <ul>
-<li>https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show</li>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-show">https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-show</a></li>
 </ul>
-<p><strong><em>Commands:</em></strong></p>
-<pre><code>az provider show -n Microsoft.Compute --output table
-
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az group show --name ${ARO_RESOURCE_GROUP_NAME}
 </code></pre>
 
-<pre><code>Namespace          RegistrationPolicy    RegistrationState
------------------  --------------------  -------------------
-Microsoft.Compute  RegistrationRequired  Registered
-</code></pre>
-
-<h4 id="103-register-provider-microsoftredhatopenshift">10.3 - Register Provider Microsoft.RedHatOpenShift</h4>
-<p><strong><em>References:</em></strong></p>
-<ul>
-<li><a href="https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register">https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register</a></li>
-</ul>
-<p><strong><em>Commands:</em></strong></p>
-<pre><code>az provider register -n Microsoft.RedHatOpenShift --wait
-
-</code></pre>
-
-<pre><code class="diff">+ success does not produce any output
-</code></pre>
-
-<h4 id="104-verify-provider-microsoftredhatopenshift">10.4 - Verify Provider Microsoft.RedHatOpenShift</h4>
-<p><strong><em>References:</em></strong></p>
-<ul>
-<li>https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show</li>
-</ul>
-<p><strong><em>Commands:</em></strong></p>
-<pre><code>az provider show -n Microsoft.RedHatOpenShift --output table
-
-</code></pre>
-
-<pre><code>Namespace                  RegistrationPolicy    RegistrationState
--------------------------  --------------------  -------------------
-Microsoft.RedHatOpenShift  RegistrationRequired  Registered
-</code></pre>
-
-<h4 id="105-register-provider-microsoftstorage">10.5 - Register Provider Microsoft.Storage</h4>
-<p><strong><em>References:</em></strong></p>
-<ul>
-<li>https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register</li>
-</ul>
-<p><strong><em>Commands:</em></strong></p>
-<pre><code>az provider register -n Microsoft.Storage --wait
-
-</code></pre>
-
-<pre><code class="diff">+ success does not produce any output
-</code></pre>
-
-<h4 id="106-verify-provider-microsoftstorage">10.6 - Verify Provider Microsoft.Storage</h4>
-<p><strong><em>References:</em></strong></p>
-<ul>
-<li>https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show</li>
-</ul>
-<p><strong><em>Commands:</em></strong></p>
-<pre><code>az provider show -n Microsoft.Storage --output table
-
-</code></pre>
-
-<pre><code>Namespace          RegistrationPolicy    RegistrationState
------------------  --------------------  -------------------
-Microsoft.Storage  RegistrationRequired  Registered
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>{
+  &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/test-eastus&quot;,
+  &quot;location&quot;: &quot;eastus&quot;,
+  &quot;managedBy&quot;: null,
+  &quot;name&quot;: &quot;test-eastus&quot;,
+  &quot;properties&quot;: {
+    &quot;provisioningState&quot;: &quot;Succeeded&quot;
+  },
+  &quot;tags&quot;: null,
+  &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;
+}
 </code></pre>
               
             </div>

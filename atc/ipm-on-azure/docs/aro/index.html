@@ -185,7 +185,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#10-setup-azure-resource-providers">10 - Setup Azure Resource Providers</a>
+    <li class="toctree-l2"><a class="reference internal" href="#10-setup-resource-providers">10 - Setup Resource Providers</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#101-register-provider-microsoftcompute">10.1 - Register Provider Microsoft.Compute</a>
     </li>
@@ -198,6 +198,22 @@
     <li class="toctree-l3"><a class="reference internal" href="#105-register-provider-microsoftstorage">10.5 - Register Provider Microsoft.Storage</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#106-verify-provider-microsoftstorage">10.6 - Verify Provider Microsoft.Storage</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#11-setup-resource-group">11 - Setup Resource Group</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#111-create-resource-group">11.1 - Create Resource Group</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#112-verify-resource-group">11.2 - Verify Resource Group</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#12-setup-virtual-network">12 - Setup Virtual Network</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#121-create-virtual-network">12.1 - Create Virtual Network</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#122-verify-virtual-network">12.2 - Verify Virtual Network</a>
     </li>
         </ul>
     </li>
@@ -254,7 +270,7 @@
 <h1 id="azure-red-hat-openshift-for-ibm-product-master">Azure Red Hat OpenShift for IBM Product Master</h1>
 <h3 id="draft">[DRAFT]</h3>
 <p><em>This document is functional, though still in active development and undergoing frequent changes.</em></p>
-<p><em>Revision: Tue 22 Sep 2020 11:04:10 PM EDT</em>
+<p><em>Revision: Wed 23 Sep 2020 10:08:41 AM EDT</em>
 &nbsp;<br></p>
 <h3 id="introduction">Introduction</h3>
 <p>This document details the steps required to automate the build of a secure, private Azure Red Hat OpenShift v4.x (ARO) infrastructure for IBM Product Master v12.x.</p>
@@ -645,8 +661,7 @@ google-chrome --version
 <li><a href="https://www.gnu.org/software/bash/manual/html_node/Environment.html">https://www.gnu.org/software/bash/manual/html_node/Environment.html</a></li>
 </ul>
 <h4 id="41-unset-environment-variables">4.1 - Unset Environment Variables</h4>
-<p>Please <em>always</em> start by unsetting the bash shell ARO environment variables that were previously set.</p>
-<p>Unsetting the ARO environment variables can help prevent issues when, or if they have been manually changed.</p>
+<p>Unsetting the ARO environment variables can help prevent issues when, or if they have changed.</p>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://www.gnu.org/software/bash/manual/html_node/Environment.html">https://www.gnu.org/software/bash/manual/html_node/Environment.html</a></li>
@@ -736,7 +751,7 @@ unset ARO_VNET_NAME
 <li><a href="https://www.gnu.org/software/bash/manual/html_node/Environment.html">https://www.gnu.org/software/bash/manual/html_node/Environment.html</a></li>
 </ul>
 <p><strong><em>Command(s):</em></strong></p>
-<pre><code class="bash">cat &quot;test.env&quot; &amp;&amp; source &quot;test.env&quot;
+<pre><code class="bash">cat &quot;ipm.env&quot; &amp;&amp; source &quot;ipm.env&quot;
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
@@ -749,7 +764,7 @@ unset ARO_VNET_NAME
 #
 # Please check, and double check the values.  Each of these are required.
 
-export ARO=test
+export ARO=ipm
 export ARO_ADMINISTRATORS_GROUP_NAME=&quot;OpenShift Administrators&quot;
 export ARO_APPLICATION_NAME=${ARO}-app
 export ARO_CLUSTER_NAME=${ARO}-cluster
@@ -867,78 +882,87 @@ export ARO_VERIFY_QUOTA_NAMES+=('Standard Dv2 Family vCPUs')
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<pre><code class="bash">ARO=test
+<pre><code class="bash">ARO=ipm
 ARO_ADMINISTRATORS_GROUP_NAME=OpenShift Administrators
-ARO_APPLICATION_NAME=test-app
-ARO_CLUSTER_NAME=test-cluster
+ARO_APPLICATION_NAME=ipm-app
+ARO_CLUSTER_NAME=ipm-cluster
 ARO_DOMAIN_NAME=mitaei.net
 ARO_LOCATION_NAME=eastus
 ARO_REDHAT_PULL_SECRET_DIR=/home/jtingiris/prj/mit/aei/secrets
-ARO_REDHAT_PULL_SECRET_FILE=/home/jtingiris/prj/mit/aei/secrets/test-redhat-pull-secret.txt
-ARO_RESOURCE_GROUP_NAME=test-eastus
-ARO_SERVICE_PRINCIPAL_NAME=http://test-app
+ARO_REDHAT_PULL_SECRET_FILE=/home/jtingiris/prj/mit/aei/secrets/ipm-redhat-pull-secret.txt
+ARO_RESOURCE_GROUP_NAME=ipm-eastus
+ARO_SERVICE_PRINCIPAL_NAME=http://ipm-app
 ARO_SERVICE_PRINCIPAL_PASSWORD=S3rv1c3Pr1cip4lP4ssw0rd!
-ARO_SUBDOMAIN_NAME=test.mitaei.net
+ARO_SUBDOMAIN_NAME=ipm.mitaei.net
 ARO_SUBNET_AGW_ADDRESS_PREFIX=10.11.4.0/25
-ARO_SUBNET_AGW_NAME=test-vnet-agw-subnet
-ARO_SUBNET_AGW_NSG_NAME=test-vnet-agw-subnet-nsg
+ARO_SUBNET_AGW_NAME=ipm-vnet-agw-subnet
+ARO_SUBNET_AGW_NSG_NAME=ipm-vnet-agw-subnet-nsg
 ARO_SUBNET_DB_ADDRESS_PREFIX=10.11.4.128/25
-ARO_SUBNET_DB_NAME=test-vnet-db-subnet
-ARO_SUBNET_DB_NSG_NAME=test-vnet-db-subnet-nsg
+ARO_SUBNET_DB_NAME=ipm-vnet-db-subnet
+ARO_SUBNET_DB_NSG_NAME=ipm-vnet-db-subnet-nsg
 ARO_SUBNET_DMZ_ADDRESS_PREFIX=10.11.5.0/25
-ARO_SUBNET_DMZ_NAME=test-vnet-dmz-subnet
-ARO_SUBNET_DMZ_NSG_NAME=test-vnet-dmz-subnet-nsg
+ARO_SUBNET_DMZ_NAME=ipm-vnet-dmz-subnet
+ARO_SUBNET_DMZ_NSG_NAME=ipm-vnet-dmz-subnet-nsg
 ARO_SUBNET_MASTER_ADDRESS_PREFIX=10.11.0.0/23
-ARO_SUBNET_MASTER_NAME=test-vnet-master-subnet
-ARO_SUBNET_MASTER_NSG_NAME=test-vnet-master-subnet-nsg
+ARO_SUBNET_MASTER_NAME=ipm-vnet-master-subnet
+ARO_SUBNET_MASTER_NSG_NAME=ipm-vnet-master-subnet-nsg
 ARO_SUBNET_TRUSTED_ADDRESS_PREFIX=10.11.5.128/25
-ARO_SUBNET_TRUSTED_NAME=test-vnet-trusted-subnet
-ARO_SUBNET_TRUSTED_NSG_NAME=test-vnet-trusted-subnet-nsg
+ARO_SUBNET_TRUSTED_NAME=ipm-vnet-trusted-subnet
+ARO_SUBNET_TRUSTED_NSG_NAME=ipm-vnet-trusted-subnet-nsg
 ARO_SUBNET_VGW_ADDRESS_PREFIX=10.11.6.0/25
 ARO_SUBNET_VGW_NAME=GatewaySubnet
 ARO_SUBNET_VGW_NSG_NAME=GatewaySubnet-nsg
 ARO_SUBNET_WORKER_ADDRESS_PREFIX=10.11.2.0/23
-ARO_SUBNET_WORKER_NAME=test-vnet-worker-subnet
-ARO_SUBNET_WORKER_NSG_NAME=test-vnet-worker-subnet-nsg
+ARO_SUBNET_WORKER_NAME=ipm-vnet-worker-subnet
+ARO_SUBNET_WORKER_NSG_NAME=ipm-vnet-worker-subnet-nsg
 ARO_SUBSCRIPTION_ID=12c7070f-83e5-453b-96d0-90770d2cf942
 ARO_SUBSCRIPTION_NAME=Azure subscription for mitaei
 ARO_TENANT_ID=25fe96e7-85ec-4e6a-b93f-779b16ff751d
 ARO_TENANT_NAME=mitaei.net
-ARO_VGW_NAME=test-vpn
+ARO_VGW_NAME=ipm-vpn
 ARO_VGW_PKI_BITS=2048
 ARO_VGW_PKI_CLIENT=example
-ARO_VGW_PKI_CLIENT_CRT_FILE=/home/jtingiris/prj/mit/aei/pki/test-vpn-client-example.crt
-ARO_VGW_PKI_CLIENT_EXT_FILE=/home/jtingiris/prj/mit/aei/pki/test-vpn-client-example.ext
-ARO_VGW_PKI_CLIENT_KEY_FILE=/home/jtingiris/prj/mit/aei/pki/test-vpn-client-example.key
+ARO_VGW_PKI_CLIENT_CRT_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.crt
+ARO_VGW_PKI_CLIENT_EXT_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.ext
+ARO_VGW_PKI_CLIENT_KEY_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.key
 ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE=!example!
-ARO_VGW_PKI_CLIENT_NAME=test-vpn-client-example
-ARO_VGW_PKI_CLIENT_PFX_FILE=/home/jtingiris/prj/mit/aei/pki/test-vpn-client-example.pfx
-ARO_VGW_PKI_CLIENT_REQ_FILE=/home/jtingiris/prj/mit/aei/pki/test-vpn-client-example.req
-ARO_VGW_PKI_CLIENT_SERIAL_FILE=/home/jtingiris/prj/mit/aei/pki/test-vpn-client-example.serial
+ARO_VGW_PKI_CLIENT_NAME=ipm-vpn-client-example
+ARO_VGW_PKI_CLIENT_PFX_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.pfx
+ARO_VGW_PKI_CLIENT_REQ_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.req
+ARO_VGW_PKI_CLIENT_SERIAL_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.serial
 ARO_VGW_PKI_DIR=/home/jtingiris/prj/mit/aei/pki
-ARO_VGW_PKI_ROOT_CA_SERIAL_FILE=/home/jtingiris/prj/mit/aei/pki/test-vpn-root.serial
+ARO_VGW_PKI_ROOT_CA_SERIAL_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-root.serial
 ARO_VGW_PKI_ROOT_CRT_FILE=/home/jtingiris/prj/mit/aei/pki/
-ARO_VGW_PKI_ROOT_CRT_FILE_NAME=test-vpn-root.crt
+ARO_VGW_PKI_ROOT_CRT_FILE_NAME=ipm-vpn-root.crt
 ARO_VGW_PKI_ROOT_KEY_FILE=/home/jtingiris/prj/mit/aei/pki/
-ARO_VGW_PKI_ROOT_KEY_FILE_NAME=test-vpn-root.key
+ARO_VGW_PKI_ROOT_KEY_FILE_NAME=ipm-vpn-root.key
 ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 ARO_VGW_POOL_ADDRESS_PREFIX=172.16.11.0/24
-ARO_VGW_PUBLIC_ADDRESS_NAME=test-vpn-public-ip
+ARO_VGW_PUBLIC_ADDRESS_NAME=ipm-vpn-public-ip
 ARO_VGW_REDUNDANCY=true
 ARO_VGW_SKU=VpnGw1AZ
 ARO_VGW_TYPE=RouteBased
-ARO_VM_JUMP_ADMIN_NAME=test-vm-jumpbox-admin
+ARO_VM_JUMP_ADMIN_NAME=ipm-vm-jumpbox-admin
 ARO_VM_JUMP_IMAGE_MARKETPLACE=true
 ARO_VM_JUMP_IMAGE_URN=cognosys:docker-ce-with-centos-8-0-free:docker-ce-with-centos-8-0-free:1.2019.0710
-ARO_VM_JUMP_NAME=test-vm-jumpbox
-ARO_VM_JUMP_PUBLIC_ADDRESS_NAME=test-vm-jumpbox-public-ip
+ARO_VM_JUMP_NAME=ipm-vm-jumpbox
+ARO_VM_JUMP_PUBLIC_ADDRESS_NAME=ipm-vm-jumpbox-public-ip
 ARO_VM_JUMP_SIZE=Standard_B1ms
 ARO_VNET_ADDRESS_PREFIX=10.11.0.0/21
-ARO_VNET_NAME=test-vnet
+ARO_VNET_NAME=ipm-vnet
 </code></pre>
 
 <h3 id="5-setup-required-directories">5 - Setup Required Directories</h3>
 <p>This documentation provides commands that create files.  To better organize the output files, the directories must exist or be created.</p>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">env | egrep &quot;ARO.*DIR&quot;
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>ARO_REDHAT_PULL_SECRET_DIR=/home/jtingiris/prj/mit/aei/secrets
+ARO_VGW_PKI_DIR=/home/jtingiris/prj/mit/aei/pki
+</code></pre>
+
 <h4 id="51-create-required-directories">5.1 - Create Required Directories</h4>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
@@ -972,6 +996,15 @@ ls -ld &quot;${ARO_REDHAT_PULL_SECRET_DIR}&quot;
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/what-is-azure-cli?view=azure-cli-latest">https://docs.microsoft.com/en-us/cli/azure/what-is-azure-cli?view=azure-cli-latest</a></li>
 </ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">env | egrep &quot;ARO.*DIR&quot;
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>ARO_REDHAT_PULL_SECRET_DIR=/home/jtingiris/prj/mit/aei/secrets
+ARO_VGW_PKI_DIR=/home/jtingiris/prj/mit/aei/pki
+</code></pre>
+
 <h4 id="61-install-azure-cli">6.1 - Install Azure CLI</h4>
 <p>The Azure CLI is available to install on Windows, macOS and Linux environments. It can also be run in a Docker container and Azure Cloud Shell.</p>
 <p>To install the Azure CLI, please follow the link in the Reference(s) section of this topic.</p>
@@ -1159,14 +1192,26 @@ joseph.tingiris@mitaei.net  Owner   /subscriptions/12c7070f-83e5-453b-96d0-90770
 </code></pre>
 
 <h3 id="8-verify-azure-subscription">8 - Verify Azure Subscription</h3>
-<p>Uze <code>az</code> to verify Azure Subscription details.  The subscription may also be manually verified by going to:</p>
-<ul>
-<li><a href="https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade">https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade</a></li>
-</ul>
+<p>Uze <code>az</code> to verify Azure Subscription details.  The subscription may also be manually verified via the Azure Portal Subscription blade.</p>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest">https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest</a></li>
 </ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">env | egrep -e '^ARO_SUBSCRIPTION_NAME|^ARO_SUBSCRIPTION_ID|^ARO_TENANT_ID|^ARO_LOCATION_NAME'
+echo &quot;ARO_SUBSCRIPTION_OWNERS=${ARO_SUBSCRIPTION_OWNERS[@]}&quot;
+echo &quot;ARO_VERIFY_QUOTA_NAMES=${ARO_VERIFY_QUOTA_NAMES[@]}&quot;
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>ARO_LOCATION_NAME=eastus
+ARO_TENANT_ID=25fe96e7-85ec-4e6a-b93f-779b16ff751d
+ARO_SUBSCRIPTION_ID=12c7070f-83e5-453b-96d0-90770d2cf942
+ARO_SUBSCRIPTION_NAME=Azure subscription for mitaei
+ARO_SUBSCRIPTION_OWNERS=christy.walsh@mitaei.net joseph.tingiris@mitaei.net
+ARO_VERIFY_QUOTA_NAMES=Standard DSv3 Family vCPUs Standard Dv2 Family vCPUs
+</code></pre>
+
 <h4 id="81-verify-subscription-name">8.1 - Verify Subscription Name</h4>
 <p>Verify the following configuration variables are valid:</p>
 <ul>
@@ -1176,6 +1221,7 @@ joseph.tingiris@mitaei.net  Owner   /subscriptions/12c7070f-83e5-453b-96d0-90770
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-list">https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-list</a></li>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-show">https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-show</a></li>
+<li><a href="https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade">https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade</a></li>
 </ul>
 <p><strong><em>Command(s):</em></strong></p>
 <pre><code class="bash">az account list --output table
@@ -1255,7 +1301,7 @@ eastus  East US        (US) East US
 <h4 id="84-verify-subscription-limits">8.4 - Verify Subscription Limits</h4>
 <p>Verify the following configuration variable is not empty:</p>
 <ul>
-<li>ARO_VERIFY_QUOTA_NAMES</li>
+<li>${ARO_VERIFY_QUOTA_NAMES}</li>
 </ul>
 <p>An ARO cluster uses several Microsoft Azure components.  It requires a minimum of 40 Total Regional vCPUs and 36 Standard DSv3 Family vCPUs.</p>
 <p><strong><em>The Azure subscription and service limits, quotas, and constraints may be insufficient to install ARO.</em></strong></p>
@@ -1347,6 +1393,16 @@ if [ &quot;${AZ_VERIFY_QUOTA_LIMIT}&quot; == &quot;&quot; ] || [ ${AZ_VERIFY_QUO
 <h3 id="9-setup-openshift-administrators">9 - Setup OpenShift Administrators</h3>
 <p>Identify the people who will be responsible for administering the OpenShift cluster.  These individuals will need Microsoft accounts and elevated roles and responsibilities.</p>
 <p>The details for how to use <code>az</code> to create users, groups, and add the necessary subscription roles is described below.</p>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">env | egrep -e '^ARO_DOMAIN_NAME'
+echo &quot;ARO_ADMINISTRATORS=${ARO_ADMINISTRATORS[@]}&quot;
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>ARO_DOMAIN_NAME=mitaei.net
+ARO_ADMINISTRATORS=openshift-admin@mitaei.net arun.babu@mitaei.net joseph.tingiris@mitaei.net sivaprasad.k@mitaei.net
+</code></pre>
+
 <h4 id="91-create-administrator-accounts">9.1 - Create Administrator Accounts</h4>
 <p>This is a good time for the Global Administrator to create Microsoft accounts for the OpenShift Administrators.</p>
 <p>Ideally, the OpenShift Administrators would also have the Global Administrator role for the tenant.  However, this is not always possible.  If you are the Global Administrator then please take note that the <strong><em>OpenShift Administrators must have Microsoft accounts in the tenant</em></strong>, and their Microsoft accounts must have at least the Contributor and User Access Administrator roles for the Azure Subscription in which ARO is to be deployed.</p>
@@ -1383,7 +1439,7 @@ if [ &quot;${AZ_VERIFY_QUOTA_LIMIT}&quot; == &quot;&quot; ] || [ ${AZ_VERIFY_QUO
   &quot;mail&quot;: null,
   &quot;mailNickname&quot;: &quot;openshift-admin&quot;,
   &quot;mobile&quot;: null,
-  &quot;objectId&quot;: &quot;d56b0a04-dfa5-49fd-9887-4af965e6953e&quot;,
+  &quot;objectId&quot;: &quot;8f9fc0bc-e694-435f-b0f8-1eb4c66caabb&quot;,
   &quot;objectType&quot;: &quot;User&quot;,
   &quot;odata.metadata&quot;: &quot;https://graph.windows.net/25fe96e7-85ec-4e6a-b93f-779b16ff751d/$metadata#directoryObjects/@Element&quot;,
   &quot;odata.type&quot;: &quot;Microsoft.DirectoryServices.User&quot;,
@@ -1402,7 +1458,7 @@ if [ &quot;${AZ_VERIFY_QUOTA_LIMIT}&quot; == &quot;&quot; ] || [ ${AZ_VERIFY_QUO
   &quot;provisionedPlans&quot;: [],
   &quot;provisioningErrors&quot;: [],
   &quot;proxyAddresses&quot;: [],
-  &quot;refreshTokensValidFromDateTime&quot;: &quot;2020-09-23T03:04:51.9124689Z&quot;,
+  &quot;refreshTokensValidFromDateTime&quot;: &quot;2020-09-23T14:09:26.228763Z&quot;,
   &quot;showInAddressList&quot;: null,
   &quot;signInNames&quot;: [],
   &quot;sipProxyAddress&quot;: null,
@@ -1410,7 +1466,7 @@ if [ &quot;${AZ_VERIFY_QUOTA_LIMIT}&quot; == &quot;&quot; ] || [ ${AZ_VERIFY_QUO
   &quot;streetAddress&quot;: null,
   &quot;surname&quot;: null,
   &quot;telephoneNumber&quot;: null,
-  &quot;thumbnailPhoto@odata.mediaEditLink&quot;: &quot;directoryObjects/d56b0a04-dfa5-49fd-9887-4af965e6953e/Microsoft.DirectoryServices.User/thumbnailPhoto&quot;,
+  &quot;thumbnailPhoto@odata.mediaEditLink&quot;: &quot;directoryObjects/8f9fc0bc-e694-435f-b0f8-1eb4c66caabb/Microsoft.DirectoryServices.User/thumbnailPhoto&quot;,
   &quot;usageLocation&quot;: null,
   &quot;userIdentities&quot;: [],
   &quot;userPrincipalName&quot;: &quot;openshift-admin@mitaei.net&quot;,
@@ -1432,7 +1488,7 @@ if [ &quot;${AZ_VERIFY_QUOTA_LIMIT}&quot; == &quot;&quot; ] || [ ${AZ_VERIFY_QUO
     &quot;userPrincipalName&quot;: &quot;openshift-admin@mitaei.net&quot;
   },
   {
-    &quot;principalId&quot;: &quot;d56b0a04-dfa5-49fd-9887-4af965e6953e&quot;
+    &quot;principalId&quot;: &quot;8f9fc0bc-e694-435f-b0f8-1eb4c66caabb&quot;
   }
 ]
 [
@@ -1474,9 +1530,9 @@ for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment create 
   &quot;condition&quot;: null,
   &quot;conditionVersion&quot;: null,
   &quot;description&quot;: null,
-  &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/4dcf6d9c-1580-4fdd-b765-d4591964c922&quot;,
-  &quot;name&quot;: &quot;4dcf6d9c-1580-4fdd-b765-d4591964c922&quot;,
-  &quot;principalId&quot;: &quot;d56b0a04-dfa5-49fd-9887-4af965e6953e&quot;,
+  &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/af5625a2-869f-4b1f-af1e-c7dc3bd9fd29&quot;,
+  &quot;name&quot;: &quot;af5625a2-869f-4b1f-af1e-c7dc3bd9fd29&quot;,
+  &quot;principalId&quot;: &quot;8f9fc0bc-e694-435f-b0f8-1eb4c66caabb&quot;,
   &quot;principalType&quot;: &quot;User&quot;,
   &quot;roleDefinitionId&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c&quot;,
   &quot;scope&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942&quot;,
@@ -1488,9 +1544,9 @@ for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment create 
   &quot;condition&quot;: null,
   &quot;conditionVersion&quot;: null,
   &quot;description&quot;: null,
-  &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/38e5a07a-3589-479e-bd2d-74303ef59f1f&quot;,
-  &quot;name&quot;: &quot;38e5a07a-3589-479e-bd2d-74303ef59f1f&quot;,
-  &quot;principalId&quot;: &quot;d56b0a04-dfa5-49fd-9887-4af965e6953e&quot;,
+  &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/c1488473-33f8-488e-8db5-2f39e2c8d74f&quot;,
+  &quot;name&quot;: &quot;c1488473-33f8-488e-8db5-2f39e2c8d74f&quot;,
+  &quot;principalId&quot;: &quot;8f9fc0bc-e694-435f-b0f8-1eb4c66caabb&quot;,
   &quot;principalType&quot;: &quot;User&quot;,
   &quot;roleDefinitionId&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleDefinitions/18d7d88d-d35e-4fb5-a5c3-7773c20a72d9&quot;,
   &quot;scope&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942&quot;,
@@ -1625,95 +1681,240 @@ sivaprasad.k@mitaei.net  Contributor                /subscriptions/12c7070f-83e5
 
 </code></pre>
 
-<h3 id="10-setup-azure-resource-providers">10 - Setup Azure Resource Providers</h3>
-<p>Make sure you are logged in to Azure via az (az login) with a Contributor or Owner role.</p>
-<p>This step will fail for OpenShift Admins with only the User Access Administrator.  They will receive a message saying they do not have authorization.</p>
+<h3 id="10-setup-resource-providers">10 - Setup Resource Providers</h3>
+<p>Make sure you are logged in to Azure via az <code>az login</code> and have the <em>Contributor</em> or <em>Owner</em> role.</p>
+<p><em>NOTE:</em></p>
+<ul>
+<li><em>These steps will fail with only the <strong>User Access Administrator</strong> role.  An unauthorized message will be received.</em></li>
+<li><em>These steps will fail without the <strong>--wait</strong> flag.  Dependent providers are automatically registered and they must be registered first.</em></li>
+</ul>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types">https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types</a></li>
 </ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">echo &quot;ARO_RESOURCE_PROVIDERS=${ARO_RESOURCE_PROVIDERS[@]}&quot;
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>ARO_RESOURCE_PROVIDERS=Microsoft.Compute Microsoft.RedHatOpenShift Microsoft.Storage
+</code></pre>
+
 <h4 id="101-register-provider-microsoftcompute">10.1 - Register Provider Microsoft.Compute</h4>
-<p><strong><em>References:</em></strong></p>
+<p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register">https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register</a></li>
 </ul>
-<p><strong><em>Commands:</em></strong></p>
-<pre><code>az provider register -n Microsoft.Compute --wait
-
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az provider register -n Microsoft.Compute --wait
 </code></pre>
 
+<p><strong><em>Example Output:</em></strong></p>
 <pre><code class="diff">+ success does not produce any output
 </code></pre>
 
 <h4 id="102-verify-provider-microsoftcompute">10.2 - Verify Provider Microsoft.Compute</h4>
-<p><strong><em>References:</em></strong></p>
+<p><strong><em>Reference(s):</em></strong></p>
 <ul>
-<li>https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show</li>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show">https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show</a></li>
 </ul>
-<p><strong><em>Commands:</em></strong></p>
-<pre><code>az provider show -n Microsoft.Compute --output table
-
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az provider show --namespace Microsoft.Compute --output table
 </code></pre>
 
+<p><strong><em>Example Output:</em></strong></p>
 <pre><code>Namespace          RegistrationPolicy    RegistrationState
 -----------------  --------------------  -------------------
 Microsoft.Compute  RegistrationRequired  Registered
 </code></pre>
 
 <h4 id="103-register-provider-microsoftredhatopenshift">10.3 - Register Provider Microsoft.RedHatOpenShift</h4>
-<p><strong><em>References:</em></strong></p>
+<p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register">https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register</a></li>
 </ul>
-<p><strong><em>Commands:</em></strong></p>
-<pre><code>az provider register -n Microsoft.RedHatOpenShift --wait
-
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az provider register -n Microsoft.RedHatOpenShift --wait
 </code></pre>
 
+<p><strong><em>Example Output:</em></strong></p>
 <pre><code class="diff">+ success does not produce any output
 </code></pre>
 
 <h4 id="104-verify-provider-microsoftredhatopenshift">10.4 - Verify Provider Microsoft.RedHatOpenShift</h4>
-<p><strong><em>References:</em></strong></p>
+<p><strong><em>Reference(s):</em></strong></p>
 <ul>
-<li>https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show</li>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show">https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show</a></li>
 </ul>
-<p><strong><em>Commands:</em></strong></p>
-<pre><code>az provider show -n Microsoft.RedHatOpenShift --output table
-
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az provider show --namespace Microsoft.RedHatOpenShift --output table
 </code></pre>
 
+<p><strong><em>Example Output:</em></strong></p>
 <pre><code>Namespace                  RegistrationPolicy    RegistrationState
 -------------------------  --------------------  -------------------
 Microsoft.RedHatOpenShift  RegistrationRequired  Registered
 </code></pre>
 
 <h4 id="105-register-provider-microsoftstorage">10.5 - Register Provider Microsoft.Storage</h4>
-<p><strong><em>References:</em></strong></p>
+<p><strong><em>Reference(s):</em></strong></p>
 <ul>
-<li>https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register</li>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register">https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register</a></li>
 </ul>
-<p><strong><em>Commands:</em></strong></p>
-<pre><code>az provider register -n Microsoft.Storage --wait
-
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az provider register -n Microsoft.Storage --wait
 </code></pre>
 
+<p><strong><em>Example Output:</em></strong></p>
 <pre><code class="diff">+ success does not produce any output
 </code></pre>
 
 <h4 id="106-verify-provider-microsoftstorage">10.6 - Verify Provider Microsoft.Storage</h4>
-<p><strong><em>References:</em></strong></p>
+<p><strong><em>Reference(s):</em></strong></p>
 <ul>
-<li>https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show</li>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show">https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show</a></li>
 </ul>
-<p><strong><em>Commands:</em></strong></p>
-<pre><code>az provider show -n Microsoft.Storage --output table
-
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az provider show --namespace Microsoft.Storage --output table
 </code></pre>
 
+<p><strong><em>Example Output:</em></strong></p>
 <pre><code>Namespace          RegistrationPolicy    RegistrationState
 -----------------  --------------------  -------------------
 Microsoft.Storage  RegistrationRequired  Registered
+</code></pre>
+
+<h3 id="11-setup-resource-group">11 - Setup Resource Group</h3>
+<p>An Azure resource group is a logical group in which Azure resources are deployed and managed.</p>
+<p>To create ARO resources, a resource group location must be specified. This is where the physical datacenter is located, where resource group metadata is stored, and where the Azure resources are hosted.</p>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest">https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest</a></li>
+</ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">env | egrep '^ARO_RESOURCE_GROUP_NAME|^ARO_LOCATION_NAME'
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>ARO_LOCATION_NAME=eastus
+ARO_RESOURCE_GROUP_NAME=ipm-eastus
+</code></pre>
+
+<h4 id="111-create-resource-group">11.1 - Create Resource Group</h4>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-create">https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-create</a></li>
+</ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az group create --name ${ARO_RESOURCE_GROUP_NAME} --location ${ARO_LOCATION_NAME}
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>{
+  &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus&quot;,
+  &quot;location&quot;: &quot;eastus&quot;,
+  &quot;managedBy&quot;: null,
+  &quot;name&quot;: &quot;ipm-eastus&quot;,
+  &quot;properties&quot;: {
+    &quot;provisioningState&quot;: &quot;Succeeded&quot;
+  },
+  &quot;tags&quot;: null,
+  &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;
+}
+</code></pre>
+
+<h4 id="112-verify-resource-group">11.2 - Verify Resource Group</h4>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-show">https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-show</a></li>
+</ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az group show --name ${ARO_RESOURCE_GROUP_NAME}
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>{
+  &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus&quot;,
+  &quot;location&quot;: &quot;eastus&quot;,
+  &quot;managedBy&quot;: null,
+  &quot;name&quot;: &quot;ipm-eastus&quot;,
+  &quot;properties&quot;: {
+    &quot;provisioningState&quot;: &quot;Succeeded&quot;
+  },
+  &quot;tags&quot;: null,
+  &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;
+}
+</code></pre>
+
+<h3 id="12-setup-virtual-network">12 - Setup Virtual Network</h3>
+<p>An Azure Virtual Network (VNet) is the fundamental building block for private networks in Azure. VNet enables many types of Azure resources, such as Azure Virtual Machines (VM), to securely communicate with each other, the internet, and on-premises networks. VNet is similar to a traditional network that you'd operate in your own data center, but brings with it additional benefits of Azure's infrastructure such as scale, availability, and isolation.</p>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-overview">https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-overview</a></li>
+</ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">env | grep ^ARO_VNET | sort -V
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>ARO_VNET_ADDRESS_PREFIX=10.11.0.0/21
+ARO_VNET_NAME=ipm-vnet
+</code></pre>
+
+<h4 id="121-create-virtual-network">12.1 - Create Virtual Network</h4>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/network/vnet?view=azure-cli-latest#az-network-vnet-create">https://docs.microsoft.com/en-us/cli/azure/network/vnet?view=azure-cli-latest#az-network-vnet-create</a></li>
+<li><a href="https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x">https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x</a></li>
+</ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az network vnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VNET_NAME} --address-prefixes ${ARO_VNET_ADDRESS_PREFIX}
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>{
+  &quot;newVNet&quot;: {
+    &quot;addressSpace&quot;: {
+      &quot;addressPrefixes&quot;: [
+        &quot;10.11.0.0/21&quot;
+      ]
+    },
+    &quot;bgpCommunities&quot;: null,
+    &quot;ddosProtectionPlan&quot;: null,
+    &quot;dhcpOptions&quot;: {
+      &quot;dnsServers&quot;: []
+    },
+    &quot;enableDdosProtection&quot;: false,
+    &quot;enableVmProtection&quot;: false,
+    &quot;etag&quot;: &quot;W/\&quot;070e6b93-8c8b-4c6a-84f9-231a20da9180\&quot;&quot;,
+    &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet&quot;,
+    &quot;ipAllocations&quot;: null,
+    &quot;location&quot;: &quot;eastus&quot;,
+    &quot;name&quot;: &quot;ipm-vnet&quot;,
+    &quot;provisioningState&quot;: &quot;Succeeded&quot;,
+    &quot;resourceGroup&quot;: &quot;ipm-eastus&quot;,
+    &quot;resourceGuid&quot;: &quot;71df59a1-9f16-450f-a6b5-282bacfe01bb&quot;,
+    &quot;subnets&quot;: [],
+    &quot;tags&quot;: {},
+    &quot;type&quot;: &quot;Microsoft.Network/virtualNetworks&quot;,
+    &quot;virtualNetworkPeerings&quot;: []
+  }
+}
+</code></pre>
+
+<h4 id="122-verify-virtual-network">12.2 - Verify Virtual Network</h4>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/network/vnet?view=azure-cli-latest#az-network-vnet-show">https://docs.microsoft.com/en-us/cli/azure/network/vnet?view=azure-cli-latest#az-network-vnet-show</a></li>
+</ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az network vnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VNET_NAME} --output table
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code>EnableDdosProtection    EnableVmProtection    Location    Name      ProvisioningState    ResourceGroup    ResourceGuid
+----------------------  --------------------  ----------  --------  -------------------  ---------------  ------------------------------------
+False                   False                 eastus      ipm-vnet  Succeeded            ipm-eastus       71df59a1-9f16-450f-a6b5-282bacfe01bb
 </code></pre>
               
             </div>
@@ -1770,5 +1971,5 @@ Microsoft.Storage  RegistrationRequired  Registered
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2020-09-23 03:09:08.141504+00:00
+Build Date UTC : 2020-09-23 14:12:41.410949+00:00
 -->

@@ -73,7 +73,11 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#9-setup-openshift-administrators">9 - Setup OpenShift Administrators</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#10-setup-azure-resource-providers">10 - Setup Azure Resource Providers</a>
+    <li class="toctree-l2"><a class="reference internal" href="#10-setup-resource-providers">10 - Setup Resource Providers</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#11-setup-resource-group">11 - Setup Resource Group</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#12-setup-virtual-network">12 - Setup Virtual Network</a>
     </li>
     </ul>
                     </li>
@@ -171,7 +175,7 @@ google-chrome --version
 </code></pre>
 
 <p><em>4.2 - Set Environment Variables</em><br></p>
-<pre><code class="bash">cat &quot;test.env&quot; &amp;&amp; source &quot;test.env&quot;
+<pre><code class="bash">cat &quot;ipm.env&quot; &amp;&amp; source &quot;ipm.env&quot;
 </code></pre>
 
 <p><em>4.3 - Verify Environment Variables</em><br></p>
@@ -179,6 +183,9 @@ google-chrome --version
 </code></pre>
 
 <h4 id="5-setup-required-directories">5 - Setup Required Directories</h4>
+<pre><code class="bash">env | egrep &quot;ARO.*DIR&quot;
+</code></pre>
+
 <p><em>5.1 - Create Required Directories</em><br></p>
 <pre><code class="bash">mkdir -p &quot;${ARO_VGW_PKI_DIR}&quot;
 mkdir -p &quot;${ARO_REDHAT_PULL_SECRET_DIR}&quot;
@@ -190,6 +197,9 @@ ls -ld &quot;${ARO_REDHAT_PULL_SECRET_DIR}&quot;
 </code></pre>
 
 <h4 id="6-setup-azure-cli">6 - Setup Azure CLI</h4>
+<pre><code class="bash">env | egrep &quot;ARO.*DIR&quot;
+</code></pre>
+
 <p><em>6.1 - Install Azure CLI</em><br></p>
 <pre><code class="bash">az --version
 </code></pre>
@@ -224,6 +234,11 @@ if [ &quot;${ARO_TENANT_ID}&quot; != &quot;${AZ_TENANT_ID}&quot; ];then; echo &q
 </code></pre>
 
 <h4 id="8-verify-azure-subscription">8 - Verify Azure Subscription</h4>
+<pre><code class="bash">env | egrep -e '^ARO_SUBSCRIPTION_NAME|^ARO_SUBSCRIPTION_ID|^ARO_TENANT_ID|^ARO_LOCATION_NAME'
+echo &quot;ARO_SUBSCRIPTION_OWNERS=${ARO_SUBSCRIPTION_OWNERS[@]}&quot;
+echo &quot;ARO_VERIFY_QUOTA_NAMES=${ARO_VERIFY_QUOTA_NAMES[@]}&quot;
+</code></pre>
+
 <p><em>8.1 - Verify Subscription Name</em><br></p>
 <pre><code class="bash">az account list --output table
 az account show --subscription &quot;${ARO_SUBSCRIPTION_ID}&quot; --query &quot;[{subscription_name:name},{subscription_id:id}]&quot;
@@ -261,6 +276,10 @@ if [ &quot;${AZ_VERIFY_QUOTA_LIMIT}&quot; == &quot;&quot; ] || [ ${AZ_VERIFY_QUO
 </code></pre>
 
 <h4 id="9-setup-openshift-administrators">9 - Setup OpenShift Administrators</h4>
+<pre><code class="bash">env | egrep -e '^ARO_DOMAIN_NAME'
+echo &quot;ARO_ADMINISTRATORS=${ARO_ADMINISTRATORS[@]}&quot;
+</code></pre>
+
 <p><em>9.1 - Create Administrator Accounts</em><br></p>
 <pre><code class="bash">az ad user create --display-name openshift-admin@mitaei.net --user-principal-name openshift-admin@mitaei.net --password &quot;DIl3*lks)-${ARO}-r4d0m!&quot; --force-change-password-next-login
 </code></pre>
@@ -278,13 +297,57 @@ for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment create 
 <pre><code class="bash">for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment list --assignee ${ARO_ADMINISTRATOR} --output table; if [ $? -ne 0 ]; then echo &quot;ERROR! failed retrieving subscription roles for \&quot;${ADMINISTRATOR}\&quot;&quot;; fi; echo; done
 </code></pre>
 
-<h4 id="10-setup-azure-resource-providers">10 - Setup Azure Resource Providers</h4>
-<p><em>10.1 - Register Provider Microsoft.Compute</em><br>
-<em>10.2 - Verify Provider Microsoft.Compute</em><br>
-<em>10.3 - Register Provider Microsoft.RedHatOpenShift</em><br>
-<em>10.4 - Verify Provider Microsoft.RedHatOpenShift</em><br>
-<em>10.5 - Register Provider Microsoft.Storage</em><br>
-<em>10.6 - Verify Provider Microsoft.Storage</em><br></p>
+<h4 id="10-setup-resource-providers">10 - Setup Resource Providers</h4>
+<pre><code class="bash">echo &quot;ARO_RESOURCE_PROVIDERS=${ARO_RESOURCE_PROVIDERS[@]}&quot;
+</code></pre>
+
+<p><em>10.1 - Register Provider Microsoft.Compute</em><br></p>
+<pre><code class="bash">az provider register -n Microsoft.Compute --wait
+</code></pre>
+
+<p><em>10.2 - Verify Provider Microsoft.Compute</em><br></p>
+<pre><code class="bash">az provider show --namespace Microsoft.Compute --output table
+</code></pre>
+
+<p><em>10.3 - Register Provider Microsoft.RedHatOpenShift</em><br></p>
+<pre><code class="bash">az provider register -n Microsoft.RedHatOpenShift --wait
+</code></pre>
+
+<p><em>10.4 - Verify Provider Microsoft.RedHatOpenShift</em><br></p>
+<pre><code class="bash">az provider show --namespace Microsoft.RedHatOpenShift --output table
+</code></pre>
+
+<p><em>10.5 - Register Provider Microsoft.Storage</em><br></p>
+<pre><code class="bash">az provider register -n Microsoft.Storage --wait
+</code></pre>
+
+<p><em>10.6 - Verify Provider Microsoft.Storage</em><br></p>
+<pre><code class="bash">az provider show --namespace Microsoft.Storage --output table
+</code></pre>
+
+<h4 id="11-setup-resource-group">11 - Setup Resource Group</h4>
+<pre><code class="bash">env | egrep '^ARO_RESOURCE_GROUP_NAME|^ARO_LOCATION_NAME'
+</code></pre>
+
+<p><em>11.1 - Create Resource Group</em><br></p>
+<pre><code class="bash">az group create --name ${ARO_RESOURCE_GROUP_NAME} --location ${ARO_LOCATION_NAME}
+</code></pre>
+
+<p><em>11.2 - Verify Resource Group</em><br></p>
+<pre><code class="bash">az group show --name ${ARO_RESOURCE_GROUP_NAME}
+</code></pre>
+
+<h4 id="12-setup-virtual-network">12 - Setup Virtual Network</h4>
+<pre><code class="bash">env | grep ^ARO_VNET | sort -V
+</code></pre>
+
+<p><em>12.1 - Create Virtual Network</em><br></p>
+<pre><code class="bash">az network vnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VNET_NAME} --address-prefixes ${ARO_VNET_ADDRESS_PREFIX}
+</code></pre>
+
+<p><em>12.2 - Verify Virtual Network</em><br></p>
+<pre><code class="bash">az network vnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VNET_NAME} --output table
+</code></pre>
               
             </div>
           </div>
