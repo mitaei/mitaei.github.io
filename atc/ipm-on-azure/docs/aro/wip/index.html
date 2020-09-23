@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="joseph.tingiris@mastechinfotrellis.com">
+  <link rel="canonical" href="https://mitaei.github.io/atc/ipm-on-azure/docs/aro/wip/">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>WIP - IPM on Azure</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/mit-extra.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "WIP";
+    var mkdocs_page_input_path = "wip.md";
+    var mkdocs_page_url = "/atc/ipm-on-azure/docs/aro/wip/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> IPM on Azure</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Index</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tldr/">TL;DR</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">WIP</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#101-register-provider-microsoftcompute">10.1 - Register Provider Microsoft.Compute</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#102-verify-provider-microsoftcompute">10.2 - Verify Provider Microsoft.Compute</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#103-register-provider-microsoftredhatopenshift">10.3 - Register Provider Microsoft.RedHatOpenShift</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#104-verify-provider-microsoftredhatopenshift">10.4 - Verify Provider Microsoft.RedHatOpenShift</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#105-register-provider-microsoftstorage">10.5 - Register Provider Microsoft.Storage</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#106-verify-provider-microsoftstorage">10.6 - Verify Provider Microsoft.Storage</a>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">IPM on Azure</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>WIP</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h3 id="10-setup-azure-resource-providers">10 - Setup Azure Resource Providers</h3>
+<p>Make sure you are logged in to Azure via az (az login) with a Contributor or Owner role.</p>
+<p>This step will fail for OpenShift Admins with only the User Access Administrator.  They will receive a message saying they do not have authorization.</p>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types">https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types</a></li>
+</ul>
+<h4 id="101-register-provider-microsoftcompute">10.1 - Register Provider Microsoft.Compute</h4>
+<p><strong><em>References:</em></strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register">https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register</a></li>
+</ul>
+<p><strong><em>Commands:</em></strong></p>
+<pre><code>az provider register -n Microsoft.Compute --wait
+
+</code></pre>
+
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
+<h4 id="102-verify-provider-microsoftcompute">10.2 - Verify Provider Microsoft.Compute</h4>
+<p><strong><em>References:</em></strong></p>
+<ul>
+<li>https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show</li>
+</ul>
+<p><strong><em>Commands:</em></strong></p>
+<pre><code>az provider show -n Microsoft.Compute --output table
+
+</code></pre>
+
+<pre><code>Namespace          RegistrationPolicy    RegistrationState
+-----------------  --------------------  -------------------
+Microsoft.Compute  RegistrationRequired  Registered
+</code></pre>
+
+<h4 id="103-register-provider-microsoftredhatopenshift">10.3 - Register Provider Microsoft.RedHatOpenShift</h4>
+<p><strong><em>References:</em></strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register">https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register</a></li>
+</ul>
+<p><strong><em>Commands:</em></strong></p>
+<pre><code>az provider register -n Microsoft.RedHatOpenShift --wait
+
+</code></pre>
+
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
+<h4 id="104-verify-provider-microsoftredhatopenshift">10.4 - Verify Provider Microsoft.RedHatOpenShift</h4>
+<p><strong><em>References:</em></strong></p>
+<ul>
+<li>https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show</li>
+</ul>
+<p><strong><em>Commands:</em></strong></p>
+<pre><code>az provider show -n Microsoft.RedHatOpenShift --output table
+
+</code></pre>
+
+<pre><code>Namespace                  RegistrationPolicy    RegistrationState
+-------------------------  --------------------  -------------------
+Microsoft.RedHatOpenShift  RegistrationRequired  Registered
+</code></pre>
+
+<h4 id="105-register-provider-microsoftstorage">10.5 - Register Provider Microsoft.Storage</h4>
+<p><strong><em>References:</em></strong></p>
+<ul>
+<li>https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register</li>
+</ul>
+<p><strong><em>Commands:</em></strong></p>
+<pre><code>az provider register -n Microsoft.Storage --wait
+
+</code></pre>
+
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
+<h4 id="106-verify-provider-microsoftstorage">10.6 - Verify Provider Microsoft.Storage</h4>
+<p><strong><em>References:</em></strong></p>
+<ul>
+<li>https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show</li>
+</ul>
+<p><strong><em>Commands:</em></strong></p>
+<pre><code>az provider show -n Microsoft.Storage --output table
+
+</code></pre>
+
+<pre><code>Namespace          RegistrationPolicy    RegistrationState
+-----------------  --------------------  -------------------
+Microsoft.Storage  RegistrationRequired  Registered
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../about/" class="btn btn-neutral" title="About"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>&copy; 2020 Mastech InfoTrellis</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../about/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

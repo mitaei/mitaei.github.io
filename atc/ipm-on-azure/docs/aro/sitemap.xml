@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url>
-     <loc>https://mitaei.github.io/atc/ipm-on-azure/</loc>
-     <lastmod>2020-09-21</lastmod>
+     <loc>https://mitaei.github.io/atc/ipm-on-azure/docs/aro/</loc>
+     <lastmod>2020-09-23</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
-     <loc>https://mitaei.github.io/atc/ipm-on-azure/about/</loc>
-     <lastmod>2020-09-21</lastmod>
+     <loc>https://mitaei.github.io/atc/ipm-on-azure/docs/aro/tldr/</loc>
+     <lastmod>2020-09-23</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://mitaei.github.io/atc/ipm-on-azure/docs/aro/about/</loc>
+     <lastmod>2020-09-23</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://mitaei.github.io/atc/ipm-on-azure/docs/aro/wip/</loc>
+     <lastmod>2020-09-23</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>

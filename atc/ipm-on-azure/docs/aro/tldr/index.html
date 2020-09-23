@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="joseph.tingiris@mastechinfotrellis.com">
+  <link rel="canonical" href="https://mitaei.github.io/atc/ipm-on-azure/docs/aro/tldr/">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>TL;DR - IPM on Azure</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/mit-extra.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "TL;DR";
+    var mkdocs_page_input_path = "tldr.md";
+    var mkdocs_page_url = "/atc/ipm-on-azure/docs/aro/tldr/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> IPM on Azure</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Index</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">TL;DR</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#1-setup-azure-tenant">1 - Setup Azure Tenant</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2-setup-azure-subscription">2 - Setup Azure Subscription</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#3-setup-linux-operating-system">3 - Setup Linux Operating System</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#4-setup-environment-variables">4 - Setup Environment Variables</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#5-setup-required-directories">5 - Setup Required Directories</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#6-setup-azure-cli">6 - Setup Azure CLI</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#7-setup-subscription-owners">7 - Setup Subscription Owners</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#8-verify-azure-subscription">8 - Verify Azure Subscription</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#9-setup-openshift-administrators">9 - Setup OpenShift Administrators</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#10-setup-azure-resource-providers">10 - Setup Azure Resource Providers</a>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../wip/">WIP</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">IPM on Azure</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>TL;DR</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="too-long-didnt-read">Too Long; Didn't Read</h1>
+<h4 id="1-setup-azure-tenant">1 - Setup Azure Tenant</h4>
+<p><em>1.1 - Create Microsoft Account</em><br>
+<em>1.2 - Create Global Administrator</em><br>
+<em>1.3 - Verify Admin Center Access</em><br>
+<em>1.4 - Verify AAD License</em><br></p>
+<h4 id="2-setup-azure-subscription">2 - Setup Azure Subscription</h4>
+<p><em>2.1 - Create Azure Subscription</em><br></p>
+<h4 id="3-setup-linux-operating-system">3 - Setup Linux Operating System</h4>
+<p><em>3.1 - Verify Operating System</em><br></p>
+<pre><code class="bash">uname -a
+</code></pre>
+
+<p><em>3.2 - Verify GNU bash</em><br></p>
+<pre><code class="bash">bash --version
+</code></pre>
+
+<p><em>3.3 - Verify GNU awk</em><br></p>
+<pre><code class="bash">awk --version
+</code></pre>
+
+<p><em>3.4 - Verify GNU coreutils</em><br></p>
+<pre><code class="bash">base64 --version
+basename --version
+dirname --version
+sort --version
+head --version
+tail --version
+</code></pre>
+
+<p><em>3.5 - Verify GNU grep</em><br></p>
+<pre><code class="bash">egrep --version
+</code></pre>
+
+<p><em>3.6 - Verify GNU wget</em><br></p>
+<pre><code class="bash">wget --version
+</code></pre>
+
+<p><em>3.7 - Verify Browser</em><br></p>
+<pre><code class="bash">firefox --version
+google-chrome --version
+</code></pre>
+
+<p><em>3.8 - Verify OpenSSL</em><br></p>
+<pre><code class="bash">openssl version
+</code></pre>
+
+<h4 id="4-setup-environment-variables">4 - Setup Environment Variables</h4>
+<p><em>4.1 - Unset Environment Variables</em><br></p>
+<pre><code class="bash">for ARO in $(env | grep ^ARO | awk -F= &quot;{print \$1}&quot; | sort -V); do echo unset $ARO; unset $ARO; done
+</code></pre>
+
+<p><em>4.2 - Set Environment Variables</em><br></p>
+<pre><code class="bash">cat &quot;test.env&quot; &amp;&amp; source &quot;test.env&quot;
+</code></pre>
+
+<p><em>4.3 - Verify Environment Variables</em><br></p>
+<pre><code class="bash">env | grep ^ARO | sort -V
+</code></pre>
+
+<h4 id="5-setup-required-directories">5 - Setup Required Directories</h4>
+<p><em>5.1 - Create Required Directories</em><br></p>
+<pre><code class="bash">mkdir -p &quot;${ARO_VGW_PKI_DIR}&quot;
+mkdir -p &quot;${ARO_REDHAT_PULL_SECRET_DIR}&quot;
+</code></pre>
+
+<p><em>5.2 - Verify Required Directories</em><br></p>
+<pre><code class="bash">ls -ld &quot;${ARO_VGW_PKI_DIR}&quot;
+ls -ld &quot;${ARO_REDHAT_PULL_SECRET_DIR}&quot;
+</code></pre>
+
+<h4 id="6-setup-azure-cli">6 - Setup Azure CLI</h4>
+<p><em>6.1 - Install Azure CLI</em><br></p>
+<pre><code class="bash">az --version
+</code></pre>
+
+<p><em>6.2 - Subscription Owner Login</em><br></p>
+<pre><code class="bash">az login
+export AZ_USER=$(az account show --query 'user.name' --output tsv)
+az role assignment list --role Owner --query &quot;[?principalName=='${AZ_USER}'].principalName&quot; --output tsv
+</code></pre>
+
+<p><em>6.3 - Verify Azure Tenant</em><br></p>
+<pre><code class="bash">az account show --query '[{tenantId:tenantId}, {homeTenantId:homeTenantId}]'
+export AZ_TENANT_ID=$(az account show --query 'tenantId' --output tsv 2&gt; /dev/null)
+if [ &quot;${ARO_TENANT_ID}&quot; != &quot;${AZ_TENANT_ID}&quot; ];then; echo &quot;ERROR! ARO_TENANT_ID (${ARO_TENANT_ID}) does not match this tenant id (${AZ_TENANT_ID})&quot;; fi
+</code></pre>
+
+<p><em>6.4 - Set Default Subscription</em><br></p>
+<pre><code class="bash">az account set -s &quot;${ARO_SUBSCRIPTION_NAME}&quot;
+</code></pre>
+
+<p><em>6.5 - Verify Default Subscription</em><br></p>
+<pre><code class="bash">az account list --query '[?isDefault == `true`]'
+</code></pre>
+
+<h4 id="7-setup-subscription-owners">7 - Setup Subscription Owners</h4>
+<p><em>7.1 - Create Subscription Owners</em><br></p>
+<pre><code class="bash">for ARO_SUBSCRIPTION_OWNER in ${ARO_SUBSCRIPTION_OWNERS[@]}; do az role assignment create --assignee ${ARO_SUBSCRIPTION_OWNER} --role Owner; done
+</code></pre>
+
+<p><em>7.2 - Verify Subscription Owners</em><br></p>
+<pre><code class="bash">az role assignment list --role Owner --output table
+</code></pre>
+
+<h4 id="8-verify-azure-subscription">8 - Verify Azure Subscription</h4>
+<p><em>8.1 - Verify Subscription Name</em><br></p>
+<pre><code class="bash">az account list --output table
+az account show --subscription &quot;${ARO_SUBSCRIPTION_ID}&quot; --query &quot;[{subscription_name:name},{subscription_id:id}]&quot;
+export AZ_SUBSCRIPTION_NAME=$(az account show --query 'name' --output tsv)
+if [ &quot;${AZ_SUBSCRIPTION_NAME}&quot; != &quot;${ARO_SUBSCRIPTION_NAME}&quot; ]; then echo &quot;ERROR! az subscription name \&quot;${AZ_SUBSCRIPTION_NAME}\&quot; does not match aro subscription name \&quot;${ARO_SUBSCRIPTION_NAME}\&quot;&quot;; fi
+</code></pre>
+
+<p><em>8.2 - Verify Subscription ID</em><br></p>
+<pre><code class="bash">az account show --subscription &quot;${ARO_SUBSCRIPTION_ID}&quot; --query &quot;[{subscription_name:name},{subscription_id:id}]&quot;
+export AZ_SUBSCRIPTION_ID=$(az account show --query 'id' --output tsv 2&gt; /dev/null)
+if [ &quot;${AZ_SUBSCRIPTION_ID}&quot; != &quot;${ARO_SUBSCRIPTION_ID}&quot; ]; then echo &quot;ERROR! az subscription name \&quot;${AZ_SUBSCRIPTION_ID}\&quot; does not match aro subscription name \&quot;${ARO_SUBSCRIPTION_ID}\&quot;&quot;; fi
+</code></pre>
+
+<p><em>8.3 - Verify Subscription Location</em><br></p>
+<pre><code class="bash">az account list-locations --query &quot;[?name=='${ARO_LOCATION_NAME}']&quot; --output table
+export AZ_LOCATION_NAME=$(az account list-locations --query &quot;[?name=='${ARO_LOCATION_NAME}'].name&quot; --output tsv)
+if [ &quot;${AZ_LOCATION_NAME}&quot; != &quot;${ARO_LOCATION_NAME}&quot; ]; then echo &quot;ERROR! az location name \&quot;${AZ_LOCATION_NAME}\&quot; does not match aro location name \&quot;${ARO_LOCATION_NAME}\&quot;&quot;; fi
+</code></pre>
+
+<p><em>8.4 - Verify Subscription Limits</em><br></p>
+<pre><code class="bash">if [ &quot;${ARO_VERIFY_QUOTA_NAMES}&quot; == &quot;&quot; ]; then echo &quot;WARNING! ARO_VERIFY_QUOTA_NAMES is not set&quot;; fi
+</code></pre>
+
+<p><em>8.5 - Verify Subscription Quotas</em><br>
+<em>8.6 - Standard DSv3 Family vCPUs</em><br></p>
+<pre><code class="bash">az vm list-usage --location ${ARO_LOCATION_NAME} --query &quot;[?localName=='Standard DSv3 Family vCPUs']&quot;
+export AZ_VERIFY_QUOTA_LIMIT=$(az vm list-usage --location ${ARO_LOCATION_NAME} --query &quot;[?localName=='Standard DSv3 Family vCPUs'].limit&quot; --output tsv)
+if [ &quot;${AZ_VERIFY_QUOTA_LIMIT}&quot; == &quot;&quot; ] || [ ${AZ_VERIFY_QUOTA_LIMIT} -lt 50  ]; then echo &quot;ERROR! Quota limit for &quot;Standard DSv3 Family vCPUs&quot; is too low!  Open a support case with Microsoft.&quot;; fi
+</code></pre>
+
+<p><em>8.7 - Standard Dv2 Family vCPUs</em><br></p>
+<pre><code class="bash">az vm list-usage --location ${ARO_LOCATION_NAME} --query &quot;[?localName=='Standard Dv2 Family vCPUs']&quot;
+export AZ_VERIFY_QUOTA_LIMIT=$(az vm list-usage --location ${ARO_LOCATION_NAME} --query &quot;[?localName=='Standard Dv2 Family vCPUs'].limit&quot; --output tsv)
+if [ &quot;${AZ_VERIFY_QUOTA_LIMIT}&quot; == &quot;&quot; ] || [ ${AZ_VERIFY_QUOTA_LIMIT} -lt 50  ]; then echo &quot;ERROR! Quota limit for &quot;Standard Dv2 Family vCPUs&quot; is too low!  Open a support case with Microsoft.&quot;; fi
+</code></pre>
+
+<h4 id="9-setup-openshift-administrators">9 - Setup OpenShift Administrators</h4>
+<p><em>9.1 - Create Administrator Accounts</em><br></p>
+<pre><code class="bash">az ad user create --display-name openshift-admin@mitaei.net --user-principal-name openshift-admin@mitaei.net --password &quot;DIl3*lks)-${ARO}-r4d0m!&quot; --force-change-password-next-login
+</code></pre>
+
+<p><em>9.2 - Verify Administrator Accounts</em><br></p>
+<pre><code class="bash">for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az ad user show --id ${ARO_ADMINISTRATOR} --query '[{userPrincipalName:userPrincipalName}, {principalId:objectId}]'; if [ $? -ne 0 ]; then echo &quot;WARNING! ${ADMINISTRATOR} aad account was not found&quot;; fi; done
+</code></pre>
+
+<p><em>9.3 - Create Administrator Roles</em><br></p>
+<pre><code class="bash">for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment create --assignee ${ARO_ADMINISTRATOR} --role &quot;Contributor&quot;; if [ $? -ne 0 ]; then echo &quot;ERROR! could not assign Contributor role to ${ARO_ADMINISTRATOR}&quot;; fi; done
+for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment create --assignee ${ARO_ADMINISTRATOR} --role &quot;User Access Administrator&quot;; if [ $? -ne 0 ]; then echo &quot;ERROR! could not assign User Access Administrator role to ${ARO_ADMINISTRATOR}&quot;; fi; done
+</code></pre>
+
+<p><em>9.4 - Verify Administrator Roles</em><br></p>
+<pre><code class="bash">for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment list --assignee ${ARO_ADMINISTRATOR} --output table; if [ $? -ne 0 ]; then echo &quot;ERROR! failed retrieving subscription roles for \&quot;${ADMINISTRATOR}\&quot;&quot;; fi; echo; done
+</code></pre>
+
+<h4 id="10-setup-azure-resource-providers">10 - Setup Azure Resource Providers</h4>
+<p><em>10.1 - Register Provider Microsoft.Compute</em><br>
+<em>10.2 - Verify Provider Microsoft.Compute</em><br>
+<em>10.3 - Register Provider Microsoft.RedHatOpenShift</em><br>
+<em>10.4 - Verify Provider Microsoft.RedHatOpenShift</em><br>
+<em>10.5 - Register Provider Microsoft.Storage</em><br>
+<em>10.6 - Verify Provider Microsoft.Storage</em><br></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../about/" class="btn btn-neutral float-right" title="About">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href=".." class="btn btn-neutral" title="Index"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>&copy; 2020 Mastech InfoTrellis</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../about/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
