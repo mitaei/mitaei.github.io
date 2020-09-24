@@ -9,7 +9,7 @@
   <meta name="author" content="joseph.tingiris@mastechinfotrellis.com">
   <link rel="canonical" href="https://mitaei.github.io/atc/ipm-on-azure/docs/aro/wip/">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>WIP - IPM on Azure</title>
+  <title>Wip - IPM on Azure</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -19,7 +19,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "WIP";
+    var mkdocs_page_name = "Wip";
     var mkdocs_page_input_path = "wip.md";
     var mkdocs_page_url = "/atc/ipm-on-azure/docs/aro/wip/";
   </script>
@@ -60,16 +60,6 @@
                     <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
                     </li>
                 </ul>
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">WIP</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#111-create-resource-group">11.1 - Create Resource Group</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#112-verify-resource-group">11.2 - Verify Resource Group</a>
-    </li>
-    </ul>
-                    </li>
-                </ul>
       </div>
     </div>
     </nav>
@@ -91,7 +81,7 @@
     
       
     
-    <li>WIP</li>
+    <li>Wip</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -102,78 +92,101 @@
           <div role="main">
             <div class="section">
               
-                <h3 id="11-setup-resource-group">11 - Setup Resource Group</h3>
-<p>An Azure resource group is a logical group in which Azure resources are deployed and managed.</p>
-<p>To create ARO resources, a resource group location must be specified. This is where the physical datacenter is located, where resource group metadata is stored, and where the Azure resources are hosted.</p>
+                <h3 id="23-azure-red-hat-openshift">23 - Azure Red Hat OpenShift</h3>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
-<li><a href="https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest">https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest</a></li>
+<li><a href="https://azure.microsoft.com/en-us/services/openshift/">https://azure.microsoft.com/en-us/services/openshift/</a></li>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/aro?view=azure-cli-latest">https://docs.microsoft.com/en-us/cli/azure/aro?view=azure-cli-latest</a></li>
 </ul>
 <p><strong><em>Command(s):</em></strong></p>
-<pre><code class="bash">env | egrep '^ARO_RESOURCE_GROUP_NAME|^ARO_LOCATION_NAME'
+<pre><code class="bash">env | egrep -e 'ARO_CLUSTER_NAME|ARO_REDHAT_PULL_SECRET_FILE|ARO_RESOURCE_GROUP_NAME|ARO_VNET_NAME|ARO_SUBNET_MASTER_NAME|ARO_SUBNET_WORKER_NAME' | sort -V
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<pre><code>ARO_LOCATION_NAME=eastus
-ARO_RESOURCE_GROUP_NAME=test-eastus
+<pre><code class="bash">ARO_CLUSTER_NAME=ipm-cluster
+ARO_REDHAT_PULL_SECRET_FILE=/home/jtingiris/prj/mit/aei/secrets/ipm-redhat-pull-secret.txt
+ARO_RESOURCE_GROUP_NAME=ipm-eastus
+ARO_SUBNET_MASTER_NAME=ipm-vnet-master-subnet
+ARO_SUBNET_WORKER_NAME=ipm-vnet-worker-subnet
+ARO_VNET_NAME=ipm-vnet
 </code></pre>
 
-<h4 id="111-create-resource-group">11.1 - Create Resource Group</h4>
+<h4 id="231-create-aro-cluster">23.1 - Create ARO Cluster</h4>
+<p>This can take up to an hour.</p>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
-<li><a href="https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-create">https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-create</a></li>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/aro?view=azure-cli-latest#az_aro_create">https://docs.microsoft.com/en-us/cli/azure/aro?view=azure-cli-latest#az_aro_create</a></li>
 </ul>
 <p><strong><em>Command(s):</em></strong></p>
-<pre><code class="bash">az group create --name ${ARO_RESOURCE_GROUP_NAME} --location ${ARO_LOCATION_NAME}
+<pre><code class="bash">az aro create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_CLUSTER_NAME} --vnet ${ARO_VNET_NAME} --master-subnet ${ARO_SUBNET_MASTER_NAME} --worker-subnet ${ARO_SUBNET_WORKER_NAME} --apiserver-visibility Private --ingress-visibility Private --pull-secret @${ARO_REDHAT_PULL_SECRET_FILE} --no-wait
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<pre><code>{
-  &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/test-eastus&quot;,
+<pre><code class="json"></code></pre>
+
+<h4 id="232-verify-aro-cluster">23.2 - Verify ARO Cluster</h4>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az aro list-credentials --name ${ARO_CLUSTER_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME}
+az aro show --name ${ARO_CLUSTER_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --query consoleProfile.url --output tsv
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="json">{
+  &quot;apiserverProfile&quot;: {
+    &quot;ip&quot;: null,
+    &quot;url&quot;: null,
+    &quot;visibility&quot;: &quot;Private&quot;
+  },
+  &quot;clusterProfile&quot;: {
+    &quot;domain&quot;: &quot;y9xvppfp&quot;,
+    &quot;pullSecret&quot;: null,
+    &quot;resourceGroupId&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/aro-y9xvppfp&quot;,
+    &quot;version&quot;: &quot;4.4.17&quot;
+  },
+  &quot;consoleProfile&quot;: {
+    &quot;url&quot;: null
+  },
+  &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.RedHatOpenShift/openShiftClusters/ipm-cluster&quot;,
+  &quot;ingressProfiles&quot;: [
+    {
+      &quot;ip&quot;: null,
+      &quot;name&quot;: &quot;default&quot;,
+      &quot;visibility&quot;: &quot;Private&quot;
+    }
+  ],
   &quot;location&quot;: &quot;eastus&quot;,
-  &quot;managedBy&quot;: null,
-  &quot;name&quot;: &quot;test-eastus&quot;,
-  &quot;properties&quot;: {
-    &quot;provisioningState&quot;: &quot;Succeeded&quot;
+  &quot;masterProfile&quot;: {
+    &quot;subnetId&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/ipm-vnet-master-subnet&quot;,
+    &quot;vmSize&quot;: &quot;Standard_D8s_v3&quot;
+  },
+  &quot;name&quot;: &quot;ipm-cluster&quot;,
+  &quot;networkProfile&quot;: {
+    &quot;podCidr&quot;: &quot;10.128.0.0/14&quot;,
+    &quot;serviceCidr&quot;: &quot;172.30.0.0/16&quot;
+  },
+  &quot;provisioningState&quot;: &quot;Creating&quot;,
+  &quot;resourceGroup&quot;: &quot;ipm-eastus&quot;,
+  &quot;servicePrincipalProfile&quot;: {
+    &quot;clientId&quot;: &quot;be13a0e9-021c-40a0-a684-a1527f3863fb&quot;,
+    &quot;clientSecret&quot;: null
   },
   &quot;tags&quot;: null,
-  &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;
-}
-</code></pre>
-
-<h4 id="112-verify-resource-group">11.2 - Verify Resource Group</h4>
-<p><strong><em>Reference(s):</em></strong></p>
-<ul>
-<li><a href="https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-show">https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-show</a></li>
-</ul>
-<p><strong><em>Command(s):</em></strong></p>
-<pre><code class="bash">az group show --name ${ARO_RESOURCE_GROUP_NAME}
-</code></pre>
-
-<p><strong><em>Example Output:</em></strong></p>
-<pre><code>{
-  &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/test-eastus&quot;,
-  &quot;location&quot;: &quot;eastus&quot;,
-  &quot;managedBy&quot;: null,
-  &quot;name&quot;: &quot;test-eastus&quot;,
-  &quot;properties&quot;: {
-    &quot;provisioningState&quot;: &quot;Succeeded&quot;
-  },
-  &quot;tags&quot;: null,
-  &quot;type&quot;: &quot;Microsoft.Resources/resourceGroups&quot;
+  &quot;type&quot;: &quot;Microsoft.RedHatOpenShift/openShiftClusters&quot;,
+  &quot;workerProfiles&quot;: [
+    {
+      &quot;count&quot;: 3,
+      &quot;diskSizeGb&quot;: 128,
+      &quot;name&quot;: &quot;worker&quot;,
+      &quot;subnetId&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/ipm-vnet-worker-subnet&quot;,
+      &quot;vmSize&quot;: &quot;Standard_D4s_v3&quot;
+    }
+  ]
 }
 </code></pre>
               
             </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href="../about/" class="btn btn-neutral" title="About"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
@@ -198,8 +211,6 @@ ARO_RESOURCE_GROUP_NAME=test-eastus
   <div class="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
-      
-        <span><a href="../about/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
     </span>

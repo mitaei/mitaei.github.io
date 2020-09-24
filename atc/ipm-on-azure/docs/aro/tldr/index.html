@@ -55,39 +55,49 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">TL;DR</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#1-setup-azure-tenant">1 - Setup Azure Tenant</a>
+    <li class="toctree-l2"><a class="reference internal" href="#1-azure-tenant">1 - Azure Tenant</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#2-setup-azure-subscription">2 - Setup Azure Subscription</a>
+    <li class="toctree-l2"><a class="reference internal" href="#2-azure-subscription">2 - Azure Subscription</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#3-setup-linux-operating-system">3 - Setup Linux Operating System</a>
+    <li class="toctree-l2"><a class="reference internal" href="#3-operating-system">3 - Operating System</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#4-setup-environment-variables">4 - Setup Environment Variables</a>
+    <li class="toctree-l2"><a class="reference internal" href="#4-environment-variables">4 - Environment Variables</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#5-setup-required-directories">5 - Setup Required Directories</a>
+    <li class="toctree-l2"><a class="reference internal" href="#5-required-directories">5 - Required Directories</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#6-setup-azure-cli">6 - Setup Azure CLI</a>
+    <li class="toctree-l2"><a class="reference internal" href="#6-azure-cli">6 - Azure CLI</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#7-setup-subscription-owners">7 - Setup Subscription Owners</a>
+    <li class="toctree-l2"><a class="reference internal" href="#7-subscription-owners">7 - Subscription Owners</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#8-verify-azure-subscription">8 - Verify Azure Subscription</a>
+    <li class="toctree-l2"><a class="reference internal" href="#8-subscription-details">8 - Subscription Details</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#9-setup-openshift-administrators">9 - Setup OpenShift Administrators</a>
+    <li class="toctree-l2"><a class="reference internal" href="#9-openshift-administrators">9 - OpenShift Administrators</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#10-setup-resource-providers">10 - Setup Resource Providers</a>
+    <li class="toctree-l2"><a class="reference internal" href="#10-resource-providers">10 - Resource Providers</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#11-setup-resource-group">11 - Setup Resource Group</a>
+    <li class="toctree-l2"><a class="reference internal" href="#11-resource-group">11 - Resource Group</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#12-setup-virtual-network">12 - Setup Virtual Network</a>
+    <li class="toctree-l2"><a class="reference internal" href="#12-virtual-network">12 - Virtual Network</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#13-openshift-subnets">13 - OpenShift Subnets</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#14-network-security-groups">14 - Network Security Groups</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#15-network-security-group-rules">15 - Network Security Group Rules</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#16-related-subnets">16 - Related Subnets</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#17-jump-server-virtual-machine">17 - Jump Server Virtual Machine</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#18-vpn-gateway">18 - VPN Gateway</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#19-vpn-gateway-certificate-authentication">19 - VPN Gateway Certificate Authentication</a>
     </li>
     </ul>
                     </li>
                 </ul>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../wip/">WIP</a>
                     </li>
                 </ul>
       </div>
@@ -123,14 +133,16 @@
             <div class="section">
               
                 <h1 id="too-long-didnt-read">Too Long; Didn't Read</h1>
-<h4 id="1-setup-azure-tenant">1 - Setup Azure Tenant</h4>
+<p>This is a representation of only the commands from the index, using the example environment configuration file from section 4.2.</p>
+<p>All descriptions, references, and example outputs have been removed.</p>
+<h4 id="1-azure-tenant">1 - Azure Tenant</h4>
 <p><em>1.1 - Create Microsoft Account</em><br>
 <em>1.2 - Create Global Administrator</em><br>
 <em>1.3 - Verify Admin Center Access</em><br>
 <em>1.4 - Verify AAD License</em><br></p>
-<h4 id="2-setup-azure-subscription">2 - Setup Azure Subscription</h4>
+<h4 id="2-azure-subscription">2 - Azure Subscription</h4>
 <p><em>2.1 - Create Azure Subscription</em><br></p>
-<h4 id="3-setup-linux-operating-system">3 - Setup Linux Operating System</h4>
+<h4 id="3-operating-system">3 - Operating System</h4>
 <p><em>3.1 - Verify Operating System</em><br></p>
 <pre><code class="bash">uname -a
 </code></pre>
@@ -169,7 +181,7 @@ google-chrome --version
 <pre><code class="bash">openssl version
 </code></pre>
 
-<h4 id="4-setup-environment-variables">4 - Setup Environment Variables</h4>
+<h4 id="4-environment-variables">4 - Environment Variables</h4>
 <p><em>4.1 - Unset Environment Variables</em><br></p>
 <pre><code class="bash">for ARO in $(env | grep ^ARO | awk -F= &quot;{print \$1}&quot; | sort -V); do echo unset $ARO; unset $ARO; done
 </code></pre>
@@ -182,7 +194,7 @@ google-chrome --version
 <pre><code class="bash">env | grep ^ARO | sort -V
 </code></pre>
 
-<h4 id="5-setup-required-directories">5 - Setup Required Directories</h4>
+<h4 id="5-required-directories">5 - Required Directories</h4>
 <pre><code class="bash">env | egrep &quot;ARO.*DIR&quot;
 </code></pre>
 
@@ -196,7 +208,7 @@ mkdir -p &quot;${ARO_REDHAT_PULL_SECRET_DIR}&quot;
 ls -ld &quot;${ARO_REDHAT_PULL_SECRET_DIR}&quot;
 </code></pre>
 
-<h4 id="6-setup-azure-cli">6 - Setup Azure CLI</h4>
+<h4 id="6-azure-cli">6 - Azure CLI</h4>
 <pre><code class="bash">env | egrep &quot;ARO.*DIR&quot;
 </code></pre>
 
@@ -224,7 +236,7 @@ if [ &quot;${ARO_TENANT_ID}&quot; != &quot;${AZ_TENANT_ID}&quot; ];then; echo &q
 <pre><code class="bash">az account list --query '[?isDefault == `true`]'
 </code></pre>
 
-<h4 id="7-setup-subscription-owners">7 - Setup Subscription Owners</h4>
+<h4 id="7-subscription-owners">7 - Subscription Owners</h4>
 <p><em>7.1 - Create Subscription Owners</em><br></p>
 <pre><code class="bash">for ARO_SUBSCRIPTION_OWNER in ${ARO_SUBSCRIPTION_OWNERS[@]}; do az role assignment create --assignee ${ARO_SUBSCRIPTION_OWNER} --role Owner; done
 </code></pre>
@@ -233,7 +245,7 @@ if [ &quot;${ARO_TENANT_ID}&quot; != &quot;${AZ_TENANT_ID}&quot; ];then; echo &q
 <pre><code class="bash">az role assignment list --role Owner --output table
 </code></pre>
 
-<h4 id="8-verify-azure-subscription">8 - Verify Azure Subscription</h4>
+<h4 id="8-subscription-details">8 - Subscription Details</h4>
 <pre><code class="bash">env | egrep -e '^ARO_SUBSCRIPTION_NAME|^ARO_SUBSCRIPTION_ID|^ARO_TENANT_ID|^ARO_LOCATION_NAME'
 echo &quot;ARO_SUBSCRIPTION_OWNERS=${ARO_SUBSCRIPTION_OWNERS[@]}&quot;
 echo &quot;ARO_VERIFY_QUOTA_NAMES=${ARO_VERIFY_QUOTA_NAMES[@]}&quot;
@@ -275,16 +287,16 @@ export AZ_VERIFY_QUOTA_LIMIT=$(az vm list-usage --location ${ARO_LOCATION_NAME} 
 if [ &quot;${AZ_VERIFY_QUOTA_LIMIT}&quot; == &quot;&quot; ] || [ ${AZ_VERIFY_QUOTA_LIMIT} -lt 50  ]; then echo &quot;ERROR! Quota limit for &quot;Standard Dv2 Family vCPUs&quot; is too low!  Open a support case with Microsoft.&quot;; fi
 </code></pre>
 
-<h4 id="9-setup-openshift-administrators">9 - Setup OpenShift Administrators</h4>
+<h4 id="9-openshift-administrators">9 - OpenShift Administrators</h4>
 <pre><code class="bash">env | egrep -e '^ARO_DOMAIN_NAME'
 echo &quot;ARO_ADMINISTRATORS=${ARO_ADMINISTRATORS[@]}&quot;
 </code></pre>
 
-<p><em>9.1 - Create Administrator Accounts</em><br></p>
+<p><em>9.1 - Create Administratorts</em><br></p>
 <pre><code class="bash">az ad user create --display-name openshift-admin@mitaei.net --user-principal-name openshift-admin@mitaei.net --password &quot;DIl3*lks)-${ARO}-r4d0m!&quot; --force-change-password-next-login
 </code></pre>
 
-<p><em>9.2 - Verify Administrator Accounts</em><br></p>
+<p><em>9.2 - Verify Administratorts</em><br></p>
 <pre><code class="bash">for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az ad user show --id ${ARO_ADMINISTRATOR} --query '[{userPrincipalName:userPrincipalName}, {principalId:objectId}]'; if [ $? -ne 0 ]; then echo &quot;WARNING! ${ADMINISTRATOR} aad account was not found&quot;; fi; done
 </code></pre>
 
@@ -297,7 +309,7 @@ for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment create 
 <pre><code class="bash">for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment list --assignee ${ARO_ADMINISTRATOR} --output table; if [ $? -ne 0 ]; then echo &quot;ERROR! failed retrieving subscription roles for \&quot;${ADMINISTRATOR}\&quot;&quot;; fi; echo; done
 </code></pre>
 
-<h4 id="10-setup-resource-providers">10 - Setup Resource Providers</h4>
+<h4 id="10-resource-providers">10 - Resource Providers</h4>
 <pre><code class="bash">echo &quot;ARO_RESOURCE_PROVIDERS=${ARO_RESOURCE_PROVIDERS[@]}&quot;
 </code></pre>
 
@@ -325,7 +337,7 @@ for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment create 
 <pre><code class="bash">az provider show --namespace Microsoft.Storage --output table
 </code></pre>
 
-<h4 id="11-setup-resource-group">11 - Setup Resource Group</h4>
+<h4 id="11-resource-group">11 - Resource Group</h4>
 <pre><code class="bash">env | egrep '^ARO_RESOURCE_GROUP_NAME|^ARO_LOCATION_NAME'
 </code></pre>
 
@@ -337,7 +349,7 @@ for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment create 
 <pre><code class="bash">az group show --name ${ARO_RESOURCE_GROUP_NAME}
 </code></pre>
 
-<h4 id="12-setup-virtual-network">12 - Setup Virtual Network</h4>
+<h4 id="12-virtual-network">12 - Virtual Network</h4>
 <pre><code class="bash">env | grep ^ARO_VNET | sort -V
 </code></pre>
 
@@ -347,6 +359,180 @@ for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment create 
 
 <p><em>12.2 - Verify Virtual Network</em><br></p>
 <pre><code class="bash">az network vnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VNET_NAME} --output table
+</code></pre>
+
+<h4 id="13-openshift-subnets">13 - OpenShift Subnets</h4>
+<pre><code class="bash">env | grep ^ARO_SUBNET | egrep -e 'MASTER|WORKER' | sort -V
+</code></pre>
+
+<p><em>13.1 - Verify OpenShift Cluster</em><br></p>
+<pre><code class="bash">az aro show --name &quot;${ARO_CLUSTER_NAME}&quot; --resource-group &quot;${ARO_RESOURCE_GROUP_NAME}&quot; --output table 2&gt; /dev/null; if [ $? -eq 0 ]; then echo &quot;ERROR! ARO cluster ${ARO_CLUSTER_NAME} exists; do not recreate the master or worker subnets&quot;; fi
+</code></pre>
+
+<p><em>13.2 - Create Master Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_MASTER_NAME} --address-prefixes ${ARO_SUBNET_MASTER_ADDRESS_PREFIX} --service-endpoints Microsoft.ContainerRegistry
+</code></pre>
+
+<p><em>13.3 - Disable Master Subnet Private Link Service</em><br></p>
+<pre><code class="bash">az network vnet subnet update --name ${ARO_SUBNET_MASTER_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --disable-private-link-service-network-policies true
+</code></pre>
+
+<p><em>13.4 - Verify Master Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_MASTER_NAME} --output table
+</code></pre>
+
+<p><em>13.5 - Create Worker Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_WORKER_NAME} --address-prefixes ${ARO_SUBNET_WORKER_ADDRESS_PREFIX} --service-endpoints Microsoft.ContainerRegistry
+</code></pre>
+
+<p><em>13.6 - Verify Worker Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_WORKER_NAME} --output table
+</code></pre>
+
+<h4 id="14-network-security-groups">14 - Network Security Groups</h4>
+<pre><code class="bash">env | egrep -e 'ARO_SUBNET(.*)NSG' | egrep -ve 'MASTER|WORKER|VGW' | sort -V
+</code></pre>
+
+<p><em>14.1 - Create Network Security Groups</em><br></p>
+<pre><code class="bash">az network nsg create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_AGW_NSG_NAME}
+</code></pre>
+
+<p><em>14.2 - Verify Network Security Groups</em><br></p>
+<pre><code class="bash">az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_AGW_NSG_NAME} --output table &amp;&amp; echo
+az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_DB_NSG_NAME} --output table &amp;&amp; echo
+az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_DMZ_NSG_NAME} --output table &amp;&amp; echo
+az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_TRUSTED_NSG_NAME} --output table &amp;&amp; echo
+</code></pre>
+
+<h4 id="15-network-security-group-rules">15 - Network Security Group Rules</h4>
+<pre><code class="bash">env | grep ARO.*NSG | egrep -ve 'MASTER|WORKER|VGW' | sort -V
+</code></pre>
+
+<p><em>15.1 - Create DMZ NSG Rule (AllowSSH)</em><br></p>
+<pre><code class="bash">az network nsg rule create --resource-group ${ARO_RESOURCE_GROUP_NAME} --nsg-name ${ARO_SUBNET_DMZ_NSG_NAME} --name AllowSSH --protocol tcp --priority 1000 --destination-port-range 22 --access allow
+</code></pre>
+
+<p><em>15.2 - Verify DMZ NSG Rules</em><br></p>
+<pre><code class="bash">az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_DMZ_NSG_NAME} --query securityRules --output table
+</code></pre>
+
+<h4 id="16-related-subnets">16 - Related Subnets</h4>
+<pre><code class="bash">env | grep ^ARO_SUBNET | egrep -ve 'MASTER|WORKER|VGW' | sort -V
+</code></pre>
+
+<p><em>16.1 - Create Application Gateway Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_AGW_NAME} --address-prefixes ${ARO_SUBNET_AGW_ADDRESS_PREFIX} --network-security-group=${ARO_SUBNET_AGW_NSG_NAME}
+</code></pre>
+
+<p><em>16.2 - Verify Application Gateway Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_AGW_NAME} --output table
+</code></pre>
+
+<p><em>16.3 - Create Database Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DB_NAME} --address-prefixes ${ARO_SUBNET_DB_ADDRESS_PREFIX} --network-security-group=${ARO_SUBNET_DB_NSG_NAME}
+</code></pre>
+
+<p><em>16.4 - Verify Database Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DB_NAME} --output table
+</code></pre>
+
+<p><em>16.5 - Create DMZ Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DMZ_NAME} --address-prefixes ${ARO_SUBNET_DMZ_ADDRESS_PREFIX} --network-security-group=${ARO_SUBNET_DMZ_NSG_NAME}
+</code></pre>
+
+<p><em>16.6 - Verify DMZ Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DMZ_NAME} --output table
+</code></pre>
+
+<p><em>16.7 - Create Trusted Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_TRUSTED_NAME} --address-prefixes ${ARO_SUBNET_TRUSTED_ADDRESS_PREFIX} --network-security-group ${ARO_SUBNET_TRUSTED_NSG_NAME}
+</code></pre>
+
+<p><em>16.8 - Verify Trusted Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_TRUSTED_NAME} --output table
+</code></pre>
+
+<h4 id="17-jump-server-virtual-machine">17 - Jump Server Virtual Machine</h4>
+<pre><code class="bash">env | egrep ARO.*JUMP | sort -V
+</code></pre>
+
+<p><em>17.1 - Create Jump Server Public IP Address</em><br></p>
+<pre><code class="bash">az network public-ip create --name ${ARO_VM_JUMP_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --sku &quot;Basic&quot; --allocation-method &quot;Dynamic&quot;
+</code></pre>
+
+<p><em>17.2 - Verify Jump Server Public IP Address</em><br></p>
+<pre><code class="bash">az network public-ip show --name ${ARO_VM_JUMP_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --query ipAddress --output tsv
+az network public-ip show --name ${ARO_VM_JUMP_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME}
+</code></pre>
+
+<p><em>17.3 - Create Jump Server Virtual NIC</em><br></p>
+<pre><code class="bash">az network nic create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}-nic --vnet-name ${ARO_VNET_NAME} --subnet ${ARO_SUBNET_DMZ_NAME} --public-ip-address ${ARO_VM_JUMP_PUBLIC_ADDRESS_NAME} --network-security-group ${ARO_SUBNET_DMZ_NSG_NAME}
+</code></pre>
+
+<p><em>17.4 - Verify Jump Server Virtual NIC</em><br></p>
+<pre><code class="bash">az network nic show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}-nic --output table
+</code></pre>
+
+<p><em>17.5 - Create Jump Server Availability Set</em><br></p>
+<pre><code class="bash">az vm availability-set create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}-as
+</code></pre>
+
+<p><em>17.6 - Verify Jump Server Availability Set</em><br></p>
+<pre><code class="bash">az vm availability-set show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}-as --output table
+</code></pre>
+
+<p><em>17.7 - Accept Jump Server Image Terms</em><br></p>
+<pre><code class="bash">az vm image terms accept --urn ${ARO_VM_JUMP_IMAGE_URN}
+</code></pre>
+
+<p><em>17.8 - Verify Jump Server Image Terms</em><br></p>
+<pre><code class="bash">az vm image terms show --urn ${ARO_VM_JUMP_IMAGE_URN} --query '[{accepted:accepted, name:name, plan:plan, product:product, publisher:publisher, type:type}]' --output table
+</code></pre>
+
+<p><em>17.9 - Create Jump Server Virtual Machine</em><br></p>
+<pre><code class="bash">az vm create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME} --location ${ARO_LOCATION_NAME} --availability-set ${ARO_VM_JUMP_NAME}-as --nics ${ARO_VM_JUMP_NAME}-nic --image ${ARO_VM_JUMP_IMAGE_URN} --admin-username ${ARO_VM_JUMP_ADMIN_NAME} --size ${ARO_VM_JUMP_SIZE} --generate-ssh-keys
+</code></pre>
+
+<p><em>17.10 - Verify Jump Server Virtual Machine</em><br></p>
+<pre><code class="bash">az vm show -d -g ${ARO_RESOURCE_GROUP_NAME} -n ${ARO_VM_JUMP_NAME} --query publicIps -o tsv
+az vm show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}
+</code></pre>
+
+<p><em>17.11 - Login to Jump Server Virtual Machine</em><br></p>
+<pre><code class="bash">export ARO_VM_JUMP_IP=$(az vm show -d -g ${ARO_RESOURCE_GROUP_NAME} -n ${ARO_VM_JUMP_NAME} --query publicIps -o tsv)
+echo &quot;${ARO_VM_JUMP_IP}&quot;
+ssh -i ~/.ssh/id_rsa.pub ${ARO_VM_JUMP_ADMIN_NAME}@${ARO_VM_JUMP_IP} &quot;hostname &amp;&amp; uptime&quot;
+</code></pre>
+
+<h4 id="18-vpn-gateway">18 - VPN Gateway</h4>
+<p><em>18.1 - Create VPN Gateway Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_VGW_NAME} --address-prefixes ${ARO_SUBNET_VGW_ADDRESS_PREFIX}
+</code></pre>
+
+<p><em>18.2 - Verify VPN Gateway Subnet</em><br></p>
+<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_VGW_NAME} --output table
+</code></pre>
+
+<p><em>18.3 - Create VPN Gateway Public IP Address</em><br>
+<em>18.4 - Verify VPN Gateway Public IP Address</em><br></p>
+<pre><code class="bash">az network public-ip show --name ${ARO_VGW_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --output table
+</code></pre>
+
+<p><em>18.5 - Create VPN Gateway</em><br></p>
+<pre><code class="bash">az network vnet-gateway create --name ${ARO_VGW_NAME} --location ${ARO_LOCATION_NAME} --public-ip-address ${ARO_VGW_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet ${ARO_VNET_NAME} --gateway-type VPN --sku ${ARO_VGW_SKU} --vpn-type ${ARO_VGW_TYPE} --address-prefixes ${ARO_VGW_POOL_ADDRESS_PREFIX} --no-wait
+</code></pre>
+
+<p><em>18.6 - Verify VPN Gateway</em><br></p>
+<pre><code class="bash">az network vnet-gateway show --name ${ARO_VGW_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --output table
+</code></pre>
+
+<h4 id="19-vpn-gateway-certificate-authentication">19 - VPN Gateway Certificate Authentication</h4>
+<p><em>19.1 - Create VPN Gateway Root Key</em><br></p>
+<pre><code class="bash">openssl genrsa -aes256 -out ${ARO_VGW_PKI_ROOT_KEY_FILE} -passout env:ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE ${ARO_VGW_PKI_BITS}
+</code></pre>
+
+<p><em>19.2 - Verify VPN Gateway Root Key</em><br></p>
+<pre><code class="bash">openssl rsa -in ${ARO_VGW_PKI_ROOT_KEY_FILE} -noout -passin env:ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE
 </code></pre>
               
             </div>

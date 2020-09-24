@@ -1,0 +1,4721 @@
+<p style="text-align: right"><img align="center" src="img/mit.png"></p>
+&nbsp;
+
+# Azure Red Hat OpenShift for IBM Product Master
+### [DRAFT]
+
+_This document is functional, though still in active development and undergoing frequent changes._
+
+_Revision: Wed 23 Sep 2020 08:59:26 PM EDT_
+&nbsp;<br>
+
+### Introduction
+This document details the steps required to automate the build of a secure, private Azure Red Hat OpenShift v4.x (ARO) infrastructure for IBM Product Master v12.x.
+
+The procedure to install IBM Product Master is an accompanying document.
+
+#### Azure
+
+Microsoft Azure is a comprehensive cloud computing service managed by Microsoft. It provides software as a service (SaaS), platform as a service (PaaS), and infrastructure as a service (IaaS).
+
+#### OpenShift Container Platform
+
+Red Hat's OpenShift Container Platform (OCP) is a hybrid cloud, enterprise Kubernetes application platform.  It is a platform as a service (Paas) built on Red Hat Enterprise Linux (RHEL), with Docker containers managed by Kubernetes.
+
+#### Azure Red Hat OpenShift
+
+Azure Red Hat OpenShift (ARO) is a fully managed offering of Red Hat OpenShift running in Microsoft Azure. This service is jointly managed and supported by both Microsoft and Red Hat.  For more details, see the Azure Red Hat OpenShift Service documentation.
+
+#### IBM Product Master
+
+IBM Product Master (IPM) provides trusted Product Information Management (PIM) and collaborative Master Data Management (MDM) capabilities. It creates an accurate and up-to-date repository of product and service information that can be used throughout organizations for strategic business initiatives
+
+**_Reference(s):_**
+
+* [https://www.openshift.com/blog/introducing-azure-red-hat-openshift-on-openshift-4](https://www.openshift.com/blog/introducing-azure-red-hat-openshift-on-openshift-4)
+* [https://docs.openshift.com/aro/4/architecture/architecture.html](https://docs.openshift.com/aro/4/architecture/architecture.html)
+* [https://azure.microsoft.com/](https://azure.microsoft.com/)
+* [https://www.openshift.com/](https://www.openshift.com/)
+* [https://www.docker.com/](https://www.docker.com/)
+* [https://kubernetes.io/](https://kubernetes.io/)
+* [https://docs.microsoft.com/en-us/azure/openshift/openshift-faq](https://docs.microsoft.com/en-us/azure/openshift/openshift-faq)
+* [https://docs.microsoft.com/en-us/azure/openshift/support-lifecycle](https://docs.microsoft.com/en-us/azure/openshift/support-lifecycle)
+* [https://www.ibm.com/products/product-master](https://www.ibm.com/products/product-master)
+
+
+### Usage
+This document provides a step-by-step approach.
+
+**_Each step is dependent upon the successful completion of previous steps._**
+
+The steps are structured and all follow this same pattern.
+
+###### _Description_
+
+* Many steps will have a detailed description that will provide additional context.  In the interest of brevity, not all steps will have detailed descriptions.
+
+
+###### _Reference(s)_
+
+* Most steps will have relevant, linked references.  All references given are to supporting documentation.
+
+
+###### _Command(s)_
+
+* These are the bash commands that must be run.  The expectation is that they will be copy/paste.  For that reason, the majority of commands rely on pre-set environment variables.  The environment variables provide for portability, flexibility, and a consistent experience.  If there are problems running any commands then it's most likely the environment variables are incorrect.
+
+
+###### _Example Output_
+
+* When there is output from a command, the example output will be given.  Please compare the outputs to ensure consistency.  It may be helpful.
+
+### 1 - Azure Tenant
+
+A tenant is Microsoft's representation of an organization.  It is a dedicated instance of Azure Active Directory (AAD) that is received when creating a new relationship with Microsoft, like signing up for Azure, Microsoft Intune, or Microsoft 365.
+
+Before Azure Red Hat OpenShift (ARO) can be installed, Microsoft accounts must exist and have appropriate access to an AAD tenant with an AAD Premium P1 License or better.  A Global Administrator must be involved in the project.
+
+If you are the Global Administrator of an existing tenant, go to step 2.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-get-started-premium](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-get-started-premium)
+* [https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-create-new-tenant](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-create-new-tenant)
+
+
+#### 1.1 - Create Microsoft Account
+
+
+missing './help/Create Microsoft Account.md'
+
+
+**_Reference(s):_**
+
+* [https://support.microsoft.com/en-us/help/4558219/microsoft-account-what-is](https://support.microsoft.com/en-us/help/4558219/microsoft-account-what-is)
+* [https://en.wikipedia.org/wiki/Microsoft_account](https://en.wikipedia.org/wiki/Microsoft_account)
+
+
+#### 1.2 - Create Global Administrator
+
+
+The person who signed up for Microsoft online services automatically becomes the first Global Administrator.
+
+Only global administrators can:
+
+* Add and manage domains
+* Assign the Global Administrator role to other users
+* Reset passwords for all users
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/microsoft-365/admin/add-users/about-admin-roles?view=o365-worldwide](https://docs.microsoft.com/en-us/microsoft-365/admin/add-users/about-admin-roles?view=o365-worldwide)
+
+
+#### 1.3 - Verify Admin Center Access
+
+
+The Microsoft 365 admin center simplifies management of Microsoft 365 services. The admin center provides a tailored experience based on the the role of the logged in user.  It is the common entry point for all administrators.
+
+* [https://admin.microsoft.com/](https://admin.microsoft.com/)
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/microsoft-365/admin/admin-overview/about-the-admin-center?view=o365-worldwide](https://docs.microsoft.com/en-us/microsoft-365/admin/admin-overview/about-the-admin-center?view=o365-worldwide)
+
+
+#### 1.4 - Verify AAD License
+
+
+The Azure Active Directory license can be verified by visiting the Directory Overview section on the Azure Portal.
+
+* [https://aad.portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/Overview](https://aad.portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/Overview)
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-whatis](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-whatis)
+
+### 2 - Azure Subscription
+
+An Azure subscription is a trust relationship with Azure Active Directory. A subscription trusts AAD to authenticate users, services, and devices.
+
+Azure subscriptions help organize access to Azure resources. They also help control how resource usage is reported, billed, and paid for. Each subscription can have a different billing and payment method.  Every Azure service belongs to a subscription, and the subscription ID is required during the installation of ARO.
+
+There are multiple choices when configuring Azure subscriptions.  A tenant may have multiple Azure subscriptions that are paid via different payment methods.  Here we will focus on a single tenant with a single subscription.
+
+A Global Administrator should do the following steps, become the Subscription Owner, and then assign the appropriate subscription roles to the OpenShift Administrators.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/microsoft-365/enterprise/subscriptions-licenses-accounts-and-tenants-for-microsoft-cloud-offerings?view=o365-worldwide](https://docs.microsoft.com/en-us/microsoft-365/enterprise/subscriptions-licenses-accounts-and-tenants-for-microsoft-cloud-offerings?view=o365-worldwide)
+
+
+#### 2.1 - Create Azure Subscription
+
+
+An Azure subscription may be purchased directly from Microsoft through the Azure website, through a Microsoft representative, or as part of a managed service from a Microsoft Partner.
+
+The Microsoft account that purchases the Azure subscription will automtically be assigned the Owner role.  Additional Owners may be added later.
+
+To learn more about the Azure purchase options, visit this link.
+
+* [https://azure.microsoft.com/en-us/pricing/purchase-options/](https://azure.microsoft.com/en-us/pricing/purchase-options/)
+
+
+**_Reference(s):_**
+
+* [https://azure.microsoft.com/](https://azure.microsoft.com/)
+
+### 3 - Operating System
+
+The ARO build procedures in this document depend upon a GNU/Linux Operating System (OS) and related tools.  Special care has been taken to ensure the commands given will work on any GNU/Linux distribution.  As of this writing, they have been successfully tested on Fedora 31+, Debian 9+, and Ubuntu 18+.
+
+* Linux or Windows Subsystem for Linux
+    * CentOS 7+, Debian 9+, Fedora 31+, RHEL 7+, or Ubuntu 18+
+* GNU bash
+* GNU awk (gawk)
+* GNU coreutils (sort, etc)
+* GNU grep
+* GNU wget
+* Google Chrome or Firefox
+* OpenSSL
+
+
+**_Reference(s):_**
+
+* [https://www.gnu.org/gnu/linux-and-gnu](https://www.gnu.org/gnu/linux-and-gnu)
+
+
+#### 3.1 - Verify Operating System
+
+
+The purpose of this step is to verify the Operating System is GNU/Linux.
+
+
+**_Reference(s):_**
+
+* [https://man7.org/linux/man-pages/man2/uname.2.html](https://man7.org/linux/man-pages/man2/uname.2.html)
+* [https://en.wikipedia.org/wiki/Uname](https://en.wikipedia.org/wiki/Uname)
+
+
+**_Command(s):_**
+
+```bash
+uname -a
+```
+
+**_Example Output:_**
+
+```
+Linux jt 5.7.17-200.fc32.x86_64 #1 SMP Fri Aug 21 15:23:46 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
+```
+
+
+#### 3.2 - Verify GNU bash
+
+
+
+
+
+**_Reference(s):_**
+
+* [https://www.man7.org/linux/man-pages/man1/bash.1.html](https://www.man7.org/linux/man-pages/man1/bash.1.html)
+* [https://en.wikipedia.org/wiki/Bash_(Unix_shell)](https://en.wikipedia.org/wiki/Bash_(Unix_shell))
+* [https://www.gnu.org/software/bash/](https://www.gnu.org/software/bash/)
+
+
+**_Command(s):_**
+
+```bash
+bash --version
+```
+
+**_Example Output:_**
+
+```
+GNU bash, version 5.0.17(1)-release (x86_64-redhat-linux-gnu)
+Copyright (C) 2019 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+
+This is free software; you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+```
+
+
+#### 3.3 - Verify GNU awk
+
+
+**_Reference(s):_**
+
+* [https://man7.org/linux/man-pages/man1/awk.1p.html](https://man7.org/linux/man-pages/man1/awk.1p.html)
+* [https://en.wikipedia.org/wiki/AWK](https://en.wikipedia.org/wiki/AWK)
+* [https://www.gnu.org/software/gawk/](https://www.gnu.org/software/gawk/)
+
+
+**_Command(s):_**
+
+```bash
+awk --version
+```
+
+**_Example Output:_**
+
+```
+GNU Awk 5.0.1, API: 3.0 (GNU MPFR 4.0.2-p9, GNU MP 6.1.2)
+Copyright (C) 1989, 1991-2019 Free Software Foundation.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see http://www.gnu.org/licenses/.
+```
+
+
+#### 3.4 - Verify GNU coreutils
+
+
+**_Reference(s):_**
+
+* [https://www.gnu.org/software/coreutils/](https://www.gnu.org/software/coreutils/)
+* [https://en.wikipedia.org/wiki/GNU_Core_Utilities](https://en.wikipedia.org/wiki/GNU_Core_Utilities)
+
+
+**_Command(s):_**
+
+```bash
+base64 --version
+basename --version
+dirname --version
+sort --version
+head --version
+tail --version
+```
+
+**_Example Output:_**
+
+```
+base64 (GNU coreutils) 8.32
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by Simon Josefsson.
+```
+
+```
+basename (GNU coreutils) 8.32
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by David MacKenzie.
+```
+
+```
+dirname (GNU coreutils) 8.32
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by David MacKenzie and Jim Meyering.
+```
+
+```
+sort (GNU coreutils) 8.32
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by Mike Haertel and Paul Eggert.
+```
+
+```
+head (GNU coreutils) 8.32
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by David MacKenzie and Jim Meyering.
+```
+
+```
+tail (GNU coreutils) 8.32
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by Paul Rubin, David MacKenzie, Ian Lance Taylor,
+and Jim Meyering.
+```
+
+
+#### 3.5 - Verify GNU grep
+
+
+**_Reference(s):_**
+
+* [https://man7.org/linux/man-pages/man1/grep.1.html](https://man7.org/linux/man-pages/man1/grep.1.html)
+* [https://en.wikipedia.org/wiki/Grep](https://en.wikipedia.org/wiki/Grep)
+* [https://www.gnu.org/software/grep/](https://www.gnu.org/software/grep/)
+
+
+**_Command(s):_**
+
+```bash
+egrep --version
+```
+
+**_Example Output:_**
+
+```
+grep (GNU grep) 3.3
+Copyright (C) 2018 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by Mike Haertel and others; see
+<https://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>.
+```
+
+
+#### 3.6 - Verify GNU wget
+
+
+**_Reference(s):_**
+
+* [https://man7.org/linux/man-pages/man1/wget.1.html](https://man7.org/linux/man-pages/man1/wget.1.html)
+* [https://en.wikipedia.org/wiki/Wget](https://en.wikipedia.org/wiki/Wget)
+* [https://www.gnu.org/software/wget/](https://www.gnu.org/software/wget/)
+
+
+**_Command(s):_**
+
+```bash
+wget --version
+```
+
+**_Example Output:_**
+
+```
+GNU Wget 1.20.3 built on linux-gnu.
+
+-cares +digest +gpgme +https +ipv6 +iri +large-file +metalink +nls 
++ntlm +opie +psl +ssl/gnutls 
+
+Wgetrc: 
+    /etc/wgetrc (system)
+Locale: 
+    /usr/share/locale 
+Compile: 
+    gcc -DHAVE_CONFIG_H -DSYSTEM_WGETRC="/etc/wgetrc" 
+    -DLOCALEDIR="/usr/share/locale" -I. -I../lib -I../lib 
+    -I/usr/include/p11-kit-1 -DHAVE_LIBGNUTLS -DNDEBUG -O2 -g -pipe 
+    -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 
+    -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions -fstack-protector-strong 
+    -grecord-gcc-switches 
+    -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 
+    -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1 -m64 -mtune=generic 
+    -fasynchronous-unwind-tables -fstack-clash-protection 
+    -fcf-protection 
+Link: 
+    gcc -I/usr/include/p11-kit-1 -DHAVE_LIBGNUTLS -DNDEBUG -O2 -g -pipe 
+    -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 
+    -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions -fstack-protector-strong 
+    -grecord-gcc-switches 
+    -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 
+    -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1 -m64 -mtune=generic 
+    -fasynchronous-unwind-tables -fstack-clash-protection 
+    -fcf-protection -Wl,-z,relro -Wl,--as-needed -Wl,-z,now 
+    -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -lmetalink -lpcre2-8 
+    -luuid -lidn2 -lnettle -lgnutls -lz -lpsl -L/usr/lib64 -lgpgme 
+    ftp-opie.o gnutls.o http-ntlm.o ../lib/libgnu.a 
+
+Copyright (C) 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later
+<http://www.gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Originally written by Hrvoje Niksic <hniksic@xemacs.org>.
+Please send bug reports and questions to <bug-wget@gnu.org>.
+```
+
+
+#### 3.7 - Verify Browser
+
+
+Either Google Chrome or Firefox is needed for a few steps.  Other browsers will probably work, too, though haven't been tested.
+
+
+**_Reference(s):_**
+
+* [https://www.mozilla.org/](https://www.mozilla.org/)
+* [https://www.google.com/chrome/](https://www.google.com/chrome/)
+
+
+**_Command(s):_**
+
+```bash
+firefox --version
+google-chrome --version
+```
+
+**_Example Output:_**
+
+```
+Mozilla Firefox 80.0
+```
+
+```
+Google Chrome 85.0.4183.83 
+```
+
+
+#### 3.8 - Verify OpenSSL
+
+
+**_Reference(s):_**
+
+* [https://www.openssl.org/](https://www.openssl.org/)
+
+
+**_Command(s):_**
+
+```bash
+openssl version
+```
+
+**_Example Output:_**
+
+```
+OpenSSL 1.1.1g FIPS  21 Apr 2020
+```
+
+### 4 - Environment Variables
+
+**_This step is most important._**
+
+This document depends very much on the bash shell.
+
+There are required bash environment variables that are necessary to execute most steps in this document.
+
+The environment variables must be exported.
+
+_Subsequent steps in this document will **not** work unless the bash shell environment is properly setup._
+
+
+
+**_Reference(s):_**
+
+* [https://www.gnu.org/software/bash/manual/html_node/Environment.html](https://www.gnu.org/software/bash/manual/html_node/Environment.html)
+
+
+#### 4.1 - Unset Environment Variables
+
+
+Unsetting the ARO environment variables can help prevent issues when, or if they have changed.
+
+
+**_Reference(s):_**
+
+* [https://www.gnu.org/software/bash/manual/html_node/Environment.html](https://www.gnu.org/software/bash/manual/html_node/Environment.html)
+
+
+**_Command(s):_**
+
+```bash
+for ARO in $(env | grep ^ARO | awk -F= "{print \$1}" | sort -V); do echo unset $ARO; unset $ARO; done
+```
+
+**_Example Output:_**
+
+```
+unset ARO
+unset ARO_ADMINISTRATORS_GROUP_NAME
+unset ARO_APPLICATION_NAME
+unset ARO_CLUSTER_NAME
+unset ARO_DOMAIN_NAME
+unset ARO_LOCATION_NAME
+unset ARO_REDHAT_PULL_SECRET_DIR
+unset ARO_REDHAT_PULL_SECRET_FILE
+unset ARO_RESOURCE_GROUP_NAME
+unset ARO_SERVICE_PRINCIPAL_NAME
+unset ARO_SERVICE_PRINCIPAL_PASSWORD
+unset ARO_SUBDOMAIN_NAME
+unset ARO_SUBNET_AGW_ADDRESS_PREFIX
+unset ARO_SUBNET_AGW_NAME
+unset ARO_SUBNET_AGW_NSG_NAME
+unset ARO_SUBNET_DB_ADDRESS_PREFIX
+unset ARO_SUBNET_DB_NAME
+unset ARO_SUBNET_DB_NSG_NAME
+unset ARO_SUBNET_DMZ_ADDRESS_PREFIX
+unset ARO_SUBNET_DMZ_NAME
+unset ARO_SUBNET_DMZ_NSG_NAME
+unset ARO_SUBNET_MASTER_ADDRESS_PREFIX
+unset ARO_SUBNET_MASTER_NAME
+unset ARO_SUBNET_MASTER_NSG_NAME
+unset ARO_SUBNET_TRUSTED_ADDRESS_PREFIX
+unset ARO_SUBNET_TRUSTED_NAME
+unset ARO_SUBNET_TRUSTED_NSG_NAME
+unset ARO_SUBNET_VGW_ADDRESS_PREFIX
+unset ARO_SUBNET_VGW_NAME
+unset ARO_SUBNET_VGW_NSG_NAME
+unset ARO_SUBNET_WORKER_ADDRESS_PREFIX
+unset ARO_SUBNET_WORKER_NAME
+unset ARO_SUBNET_WORKER_NSG_NAME
+unset ARO_SUBSCRIPTION_ID
+unset ARO_SUBSCRIPTION_NAME
+unset ARO_TENANT_ID
+unset ARO_TENANT_NAME
+unset ARO_VGW_NAME
+unset ARO_VGW_PKI_BITS
+unset ARO_VGW_PKI_CLIENT
+unset ARO_VGW_PKI_CLIENT_CRT_FILE
+unset ARO_VGW_PKI_CLIENT_EXT_FILE
+unset ARO_VGW_PKI_CLIENT_KEY_FILE
+unset ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE
+unset ARO_VGW_PKI_CLIENT_NAME
+unset ARO_VGW_PKI_CLIENT_PFX_FILE
+unset ARO_VGW_PKI_CLIENT_REQ_FILE
+unset ARO_VGW_PKI_CLIENT_SERIAL_FILE
+unset ARO_VGW_PKI_DIR
+unset ARO_VGW_PKI_ROOT_CA_SERIAL_FILE
+unset ARO_VGW_PKI_ROOT_CRT_FILE
+unset ARO_VGW_PKI_ROOT_CRT_FILE_NAME
+unset ARO_VGW_PKI_ROOT_KEY_FILE
+unset ARO_VGW_PKI_ROOT_KEY_FILE_NAME
+unset ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE
+unset ARO_VGW_POOL_ADDRESS_PREFIX
+unset ARO_VGW_PUBLIC_ADDRESS_NAME
+unset ARO_VGW_REDUNDANCY
+unset ARO_VGW_SKU
+unset ARO_VGW_TYPE
+unset ARO_VM_JUMP_ADMIN_NAME
+unset ARO_VM_JUMP_IMAGE_MARKETPLACE
+unset ARO_VM_JUMP_IMAGE_URN
+unset ARO_VM_JUMP_NAME
+unset ARO_VM_JUMP_PUBLIC_ADDRESS_NAME
+unset ARO_VM_JUMP_SIZE
+unset ARO_VNET_ADDRESS_PREFIX
+unset ARO_VNET_NAME
+```
+
+#### 4.2 - Set Environment Variables
+
+
+The following bash shell environment variables are required.  They are reused for multiple steps.
+
+It is recommended that the environment variables be maintained in a configuration file, i.e. **_ipm.env_**
+
+Maintaining a configuration file will make them easier to use and update.
+
+_These are example values that must be changed for this installation._
+
+**_Before proceeding, please take your time ensuring the environment variable values are correct._**
+
+
+**_Reference(s):_**
+
+* [https://www.gnu.org/software/bash/manual/html_node/Environment.html](https://www.gnu.org/software/bash/manual/html_node/Environment.html)
+
+
+**_Command(s):_**
+
+```bash
+cat "ipm.env" && source "ipm.env"
+```
+
+**_Example Output:_**
+
+```
+# NOTE:
+#
+# These variables may be set statically or dynamically.
+#
+# This example shows both, static and dynamic variables.
+# For the dynamic variables, the order of variables is important
+# because many values rely on the value of another variable.
+#
+# Please check, and double check the values.
+#
+# Each of these are required.
+
+export ARO=ipm
+export ARO_ADMINISTRATORS_GROUP_NAME="OpenShift Administrators"
+export ARO_APPLICATION_NAME=${ARO}-app
+export ARO_CLUSTER_NAME=${ARO}-cluster
+export ARO_DOMAIN_NAME=mitaei.net
+export ARO_SUBDOMAIN_NAME=${ARO}.${ARO_DOMAIN_NAME}
+export ARO_LOCATION_NAME=eastus # region
+export ARO_REDHAT_PULL_SECRET_DIR="${PWD}/secrets"
+export ARO_REDHAT_PULL_SECRET_FILE="${ARO_REDHAT_PULL_SECRET_DIR}/${ARO}-redhat-pull-secret.txt"
+export ARO_RESOURCE_GROUP_NAME="${ARO}-${ARO_LOCATION_NAME}"
+export ARO_SERVICE_PRINCIPAL_NAME="http://${ARO_APPLICATION_NAME}"
+export ARO_SERVICE_PRINCIPAL_PASSWORD="S3rv1c3Pr1cip4lP4ssw0rd!"
+export ARO_SUBSCRIPTION_ID=$(az account show --query 'id' --output tsv 2> /dev/null)
+export ARO_SUBSCRIPTION_NAME="Azure subscription for mitaei"
+export ARO_TENANT_ID=$(az account show --query 'tenantId' --output tsv 2> /dev/null)
+export ARO_TENANT_NAME=mitaei.net
+export ARO_VNET_ADDRESS_PREFIX=10.11.0.0/21
+export ARO_VNET_NAME=${ARO}-vnet
+
+# ARO subnets: MASTER, WORKER
+export ARO_SUBNET_MASTER_ADDRESS_PREFIX=10.11.0.0/23
+export ARO_SUBNET_MASTER_NAME=${ARO_VNET_NAME}-master-subnet
+export ARO_SUBNET_MASTER_NSG_NAME=${ARO_SUBNET_MASTER_NAME}-nsg
+export ARO_SUBNET_WORKER_ADDRESS_PREFIX=10.11.2.0/23
+export ARO_SUBNET_WORKER_NAME=${ARO_VNET_NAME}-worker-subnet
+export ARO_SUBNET_WORKER_NSG_NAME=${ARO_SUBNET_WORKER_NAME}-nsg
+
+# non-ARO subnets AGW, DB, DMZ, TRUSTED, VPN (GatewaySubnet)
+export ARO_SUBNET_AGW_ADDRESS_PREFIX=10.11.4.0/25
+export ARO_SUBNET_AGW_NAME=${ARO_VNET_NAME}-agw-subnet
+export ARO_SUBNET_AGW_NSG_NAME=${ARO_SUBNET_AGW_NAME}-nsg
+export ARO_SUBNET_DB_ADDRESS_PREFIX=10.11.4.128/25
+export ARO_SUBNET_DB_NAME=${ARO_VNET_NAME}-db-subnet
+export ARO_SUBNET_DB_NSG_NAME=${ARO_SUBNET_DB_NAME}-nsg
+export ARO_SUBNET_DMZ_ADDRESS_PREFIX=10.11.5.0/25
+export ARO_SUBNET_DMZ_NAME=${ARO_VNET_NAME}-dmz-subnet
+export ARO_SUBNET_DMZ_NSG_NAME=${ARO_SUBNET_DMZ_NAME}-nsg
+export ARO_SUBNET_TRUSTED_ADDRESS_PREFIX=10.11.5.128/25
+export ARO_SUBNET_TRUSTED_NAME=${ARO_VNET_NAME}-trusted-subnet
+export ARO_SUBNET_TRUSTED_NSG_NAME=${ARO_SUBNET_TRUSTED_NAME}-nsg
+export ARO_SUBNET_VGW_ADDRESS_PREFIX=10.11.6.0/25
+export ARO_SUBNET_VGW_NAME=GatewaySubnet # this MUST be named GatewaySubnet
+export ARO_SUBNET_VGW_NSG_NAME=${ARO_SUBNET_VGW_NAME}-nsg # this can't be used?
+
+# VPN Gateway (P2S)
+export ARO_VGW_NAME=${ARO}-vpn
+export ARO_VGW_PKI_DIR="${PWD}/pki"
+export ARO_VGW_PKI_BITS=2048
+export ARO_VGW_PKI_CLIENT='example'
+export ARO_VGW_PKI_CLIENT_NAME="${ARO_VGW_NAME}-client-${ARO_VGW_PKI_CLIENT}"
+export ARO_VGW_PKI_CLIENT_CRT_FILE="${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME}.crt"
+export ARO_VGW_PKI_CLIENT_EXT_FILE="${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME}.ext"
+export ARO_VGW_PKI_CLIENT_KEY_FILE="${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME}.key"
+export ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE='!'"${ARO_VGW_PKI_CLIENT}"'!'
+export ARO_VGW_PKI_CLIENT_PFX_FILE="${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME}.pfx"
+export ARO_VGW_PKI_CLIENT_REQ_FILE="${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME}.req"
+export ARO_VGW_PKI_CLIENT_SERIAL_FILE="${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME}.serial"
+export ARO_VGW_PKI_ROOT_CA_SERIAL_FILE="${ARO_VGW_PKI_DIR}/${ARO_VGW_NAME}-root.serial"
+export ARO_VGW_PKI_ROOT_CRT_FILE="${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_ROOT_CRT_FILE_NAME}"
+export ARO_VGW_PKI_ROOT_CRT_FILE_NAME="${ARO_VGW_NAME}-root.crt"
+export ARO_VGW_PKI_ROOT_KEY_FILE="${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_ROOT_KEY_FILE_NAME}"
+export ARO_VGW_PKI_ROOT_KEY_FILE_NAME="${ARO_VGW_NAME}-root.key"
+export ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE="Pk1P4ssphr4s3!!"
+export ARO_VGW_POOL_ADDRESS_PREFIX=172.16.11.0/24
+export ARO_VGW_PUBLIC_ADDRESS_NAME=${ARO_VGW_NAME}-public-ip
+export ARO_VGW_REDUNDANCY=true # more costly; set to false for lower environments
+export ARO_VGW_SKU="VpnGw1" # Not Redundant; reverse the order for redundant
+export ARO_VGW_SKU="VpnGw1AZ" # Redundant; reverse the order for not redundant
+export ARO_VGW_TYPE=RouteBased
+
+# Additonal, non_ARO VMs
+export ARO_VM_JUMP_NAME=${ARO}-vm-jumpbox
+export ARO_VM_JUMP_ADMIN_NAME=${ARO_VM_JUMP_NAME}-admin
+export ARO_VM_JUMP_IMAGE_MARKETPLACE=true
+export ARO_VM_JUMP_IMAGE_URN="cognosys:docker-ce-with-centos-8-0-free:docker-ce-with-centos-8-0-free:1.2019.0710"
+#export ARO_VM_JUMP_IP=$(az vm show -d -g ${ARO_RESOURCE_GROUP_NAME} -n ${ARO_VM_JUMP_NAME} --query publicIps -o tsv)
+export ARO_VM_JUMP_PUBLIC_ADDRESS_NAME=${ARO_VM_JUMP_NAME}-public-ip
+export ARO_VM_JUMP_SIZE="Standard_B1ms"
+
+#
+# arrays
+#
+
+# Microsoft account UPNs for the OpenShift Administrators
+export ARO_ADMINISTRATORS=()
+export ARO_ADMINISTRATORS+=(openshift-admin@mitaei.net)
+export ARO_ADMINISTRATORS+=(arun.babu@mitaei.net)
+export ARO_ADMINISTRATORS+=(joseph.tingiris@mitaei.net)
+export ARO_ADMINISTRATORS+=(sivaprasad.k@mitaei.net)
+
+# Microsoft Resource Providers needed for ARO
+export ARO_RESOURCE_PROVIDERS=()
+export ARO_RESOURCE_PROVIDERS+=(Microsoft.Compute)
+export ARO_RESOURCE_PROVIDERS+=(Microsoft.RedHatOpenShift)
+export ARO_RESOURCE_PROVIDERS+=(Microsoft.Storage)
+
+# Microsoft account UPNs for who will be made Azure Subscription Owners
+export ARO_SUBSCRIPTION_OWNERS=()
+export ARO_SUBSCRIPTION_OWNERS+=(christy.walsh@mitaei.net)
+export ARO_SUBSCRIPTION_OWNERS+=(joseph.tingiris@mitaei.net)
+
+# Microsoft VM Family Quotas that will be verified (to have enough vCPUs for ARO)
+export ARO_VERIFY_QUOTA_NAMES=()
+export ARO_VERIFY_QUOTA_NAMES+=('Standard DSv3 Family vCPUs')
+export ARO_VERIFY_QUOTA_NAMES+=('Standard Dv2 Family vCPUs')
+```
+
+#### 4.3 - Verify Environment Variables
+
+
+Ensure the ARO variables are avaialble in the bash shell environment that you're working in.
+
+
+**_Reference(s):_**
+
+* [https://man7.org/linux/man-pages/man1/env.1.html](https://man7.org/linux/man-pages/man1/env.1.html)
+
+
+**_Command(s):_**
+
+```bash
+env | grep ^ARO | sort -V
+```
+
+**_Example Output:_**
+
+```bash
+ARO=ipm
+ARO_ADMINISTRATORS_GROUP_NAME=OpenShift Administrators
+ARO_APPLICATION_NAME=ipm-app
+ARO_CLUSTER_NAME=ipm-cluster
+ARO_DOMAIN_NAME=mitaei.net
+ARO_LOCATION_NAME=eastus
+ARO_REDHAT_PULL_SECRET_DIR=/home/jtingiris/prj/mit/aei/secrets
+ARO_REDHAT_PULL_SECRET_FILE=/home/jtingiris/prj/mit/aei/secrets/ipm-redhat-pull-secret.txt
+ARO_RESOURCE_GROUP_NAME=ipm-eastus
+ARO_SERVICE_PRINCIPAL_NAME=http://ipm-app
+ARO_SERVICE_PRINCIPAL_PASSWORD=S3rv1c3Pr1cip4lP4ssw0rd!
+ARO_SUBDOMAIN_NAME=ipm.mitaei.net
+ARO_SUBNET_AGW_ADDRESS_PREFIX=10.11.4.0/25
+ARO_SUBNET_AGW_NAME=ipm-vnet-agw-subnet
+ARO_SUBNET_AGW_NSG_NAME=ipm-vnet-agw-subnet-nsg
+ARO_SUBNET_DB_ADDRESS_PREFIX=10.11.4.128/25
+ARO_SUBNET_DB_NAME=ipm-vnet-db-subnet
+ARO_SUBNET_DB_NSG_NAME=ipm-vnet-db-subnet-nsg
+ARO_SUBNET_DMZ_ADDRESS_PREFIX=10.11.5.0/25
+ARO_SUBNET_DMZ_NAME=ipm-vnet-dmz-subnet
+ARO_SUBNET_DMZ_NSG_NAME=ipm-vnet-dmz-subnet-nsg
+ARO_SUBNET_MASTER_ADDRESS_PREFIX=10.11.0.0/23
+ARO_SUBNET_MASTER_NAME=ipm-vnet-master-subnet
+ARO_SUBNET_MASTER_NSG_NAME=ipm-vnet-master-subnet-nsg
+ARO_SUBNET_TRUSTED_ADDRESS_PREFIX=10.11.5.128/25
+ARO_SUBNET_TRUSTED_NAME=ipm-vnet-trusted-subnet
+ARO_SUBNET_TRUSTED_NSG_NAME=ipm-vnet-trusted-subnet-nsg
+ARO_SUBNET_VGW_ADDRESS_PREFIX=10.11.6.0/25
+ARO_SUBNET_VGW_NAME=GatewaySubnet
+ARO_SUBNET_VGW_NSG_NAME=GatewaySubnet-nsg
+ARO_SUBNET_WORKER_ADDRESS_PREFIX=10.11.2.0/23
+ARO_SUBNET_WORKER_NAME=ipm-vnet-worker-subnet
+ARO_SUBNET_WORKER_NSG_NAME=ipm-vnet-worker-subnet-nsg
+ARO_SUBSCRIPTION_ID=12c7070f-83e5-453b-96d0-90770d2cf942
+ARO_SUBSCRIPTION_NAME=Azure subscription for mitaei
+ARO_TENANT_ID=25fe96e7-85ec-4e6a-b93f-779b16ff751d
+ARO_TENANT_NAME=mitaei.net
+ARO_VGW_NAME=ipm-vpn
+ARO_VGW_PKI_BITS=2048
+ARO_VGW_PKI_CLIENT=example
+ARO_VGW_PKI_CLIENT_CRT_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.crt
+ARO_VGW_PKI_CLIENT_EXT_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.ext
+ARO_VGW_PKI_CLIENT_KEY_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.key
+ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE=!example!
+ARO_VGW_PKI_CLIENT_NAME=ipm-vpn-client-example
+ARO_VGW_PKI_CLIENT_PFX_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.pfx
+ARO_VGW_PKI_CLIENT_REQ_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.req
+ARO_VGW_PKI_CLIENT_SERIAL_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.serial
+ARO_VGW_PKI_DIR=/home/jtingiris/prj/mit/aei/pki
+ARO_VGW_PKI_ROOT_CA_SERIAL_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-root.serial
+ARO_VGW_PKI_ROOT_CRT_FILE=/home/jtingiris/prj/mit/aei/pki/
+ARO_VGW_PKI_ROOT_CRT_FILE_NAME=ipm-vpn-root.crt
+ARO_VGW_PKI_ROOT_KEY_FILE=/home/jtingiris/prj/mit/aei/pki/
+ARO_VGW_PKI_ROOT_KEY_FILE_NAME=ipm-vpn-root.key
+ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
+ARO_VGW_POOL_ADDRESS_PREFIX=172.16.11.0/24
+ARO_VGW_PUBLIC_ADDRESS_NAME=ipm-vpn-public-ip
+ARO_VGW_REDUNDANCY=true
+ARO_VGW_SKU=VpnGw1AZ
+ARO_VGW_TYPE=RouteBased
+ARO_VM_JUMP_ADMIN_NAME=ipm-vm-jumpbox-admin
+ARO_VM_JUMP_IMAGE_MARKETPLACE=true
+ARO_VM_JUMP_IMAGE_URN=cognosys:docker-ce-with-centos-8-0-free:docker-ce-with-centos-8-0-free:1.2019.0710
+ARO_VM_JUMP_NAME=ipm-vm-jumpbox
+ARO_VM_JUMP_PUBLIC_ADDRESS_NAME=ipm-vm-jumpbox-public-ip
+ARO_VM_JUMP_SIZE=Standard_B1ms
+ARO_VNET_ADDRESS_PREFIX=10.11.0.0/21
+ARO_VNET_NAME=ipm-vnet
+```
+
+### 5 - Required Directories
+
+This documentation provides commands that create files.  To better organize the output files, the directories must exist or be created.
+
+
+**_Command(s):_**
+
+```bash
+env | egrep "ARO.*DIR"
+```
+
+**_Example Output:_**
+
+```
+ARO_REDHAT_PULL_SECRET_DIR=/home/jtingiris/prj/mit/aei/secrets
+ARO_VGW_PKI_DIR=/home/jtingiris/prj/mit/aei/pki
+```
+
+#### 5.1 - Create Required Directories
+
+
+**_Reference(s):_**
+
+* [https://man7.org/linux/man-pages/man1/mkdir.1.html](https://man7.org/linux/man-pages/man1/mkdir.1.html)
+
+
+**_Command(s):_**
+
+```bash
+mkdir -p "${ARO_VGW_PKI_DIR}"
+mkdir -p "${ARO_REDHAT_PULL_SECRET_DIR}"
+```
+
+#### 5.2 - Verify Required Directories
+
+
+**_Reference(s):_**
+
+* [https://man7.org/linux/man-pages/man1/ls.1.html](https://man7.org/linux/man-pages/man1/ls.1.html)
+
+
+**_Command(s):_**
+
+```bash
+ls -ld "${ARO_VGW_PKI_DIR}"
+ls -ld "${ARO_REDHAT_PULL_SECRET_DIR}"
+```
+
+**_Example Output:_**
+
+```bash
+drwxrws---+ 3 jtingiris mit 4096 Sep 21 10:06 /home/jtingiris/prj/mit/aei/pki
+```
+```bash
+drwxrws---+ 2 jtingiris mit 4096 Sep 17 16:11 /home/jtingiris/prj/mit/aei/secrets
+```
+### 6 - Azure CLI
+
+The Azure CLI is a Command Line Interface (CLI) used to create and manage Azure resources.  The Azure CLI works with all Azure services.  It is designed to more quickly work with Azure, with an emphasis on automation.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/what-is-azure-cli?view=azure-cli-latest](https://docs.microsoft.com/en-us/cli/azure/what-is-azure-cli?view=azure-cli-latest)
+
+
+**_Command(s):_**
+
+```bash
+env | egrep "ARO.*DIR"
+```
+
+**_Example Output:_**
+
+```
+ARO_REDHAT_PULL_SECRET_DIR=/home/jtingiris/prj/mit/aei/secrets
+ARO_VGW_PKI_DIR=/home/jtingiris/prj/mit/aei/pki
+```
+
+#### 6.1 - Install Azure CLI
+
+
+The Azure CLI is available to install on Windows, macOS and Linux environments. It can also be run in a Docker container and Azure Cloud Shell.
+
+To install the Azure CLI, please follow the link in the Reference(s) section of this topic.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
+
+
+**_Command(s):_**
+
+```bash
+az --version
+```
+
+**_Example Output:_**
+
+```bash
+azure-cli                         2.12.0
+
+core                              2.12.0
+telemetry                          1.0.6
+
+Extensions:
+resource-graph                     1.1.0
+aro                                1.0.0
+
+Python location '/usr/bin/python3'
+Extensions directory '/home/jtingiris/.azure/cliextensions'
+
+Python (Linux) 3.8.5 (default, Aug 12 2020, 00:00:00) 
+[GCC 10.2.1 20200723 (Red Hat 10.2.1-1)]
+
+Legal docs and information: aka.ms/AzureCliLegal
+
+
+Your CLI is up-to-date.
+
+Please let us know how we are doing: https://aka.ms/azureclihats
+and let us know if you're interested in trying out our newest features: https://aka.ms/CLIUXstudy
+```
+
+#### 6.2 - Subscription Owner Login
+
+
+The Azure Subscription Owner must perform the remaining steps in this documentation.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?view=azure-cli-latest](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?view=azure-cli-latest)
+
+
+**_Command(s):_**
+
+```bash
+az login
+export AZ_USER=$(az account show --query 'user.name' --output tsv)
+az role assignment list --role Owner --query "[?principalName=='${AZ_USER}'].principalName" --output tsv
+```
+
+**_Example Output:_**
+
+```bash
+joseph.tingiris@mitaei.net
+```
+
+#### 6.3 - Verify Azure Tenant
+
+
+One way to verify the Azure Tenant is to obtain the Tenant ID with az.  Another way is to login to the Azure AAD portal.
+
+The Tenant ID must match what is in the environment configuration file.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az_account_show](https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az_account_show)
+* [https://aad.portal.azure.com/](https://aad.portal.azure.com/)
+
+
+**_Command(s):_**
+
+```bash
+az account show --query '[{tenantId:tenantId}, {homeTenantId:homeTenantId}]'
+export AZ_TENANT_ID=$(az account show --query 'tenantId' --output tsv 2> /dev/null)
+if [ "${ARO_TENANT_ID}" != "${AZ_TENANT_ID}" ];then; echo "ERROR! ARO_TENANT_ID (${ARO_TENANT_ID}) does not match this tenant id (${AZ_TENANT_ID})"; fi
+```
+
+**_Example Output:_**
+
+```json
+[
+  {
+    "tenantId": "25fe96e7-85ec-4e6a-b93f-779b16ff751d"
+  },
+  {
+    "homeTenantId": "25fe96e7-85ec-4e6a-b93f-779b16ff751d"
+  }
+]
+```
+
+#### 6.4 - Set Default Subscription
+
+
+Set the default subscription that the ARO resources will be installed in.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az_account_set](https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az_account_set)
+
+
+**_Command(s):_**
+
+```bash
+az account set -s "${ARO_SUBSCRIPTION_NAME}"
+```
+
+**_Example Output:_**
+
+```diff
++ success does not produce any output
+```
+
+#### 6.5 - Verify Default Subscription
+
+
+The Azure CLI Default Subscription will be used to provision all ARO resources.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az_account_list](https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az_account_list)
+
+
+**_Command(s):_**
+
+```bash
+az account list --query '[?isDefault == `true`]'
+```
+
+**_Example Output:_**
+
+```json
+[
+  {
+    "cloudName": "AzureCloud",
+    "homeTenantId": "25fe96e7-85ec-4e6a-b93f-779b16ff751d",
+    "id": "12c7070f-83e5-453b-96d0-90770d2cf942",
+    "isDefault": true,
+    "managedByTenants": [],
+    "name": "Azure subscription for mitaei",
+    "state": "Enabled",
+    "tenantId": "25fe96e7-85ec-4e6a-b93f-779b16ff751d",
+    "user": {
+      "name": "joseph.tingiris@mitaei.net",
+      "type": "user"
+    }
+  }
+]
+```
+### 7 - Subscription Owners
+
+There should be at least two (2) Subscription Owners.  This step is optional, but recommended.  It will use the ${ARO_SUBSCRIPTION_OWNERS} environment value and ensure all User Principal Names (UPNs) are added as Subscription Owners.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#owner](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#owner)
+
+
+#### 7.1 - Create Subscription Owners
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/role/assignment?view=azure-cli-latest#az_role_assignment_create](https://docs.microsoft.com/en-us/cli/azure/role/assignment?view=azure-cli-latest#az_role_assignment_create)
+
+
+**_Command(s):_**
+
+```bash
+for ARO_SUBSCRIPTION_OWNER in ${ARO_SUBSCRIPTION_OWNERS[@]}; do az role assignment create --assignee ${ARO_SUBSCRIPTION_OWNER} --role Owner; done
+```
+
+**_Example Output:_**
+
+```
+{
+  "canDelegate": null,
+  "condition": null,
+  "conditionVersion": null,
+  "description": null,
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/c3649109-4f94-47cf-9c05-2677f6f1a9a8",
+  "name": "c3649109-4f94-47cf-9c05-2677f6f1a9a8",
+  "principalId": "52f7dd5d-ad08-4b40-878f-40686c51c24e",
+  "principalName": "christy.walsh@mitaei.net",
+  "principalType": "User",
+  "roleDefinitionId": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+  "roleDefinitionName": "Owner",
+  "scope": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942",
+  "type": "Microsoft.Authorization/roleAssignments"
+}
+```
+
+```
+{
+  "canDelegate": null,
+  "condition": null,
+  "conditionVersion": null,
+  "description": null,
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/0e3fa58c-ed20-4ead-bc53-47578faf7b8e",
+  "name": "0e3fa58c-ed20-4ead-bc53-47578faf7b8e",
+  "principalId": "83525d38-8d7f-4476-81aa-14c46c4cb876",
+  "principalName": "joseph.tingiris@mitaei.net",
+  "principalType": "User",
+  "roleDefinitionId": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+  "roleDefinitionName": "Owner",
+  "scope": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942",
+  "type": "Microsoft.Authorization/roleAssignments"
+}
+```
+
+
+#### 7.2 - Verify Subscription Owners
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/role/assignment?view=azure-cli-latest#az_role_assignment_list](https://docs.microsoft.com/en-us/cli/azure/role/assignment?view=azure-cli-latest#az_role_assignment_list)
+
+
+**_Command(s):_**
+
+```bash
+az role assignment list --role Owner --output table
+```
+
+**_Example Output:_**
+
+```bash
+Principal                   Role    Scope
+--------------------------  ------  ---------------------------------------------------
+christy.walsh@mitaei.net    Owner   /subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942
+joseph.tingiris@mitaei.net  Owner   /subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942
+```
+### 8 - Subscription Details
+
+Uze `az` to verify Azure Subscription details.  The subscription may also be manually verified via the Azure Portal Subscription blade.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest](https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest)
+
+
+**_Command(s):_**
+
+```bash
+env | egrep -e '^ARO_SUBSCRIPTION_NAME|^ARO_SUBSCRIPTION_ID|^ARO_TENANT_ID|^ARO_LOCATION_NAME'
+echo "ARO_SUBSCRIPTION_OWNERS=${ARO_SUBSCRIPTION_OWNERS[@]}"
+echo "ARO_VERIFY_QUOTA_NAMES=${ARO_VERIFY_QUOTA_NAMES[@]}"
+```
+
+**_Example Output:_**
+
+```
+ARO_LOCATION_NAME=eastus
+ARO_TENANT_ID=25fe96e7-85ec-4e6a-b93f-779b16ff751d
+ARO_SUBSCRIPTION_ID=12c7070f-83e5-453b-96d0-90770d2cf942
+ARO_SUBSCRIPTION_NAME=Azure subscription for mitaei
+ARO_SUBSCRIPTION_OWNERS=christy.walsh@mitaei.net joseph.tingiris@mitaei.net
+ARO_VERIFY_QUOTA_NAMES=Standard DSv3 Family vCPUs Standard Dv2 Family vCPUs
+```
+
+#### 8.1 - Verify Subscription Name
+
+
+Verify the following configuration variables are valid:
+
+* ${ARO_SUBSCRIPTION_NAME}
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-list](https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-list)
+* [https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-show](https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-show)
+* [https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade](https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade)
+
+
+**_Command(s):_**
+
+```bash
+az account list --output table
+az account show --subscription "${ARO_SUBSCRIPTION_ID}" --query "[{subscription_name:name},{subscription_id:id}]"
+export AZ_SUBSCRIPTION_NAME=$(az account show --query 'name' --output tsv)
+if [ "${AZ_SUBSCRIPTION_NAME}" != "${ARO_SUBSCRIPTION_NAME}" ]; then echo "ERROR! az subscription name \"${AZ_SUBSCRIPTION_NAME}\" does not match aro subscription name \"${ARO_SUBSCRIPTION_NAME}\""; fi
+```
+
+**_Example Output:_**
+
+```
+Name                           CloudName    SubscriptionId                        State    IsDefault
+-----------------------------  -----------  ------------------------------------  -------  -----------
+N/A(tenant level account)      AzureCloud   fe47e621-b8dd-44c8-ba00-c07e41e4b3d1  Enabled  False
+N/A(tenant level account)      AzureCloud   300a380f-b8d0-46c1-be0e-3b8e1af971b6  Enabled  False
+AP_BASE                        AzureCloud   54f592d8-63d3-48f3-9f92-a15651f96255  Enabled  False
+Azure subscription for mitaei  AzureCloud   12c7070f-83e5-453b-96d0-90770d2cf942  Enabled  True
+```
+```
+[
+  {
+    "subscription_name": "Azure subscription for mitaei"
+  },
+  {
+    "subscription_id": "12c7070f-83e5-453b-96d0-90770d2cf942"
+  }
+]
+```
+
+#### 8.2 - Verify Subscription ID
+
+
+Verify the following configuration variables are valid:
+
+* ${ARO_SUBSCRIPTION_ID}
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-list](https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-list)
+* [https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-show](https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-show)
+
+
+**_Command(s):_**
+
+```bash
+az account show --subscription "${ARO_SUBSCRIPTION_ID}" --query "[{subscription_name:name},{subscription_id:id}]"
+export AZ_SUBSCRIPTION_ID=$(az account show --query 'id' --output tsv 2> /dev/null)
+if [ "${AZ_SUBSCRIPTION_ID}" != "${ARO_SUBSCRIPTION_ID}" ]; then echo "ERROR! az subscription name \"${AZ_SUBSCRIPTION_ID}\" does not match aro subscription name \"${ARO_SUBSCRIPTION_ID}\""; fi
+```
+
+**_Example Output:_**
+
+```
+[
+  {
+    "subscription_name": "Azure subscription for mitaei"
+  },
+  {
+    "subscription_id": "12c7070f-83e5-453b-96d0-90770d2cf942"
+  }
+]
+```
+
+#### 8.3 - Verify Subscription Location
+
+
+Verify the following configuration variables are valid:
+
+* ${ARO_LOCATION_NAME}
+
+_NOTE: Azure Red Hat OpenShift is only available in certain Microsoft geographies, or locations.  Please use the links in the references of this section to determine the most suitable location for the installation.  The location name will be used throughout this document._
+
+
+
+**_Reference(s):_**
+
+* [https://azure.microsoft.com/en-us/global-infrastructure/services/?products=openshift](https://azure.microsoft.com/en-us/global-infrastructure/services/?products=openshift)
+
+
+**_Command(s):_**
+
+```bash
+az account list-locations --query "[?name=='${ARO_LOCATION_NAME}']" --output table
+export AZ_LOCATION_NAME=$(az account list-locations --query "[?name=='${ARO_LOCATION_NAME}'].name" --output tsv)
+if [ "${AZ_LOCATION_NAME}" != "${ARO_LOCATION_NAME}" ]; then echo "ERROR! az location name \"${AZ_LOCATION_NAME}\" does not match aro location name \"${ARO_LOCATION_NAME}\""; fi
+```
+
+**_Example Output:_**
+
+```
+Name    DisplayName    RegionalDisplayName
+------  -------------  ---------------------
+eastus  East US        (US) East US
+```
+
+
+#### 8.4 - Verify Subscription Limits
+
+
+Verify the following configuration variable is not empty:
+
+* ${ARO_VERIFY_QUOTA_NAMES}
+
+An ARO cluster uses several Microsoft Azure components.  It requires a minimum of 40 Total Regional vCPUs and 36 Standard DSv3 Family vCPUs.
+
+**_The Azure subscription and service limits, quotas, and constraints may be insufficient to install ARO._**
+
+Default limits vary by offer category types, such as Free Trial and Pay-As-You-Go, and by series, such as Dv2, F, and G. For example, the default for Enterprise Agreement subscriptions is 350 cores.
+
+It is wise to check the limits for the subscription type and if necessary, increase quota limits before the installation of an Azure OpenShift cluster.
+
+ARO minimum limits are required for:
+
+* Standard DSv3 Family vCPUs
+* Standard Dv2 Family vCPUs
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/azure/azure-subscription-service-limits](https://docs.microsoft.com/en-us/azure/azure-subscription-service-limits)
+* [https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules)
+* [https://docs.microsoft.com/en-us/azure/networking/check-usage-against-limits](https://docs.microsoft.com/en-us/azure/networking/check-usage-against-limits)
+* [https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest#az-vm-list-usage](https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest#az-vm-list-usage)
+* [https://docs.openshift.com/container-platform/4.5/installing/installing_azure/installing-azure-account.html](https://docs.openshift.com/container-platform/4.5/installing/installing_azure/installing-azure-account.html)
+
+
+**_Command(s):_**
+
+```bash
+if [ "${ARO_VERIFY_QUOTA_NAMES}" == "" ]; then echo "WARNING! ARO_VERIFY_QUOTA_NAMES is not set"; fi
+```
+
+**_Example Output:_**
+
+```diff
++ success does not produce any output
+```
+
+#### 8.5 - Verify Subscription Quotas
+
+
+**_This step must be done manually._**
+
+Requesting a quota increase can take 24-48 hours to complete.  The Subscription Owner must do this step.
+
+Ensure the quota increase requests a minimum of 50 for the following VM families, 100 is preferred.
+
+Dv2 Series
+DSv3 Series
+
+To increase the quota limits, a support case must be opened. Microsoft will communicate directly to the person who requested the increase.  An increase in the VM series quotas automatically increases the total regional vCPU limit by the same amount.
+
+_Links to Microsoft's directions on how to request a quota increase for a specific subscription are provided in the references section of this topic._
+
+Verify subscription quotas for:
+
+* Standard DSv3 Family vCPUs
+* Standard Dv2 Family vCPUs
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/azure/azure-portal/supportability/per-vm-quota-requests](https://docs.microsoft.com/en-us/azure/azure-portal/supportability/per-vm-quota-requests)
+* [https://docs.microsoft.com/en-us/azure/azure-portal/supportability/regional-quota-requests](https://docs.microsoft.com/en-us/azure/azure-portal/supportability/regional-quota-requests)
+
+
+#### 8.6 - Standard DSv3 Family vCPUs
+
+
+Ensure the quota "limit" is greater than 50.
+
+
+**_Command(s):_**
+
+```bash
+az vm list-usage --location ${ARO_LOCATION_NAME} --query "[?localName=='Standard DSv3 Family vCPUs']"
+export AZ_VERIFY_QUOTA_LIMIT=$(az vm list-usage --location ${ARO_LOCATION_NAME} --query "[?localName=='Standard DSv3 Family vCPUs'].limit" --output tsv)
+if [ "${AZ_VERIFY_QUOTA_LIMIT}" == "" ] || [ ${AZ_VERIFY_QUOTA_LIMIT} -lt 50  ]; then echo "ERROR! Quota limit for "Standard DSv3 Family vCPUs" is too low!  Open a support case with Microsoft."; fi
+```
+
+**_Example Output:_**
+
+```
+[
+  {
+    "currentValue": "0",
+    "limit": "100",
+    "localName": "Standard DSv3 Family vCPUs",
+    "name": {
+      "localizedValue": "Standard DSv3 Family vCPUs",
+      "value": "standardDSv3Family"
+    }
+  }
+]
+```
+
+#### 8.7 - Standard Dv2 Family vCPUs
+
+
+Ensure the quota "limit" is greater than 50.
+
+
+**_Command(s):_**
+
+```bash
+az vm list-usage --location ${ARO_LOCATION_NAME} --query "[?localName=='Standard Dv2 Family vCPUs']"
+export AZ_VERIFY_QUOTA_LIMIT=$(az vm list-usage --location ${ARO_LOCATION_NAME} --query "[?localName=='Standard Dv2 Family vCPUs'].limit" --output tsv)
+if [ "${AZ_VERIFY_QUOTA_LIMIT}" == "" ] || [ ${AZ_VERIFY_QUOTA_LIMIT} -lt 50  ]; then echo "ERROR! Quota limit for "Standard Dv2 Family vCPUs" is too low!  Open a support case with Microsoft."; fi
+```
+
+**_Example Output:_**
+
+```
+[
+  {
+    "currentValue": "0",
+    "limit": "100",
+    "localName": "Standard Dv2 Family vCPUs",
+    "name": {
+      "localizedValue": "Standard Dv2 Family vCPUs",
+      "value": "standardDv2Family"
+    }
+  }
+]
+```
+### 9 - OpenShift Administrators
+
+Identify the people who will be responsible for administering the OpenShift cluster.  These individuals will need Microsoft accounts and elevated roles and responsibilities.
+
+The details for how to use `az` to create users, groups, and add the necessary subscription roles is described below.
+
+
+**_Command(s):_**
+
+```bash
+env | egrep -e '^ARO_DOMAIN_NAME'
+echo "ARO_ADMINISTRATORS=${ARO_ADMINISTRATORS[@]}"
+```
+
+**_Example Output:_**
+
+```
+ARO_DOMAIN_NAME=mitaei.net
+ARO_ADMINISTRATORS=openshift-admin@mitaei.net arun.babu@mitaei.net joseph.tingiris@mitaei.net sivaprasad.k@mitaei.net
+```
+
+#### 9.1 - Create Administratorts
+
+
+missing './help/Create Administratorts.md'
+
+
+**_Command(s):_**
+
+```bash
+az ad user create --display-name openshift-admin@mitaei.net --user-principal-name openshift-admin@mitaei.net --password "DIl3*lks)-${ARO}-r4d0m!" --force-change-password-next-login
+```
+
+**_Example Output:_**
+
+```json
+{
+  "accountEnabled": true,
+  "ageGroup": null,
+  "assignedLicenses": [],
+  "assignedPlans": [],
+  "city": null,
+  "companyName": null,
+  "consentProvidedForMinor": null,
+  "country": null,
+  "createdDateTime": null,
+  "creationType": null,
+  "deletionTimestamp": null,
+  "department": null,
+  "dirSyncEnabled": null,
+  "displayName": "openshift-admin@mitaei.net",
+  "employeeId": null,
+  "facsimileTelephoneNumber": null,
+  "givenName": null,
+  "immutableId": null,
+  "isCompromised": null,
+  "jobTitle": null,
+  "lastDirSyncTime": null,
+  "legalAgeGroupClassification": null,
+  "mail": null,
+  "mailNickname": "openshift-admin",
+  "mobile": null,
+  "objectId": "5cc72d03-cca1-44cf-bbc5-a2f80ef1c9d1",
+  "objectType": "User",
+  "odata.metadata": "https://graph.windows.net/25fe96e7-85ec-4e6a-b93f-779b16ff751d/$metadata#directoryObjects/@Element",
+  "odata.type": "Microsoft.DirectoryServices.User",
+  "onPremisesDistinguishedName": null,
+  "onPremisesSecurityIdentifier": null,
+  "otherMails": [],
+  "passwordPolicies": null,
+  "passwordProfile": {
+    "enforceChangePasswordPolicy": false,
+    "forceChangePasswordNextLogin": true,
+    "password": null
+  },
+  "physicalDeliveryOfficeName": null,
+  "postalCode": null,
+  "preferredLanguage": null,
+  "provisionedPlans": [],
+  "provisioningErrors": [],
+  "proxyAddresses": [],
+  "refreshTokensValidFromDateTime": "2020-09-24T01:00:12.093914Z",
+  "showInAddressList": null,
+  "signInNames": [],
+  "sipProxyAddress": null,
+  "state": null,
+  "streetAddress": null,
+  "surname": null,
+  "telephoneNumber": null,
+  "thumbnailPhoto@odata.mediaEditLink": "directoryObjects/5cc72d03-cca1-44cf-bbc5-a2f80ef1c9d1/Microsoft.DirectoryServices.User/thumbnailPhoto",
+  "usageLocation": null,
+  "userIdentities": [],
+  "userPrincipalName": "openshift-admin@mitaei.net",
+  "userState": null,
+  "userStateChangedOn": null,
+  "userType": "Member"
+}
+```
+
+#### 9.2 - Verify Administratorts
+
+
+missing './help/Verify Administratorts.md'
+
+
+**_Command(s):_**
+
+```bash
+for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az ad user show --id ${ARO_ADMINISTRATOR} --query '[{userPrincipalName:userPrincipalName}, {principalId:objectId}]'; if [ $? -ne 0 ]; then echo "WARNING! ${ADMINISTRATOR} aad account was not found"; fi; done
+```
+
+**_Example Output:_**
+
+```
+[
+  {
+    "userPrincipalName": "openshift-admin@mitaei.net"
+  },
+  {
+    "principalId": "5cc72d03-cca1-44cf-bbc5-a2f80ef1c9d1"
+  }
+]
+[
+  {
+    "userPrincipalName": "arun.babu@mitaei.net"
+  },
+  {
+    "principalId": "4c3b0f6a-3e08-4d7e-9161-2a540bea4dc8"
+  }
+]
+[
+  {
+    "userPrincipalName": "joseph.tingiris@mitaei.net"
+  },
+  {
+    "principalId": "83525d38-8d7f-4476-81aa-14c46c4cb876"
+  }
+]
+[
+  {
+    "userPrincipalName": "sivaprasad.k@mitaei.net"
+  },
+  {
+    "principalId": "26d953e1-003f-4f61-9e68-4f3a5216d8e9"
+  }
+]
+```
+
+#### 9.3 - Create Administrator Roles
+
+
+The _Contributor_ and _User Access Administrator_ subscription roles are required to administer ARO.
+
+
+**_Command(s):_**
+
+```bash
+for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment create --assignee ${ARO_ADMINISTRATOR} --role "Contributor"; if [ $? -ne 0 ]; then echo "ERROR! could not assign Contributor role to ${ARO_ADMINISTRATOR}"; fi; done
+for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment create --assignee ${ARO_ADMINISTRATOR} --role "User Access Administrator"; if [ $? -ne 0 ]; then echo "ERROR! could not assign User Access Administrator role to ${ARO_ADMINISTRATOR}"; fi; done
+```
+
+**_Example Output:_**
+
+```
+{
+  "canDelegate": null,
+  "condition": null,
+  "conditionVersion": null,
+  "description": null,
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/2a1f28da-7409-4486-897c-a27bbf6cd8e5",
+  "name": "2a1f28da-7409-4486-897c-a27bbf6cd8e5",
+  "principalId": "5cc72d03-cca1-44cf-bbc5-a2f80ef1c9d1",
+  "principalType": "User",
+  "roleDefinitionId": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+  "scope": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942",
+  "type": "Microsoft.Authorization/roleAssignments"
+}
+
+{
+  "canDelegate": null,
+  "condition": null,
+  "conditionVersion": null,
+  "description": null,
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/6e12447d-681f-4227-b2ff-2cef1948c532",
+  "name": "6e12447d-681f-4227-b2ff-2cef1948c532",
+  "principalId": "5cc72d03-cca1-44cf-bbc5-a2f80ef1c9d1",
+  "principalType": "User",
+  "roleDefinitionId": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleDefinitions/18d7d88d-d35e-4fb5-a5c3-7773c20a72d9",
+  "scope": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942",
+  "type": "Microsoft.Authorization/roleAssignments"
+}
+
+{
+  "canDelegate": null,
+  "condition": null,
+  "conditionVersion": null,
+  "description": null,
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/8f458612-ca5f-4ff2-832a-d00e700975b0",
+  "name": "8f458612-ca5f-4ff2-832a-d00e700975b0",
+  "principalId": "4c3b0f6a-3e08-4d7e-9161-2a540bea4dc8",
+  "principalName": "arun.babu@mitaei.net",
+  "principalType": "User",
+  "roleDefinitionId": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+  "roleDefinitionName": "Contributor",
+  "scope": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942",
+  "type": "Microsoft.Authorization/roleAssignments"
+}
+
+{
+  "canDelegate": null,
+  "condition": null,
+  "conditionVersion": null,
+  "description": null,
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/7f1ba7da-c858-489f-a988-39123faa181f",
+  "name": "7f1ba7da-c858-489f-a988-39123faa181f",
+  "principalId": "4c3b0f6a-3e08-4d7e-9161-2a540bea4dc8",
+  "principalName": "arun.babu@mitaei.net",
+  "principalType": "User",
+  "roleDefinitionId": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleDefinitions/18d7d88d-d35e-4fb5-a5c3-7773c20a72d9",
+  "roleDefinitionName": "User Access Administrator",
+  "scope": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942",
+  "type": "Microsoft.Authorization/roleAssignments"
+}
+
+{
+  "canDelegate": null,
+  "condition": null,
+  "conditionVersion": null,
+  "description": null,
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/6f98e077-c161-453d-a903-b00acb9bd5f2",
+  "name": "6f98e077-c161-453d-a903-b00acb9bd5f2",
+  "principalId": "83525d38-8d7f-4476-81aa-14c46c4cb876",
+  "principalName": "joseph.tingiris@mitaei.net",
+  "principalType": "User",
+  "roleDefinitionId": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+  "roleDefinitionName": "Contributor",
+  "scope": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942",
+  "type": "Microsoft.Authorization/roleAssignments"
+}
+
+{
+  "canDelegate": null,
+  "condition": null,
+  "conditionVersion": null,
+  "description": null,
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/91ea94dc-f9aa-486b-8c92-7c1911bced00",
+  "name": "91ea94dc-f9aa-486b-8c92-7c1911bced00",
+  "principalId": "83525d38-8d7f-4476-81aa-14c46c4cb876",
+  "principalName": "joseph.tingiris@mitaei.net",
+  "principalType": "User",
+  "roleDefinitionId": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleDefinitions/18d7d88d-d35e-4fb5-a5c3-7773c20a72d9",
+  "roleDefinitionName": "User Access Administrator",
+  "scope": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942",
+  "type": "Microsoft.Authorization/roleAssignments"
+}
+
+{
+  "canDelegate": null,
+  "condition": null,
+  "conditionVersion": null,
+  "description": null,
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/1bf7b433-935b-4160-a634-43bd291739c8",
+  "name": "1bf7b433-935b-4160-a634-43bd291739c8",
+  "principalId": "26d953e1-003f-4f61-9e68-4f3a5216d8e9",
+  "principalName": "sivaprasad.k@mitaei.net",
+  "principalType": "User",
+  "roleDefinitionId": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+  "roleDefinitionName": "Contributor",
+  "scope": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942",
+  "type": "Microsoft.Authorization/roleAssignments"
+}
+
+{
+  "canDelegate": null,
+  "condition": null,
+  "conditionVersion": null,
+  "description": null,
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/13f30fcc-49ed-45dd-b971-0566b2c3220b",
+  "name": "13f30fcc-49ed-45dd-b971-0566b2c3220b",
+  "principalId": "26d953e1-003f-4f61-9e68-4f3a5216d8e9",
+  "principalName": "sivaprasad.k@mitaei.net",
+  "principalType": "User",
+  "roleDefinitionId": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleDefinitions/18d7d88d-d35e-4fb5-a5c3-7773c20a72d9",
+  "roleDefinitionName": "User Access Administrator",
+  "scope": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942",
+  "type": "Microsoft.Authorization/roleAssignments"
+}
+
+```
+
+#### 9.4 - Verify Administrator Roles
+
+
+Verify all ${ARO_ADMINISTRATORS} have the _Contributor_ and _User Access Administrator_ subscription roles.
+
+
+**_Command(s):_**
+
+```bash
+for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment list --assignee ${ARO_ADMINISTRATOR} --output table; if [ $? -ne 0 ]; then echo "ERROR! failed retrieving subscription roles for \"${ADMINISTRATOR}\""; fi; echo; done
+```
+
+**_Example Output:_**
+
+```
+Principal                   Role                       Scope
+--------------------------  -------------------------  ---------------------------------------------------
+openshift-admin@mitaei.net  User Access Administrator  /subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942
+openshift-admin@mitaei.net  Contributor                /subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942
+
+Principal             Role                       Scope
+--------------------  -------------------------  ---------------------------------------------------
+arun.babu@mitaei.net  User Access Administrator  /subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942
+arun.babu@mitaei.net  Contributor                /subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942
+
+Principal                   Role                       Scope
+--------------------------  -------------------------  ---------------------------------------------------
+joseph.tingiris@mitaei.net  User Access Administrator  /subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942
+joseph.tingiris@mitaei.net  Owner                      /subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942
+joseph.tingiris@mitaei.net  Contributor                /subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942
+
+Principal                Role                       Scope
+-----------------------  -------------------------  ---------------------------------------------------
+sivaprasad.k@mitaei.net  User Access Administrator  /subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942
+sivaprasad.k@mitaei.net  Contributor                /subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942
+
+```
+### 10 - Resource Providers
+
+Make sure you are logged in to Azure via az `az login` and have the _Contributor_ or _Owner_ role.
+
+_NOTE:_
+
+* _These steps will fail with only the **User Access Administrator** role.  An unauthorized message will be received._
+* _These steps will fail without the **--wait** flag.  Dependent providers are automatically registered and they must be registered first._
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types)
+
+
+**_Command(s):_**
+
+```bash
+echo "ARO_RESOURCE_PROVIDERS=${ARO_RESOURCE_PROVIDERS[@]}"
+```
+
+**_Example Output:_**
+
+```
+ARO_RESOURCE_PROVIDERS=Microsoft.Compute Microsoft.RedHatOpenShift Microsoft.Storage
+```
+
+#### 10.1 - Register Provider Microsoft.Compute
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register](https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register)
+
+
+**_Command(s):_**
+
+```bash
+az provider register -n Microsoft.Compute --wait
+```
+
+**_Example Output:_**
+
+```diff
++ success does not produce any output
+```
+
+#### 10.2 - Verify Provider Microsoft.Compute
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show](https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show)
+
+
+**_Command(s):_**
+
+```bash
+az provider show --namespace Microsoft.Compute --output table
+```
+
+**_Example Output:_**
+
+```
+Namespace          RegistrationPolicy    RegistrationState
+-----------------  --------------------  -------------------
+Microsoft.Compute  RegistrationRequired  Registered
+```
+
+
+#### 10.3 - Register Provider Microsoft.RedHatOpenShift
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register](https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register)
+
+
+**_Command(s):_**
+
+```bash
+az provider register -n Microsoft.RedHatOpenShift --wait
+```
+
+**_Example Output:_**
+
+```diff
++ success does not produce any output
+```
+
+#### 10.4 - Verify Provider Microsoft.RedHatOpenShift
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show](https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show)
+
+
+**_Command(s):_**
+
+```bash
+az provider show --namespace Microsoft.RedHatOpenShift --output table
+```
+
+**_Example Output:_**
+
+```
+Namespace                  RegistrationPolicy    RegistrationState
+-------------------------  --------------------  -------------------
+Microsoft.RedHatOpenShift  RegistrationRequired  Registered
+```
+
+
+#### 10.5 - Register Provider Microsoft.Storage
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register](https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_register)
+
+
+**_Command(s):_**
+
+```bash
+az provider register -n Microsoft.Storage --wait
+```
+
+**_Example Output:_**
+
+```diff
++ success does not produce any output
+```
+
+#### 10.6 - Verify Provider Microsoft.Storage
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show](https://docs.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az_provider_show)
+
+
+**_Command(s):_**
+
+```bash
+az provider show --namespace Microsoft.Storage --output table
+```
+
+**_Example Output:_**
+
+```
+Namespace          RegistrationPolicy    RegistrationState
+-----------------  --------------------  -------------------
+Microsoft.Storage  RegistrationRequired  Registered
+```
+
+### 11 - Resource Group
+
+An Azure resource group is a logical group in which Azure resources are deployed and managed.
+
+To create ARO resources, a resource group location must be specified. This is where the physical datacenter is located, where resource group metadata is stored, and where the Azure resources are hosted.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest](https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest)
+
+
+**_Command(s):_**
+
+```bash
+env | egrep '^ARO_RESOURCE_GROUP_NAME|^ARO_LOCATION_NAME'
+```
+
+**_Example Output:_**
+
+```
+ARO_LOCATION_NAME=eastus
+ARO_RESOURCE_GROUP_NAME=ipm-eastus
+```
+
+#### 11.1 - Create Resource Group
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-create](https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-create)
+
+
+**_Command(s):_**
+
+```bash
+az group create --name ${ARO_RESOURCE_GROUP_NAME} --location ${ARO_LOCATION_NAME}
+```
+
+**_Example Output:_**
+
+```
+{
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus",
+  "location": "eastus",
+  "managedBy": null,
+  "name": "ipm-eastus",
+  "properties": {
+    "provisioningState": "Succeeded"
+  },
+  "tags": null,
+  "type": "Microsoft.Resources/resourceGroups"
+}
+```
+
+
+#### 11.2 - Verify Resource Group
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-show](https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-show)
+
+
+**_Command(s):_**
+
+```bash
+az group show --name ${ARO_RESOURCE_GROUP_NAME}
+```
+
+**_Example Output:_**
+
+```
+{
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus",
+  "location": "eastus",
+  "managedBy": null,
+  "name": "ipm-eastus",
+  "properties": {
+    "provisioningState": "Succeeded"
+  },
+  "tags": null,
+  "type": "Microsoft.Resources/resourceGroups"
+}
+```
+
+### 12 - Virtual Network
+
+An Azure Virtual Network (VNet) is the fundamental building block for private networks in Azure. VNet enables many types of Azure resources, such as Azure Virtual Machines (VM), to securely communicate with each other, the internet, and on-premises networks. VNet is similar to a traditional network that you'd operate in your own data center, but brings with it additional benefits of Azure's infrastructure such as scale, availability, and isolation.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-overview](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-overview)
+
+
+**_Command(s):_**
+
+```bash
+env | grep ^ARO_VNET | sort -V
+```
+
+**_Example Output:_**
+
+```
+ARO_VNET_ADDRESS_PREFIX=10.11.0.0/21
+ARO_VNET_NAME=ipm-vnet
+```
+
+#### 12.1 - Create Virtual Network
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet?view=azure-cli-latest#az-network-vnet-create](https://docs.microsoft.com/en-us/cli/azure/network/vnet?view=azure-cli-latest#az-network-vnet-create)
+* [https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x](https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VNET_NAME} --address-prefixes ${ARO_VNET_ADDRESS_PREFIX}
+```
+
+**_Example Output:_**
+
+```
+{
+  "newVNet": {
+    "addressSpace": {
+      "addressPrefixes": [
+        "10.11.0.0/21"
+      ]
+    },
+    "bgpCommunities": null,
+    "ddosProtectionPlan": null,
+    "dhcpOptions": {
+      "dnsServers": []
+    },
+    "enableDdosProtection": false,
+    "enableVmProtection": false,
+    "etag": "W/\"0b4c8438-7c0c-4f40-b157-7e783d6b043f\"",
+    "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet",
+    "ipAllocations": null,
+    "location": "eastus",
+    "name": "ipm-vnet",
+    "provisioningState": "Succeeded",
+    "resourceGroup": "ipm-eastus",
+    "resourceGuid": "f2665dad-2e5a-4909-b812-a042a0824f0c",
+    "subnets": [],
+    "tags": {},
+    "type": "Microsoft.Network/virtualNetworks",
+    "virtualNetworkPeerings": []
+  }
+}
+```
+
+
+#### 12.2 - Verify Virtual Network
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet?view=azure-cli-latest#az-network-vnet-show](https://docs.microsoft.com/en-us/cli/azure/network/vnet?view=azure-cli-latest#az-network-vnet-show)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VNET_NAME} --output table
+```
+
+**_Example Output:_**
+
+```
+EnableDdosProtection    EnableVmProtection    Location    Name      ProvisioningState    ResourceGroup    ResourceGuid
+----------------------  --------------------  ----------  --------  -------------------  ---------------  ------------------------------------
+False                   False                 eastus      ipm-vnet  Succeeded            ipm-eastus       f2665dad-2e5a-4909-b812-a042a0824f0c
+```
+
+### 13 - OpenShift Subnets
+
+Azure Red Hat OpenShift clusters require a virtual network with two empty subnets, for the master and worker nodes.   The networks must be in the same resource group.  The network numbers should be IPv4 RFC1918 compliant and prefixed.
+
+Additional subnets are needed for related virtual machines and a VPN.  The VPN subnet must be named GatewaySubnet.
+
+It is suggested the virtual network (VNet) prefix be /21 and each (master and worker) vnet subnet prefix be /23, which will allow for a total of 510 master nodes and 510 worker nodes.
+
+_NOTE: In 2018, Microsoft started automatically enabling Network Watcher when a new vnet is created.  There is not strictly required for ARO and there is an additional cost associated.  This will be seen as a new resource group named NetworkWatcherRG and a new vnet named NetworkWatercher_<region>; Please see the references in this section for more details._
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az-network-vnet-subnet-create](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az-network-vnet-subnet-create)
+* [https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x](https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x)
+* [https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview)
+* [https://azure.microsoft.com/en-us/updates/azure-network-watcher-will-be-enabled-by-default-for-subscriptions-containing-virtual-networks/](https://azure.microsoft.com/en-us/updates/azure-network-watcher-will-be-enabled-by-default-for-subscriptions-containing-virtual-networks/)
+* [https://azure.microsoft.com/en-us/pricing/details/network-watcher/](https://azure.microsoft.com/en-us/pricing/details/network-watcher/)
+* [https://tools.ietf.org/html/rfc1918](https://tools.ietf.org/html/rfc1918)
+
+
+**_Example Output:_**
+
+
+**_Command(s):_**
+
+```bash
+env | grep ^ARO_SUBNET | egrep -e 'MASTER|WORKER' | sort -V
+```
+```
+ARO_SUBNET_MASTER_ADDRESS_PREFIX=10.11.0.0/23
+ARO_SUBNET_MASTER_NAME=ipm-vnet-master-subnet
+ARO_SUBNET_MASTER_NSG_NAME=ipm-vnet-master-subnet-nsg
+ARO_SUBNET_WORKER_ADDRESS_PREFIX=10.11.2.0/23
+ARO_SUBNET_WORKER_NAME=ipm-vnet-worker-subnet
+ARO_SUBNET_WORKER_NSG_NAME=ipm-vnet-worker-subnet-nsg
+```
+
+#### 13.1 - Verify OpenShift Cluster
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/aro?view=azure-cli-latest#az_aro_show](https://docs.microsoft.com/en-us/cli/azure/aro?view=azure-cli-latest#az_aro_show)
+
+
+**_Command(s):_**
+
+```bash
+az aro show --name "${ARO_CLUSTER_NAME}" --resource-group "${ARO_RESOURCE_GROUP_NAME}" --output table 2> /dev/null; if [ $? -eq 0 ]; then echo "ERROR! ARO cluster ${ARO_CLUSTER_NAME} exists; do not recreate the master or worker subnets"; fi
+```
+
+**_Example Output:_**
+
+```diff
++ success does not produce any output
+```
+
+#### 13.2 - Create Master Subnet
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_create](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_create)
+* [https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x](https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_MASTER_NAME} --address-prefixes ${ARO_SUBNET_MASTER_ADDRESS_PREFIX} --service-endpoints Microsoft.ContainerRegistry
+```
+
+**_Example Output:_**
+
+```
+{
+  "addressPrefix": "10.11.0.0/23",
+  "addressPrefixes": null,
+  "delegations": [],
+  "etag": "W/\"581dc284-92ba-40d3-9518-4dad74561202\"",
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/ipm-vnet-master-subnet",
+  "ipAllocations": null,
+  "ipConfigurationProfiles": null,
+  "ipConfigurations": null,
+  "name": "ipm-vnet-master-subnet",
+  "natGateway": null,
+  "networkSecurityGroup": null,
+  "privateEndpointNetworkPolicies": "Enabled",
+  "privateEndpoints": null,
+  "privateLinkServiceNetworkPolicies": "Enabled",
+  "provisioningState": "Succeeded",
+  "purpose": null,
+  "resourceGroup": "ipm-eastus",
+  "resourceNavigationLinks": null,
+  "routeTable": null,
+  "serviceAssociationLinks": null,
+  "serviceEndpointPolicies": null,
+  "serviceEndpoints": [
+    {
+      "locations": [
+        "*"
+      ],
+      "provisioningState": "Succeeded",
+      "service": "Microsoft.ContainerRegistry"
+    }
+  ],
+  "type": "Microsoft.Network/virtualNetworks/subnets"
+}
+```
+
+
+#### 13.3 - Disable Master Subnet Private Link Service
+
+
+This is required to be able to connect and manage the cluster.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_update](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_update)
+* [https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x](https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet update --name ${ARO_SUBNET_MASTER_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --disable-private-link-service-network-policies true
+```
+
+**_Example Output:_**
+
+```
+{
+  "addressPrefix": "10.11.0.0/23",
+  "addressPrefixes": null,
+  "delegations": [],
+  "etag": "W/\"436b18fd-4f7b-4145-b7b2-40bc67e5a4c9\"",
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/ipm-vnet-master-subnet",
+  "ipAllocations": null,
+  "ipConfigurationProfiles": null,
+  "ipConfigurations": null,
+  "name": "ipm-vnet-master-subnet",
+  "natGateway": null,
+  "networkSecurityGroup": null,
+  "privateEndpointNetworkPolicies": "Enabled",
+  "privateEndpoints": null,
+  "privateLinkServiceNetworkPolicies": "Disabled",
+  "provisioningState": "Succeeded",
+  "purpose": null,
+  "resourceGroup": "ipm-eastus",
+  "resourceNavigationLinks": null,
+  "routeTable": null,
+  "serviceAssociationLinks": null,
+  "serviceEndpointPolicies": null,
+  "serviceEndpoints": [
+    {
+      "locations": [
+        "*"
+      ],
+      "provisioningState": "Succeeded",
+      "service": "Microsoft.ContainerRegistry"
+    }
+  ],
+  "type": "Microsoft.Network/virtualNetworks/subnets"
+}
+```
+
+
+#### 13.4 - Verify Master Subnet
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_show](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_show)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_MASTER_NAME} --output table
+```
+
+**_Example Output:_**
+
+```
+AddressPrefix    Name                    PrivateEndpointNetworkPolicies    PrivateLinkServiceNetworkPolicies    ProvisioningState    ResourceGroup
+---------------  ----------------------  --------------------------------  -----------------------------------  -------------------  ---------------
+10.11.0.0/23     ipm-vnet-master-subnet  Enabled                           Disabled                             Succeeded            ipm-eastus
+```
+
+
+#### 13.5 - Create Worker Subnet
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_create](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_create)
+* [https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x](https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_WORKER_NAME} --address-prefixes ${ARO_SUBNET_WORKER_ADDRESS_PREFIX} --service-endpoints Microsoft.ContainerRegistry
+```
+
+**_Example Output:_**
+
+```
+{
+  "addressPrefix": "10.11.2.0/23",
+  "addressPrefixes": null,
+  "delegations": [],
+  "etag": "W/\"23826004-3e53-40f1-8d74-9eb0bdc89b24\"",
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/ipm-vnet-worker-subnet",
+  "ipAllocations": null,
+  "ipConfigurationProfiles": null,
+  "ipConfigurations": null,
+  "name": "ipm-vnet-worker-subnet",
+  "natGateway": null,
+  "networkSecurityGroup": null,
+  "privateEndpointNetworkPolicies": "Enabled",
+  "privateEndpoints": null,
+  "privateLinkServiceNetworkPolicies": "Enabled",
+  "provisioningState": "Succeeded",
+  "purpose": null,
+  "resourceGroup": "ipm-eastus",
+  "resourceNavigationLinks": null,
+  "routeTable": null,
+  "serviceAssociationLinks": null,
+  "serviceEndpointPolicies": null,
+  "serviceEndpoints": [
+    {
+      "locations": [
+        "*"
+      ],
+      "provisioningState": "Succeeded",
+      "service": "Microsoft.ContainerRegistry"
+    }
+  ],
+  "type": "Microsoft.Network/virtualNetworks/subnets"
+}
+```
+
+
+#### 13.6 - Verify Worker Subnet
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_show](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_show)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_WORKER_NAME} --output table
+```
+
+**_Example Output:_**
+
+```
+AddressPrefix    Name                    PrivateEndpointNetworkPolicies    PrivateLinkServiceNetworkPolicies    ProvisioningState    ResourceGroup
+---------------  ----------------------  --------------------------------  -----------------------------------  -------------------  ---------------
+10.11.2.0/23     ipm-vnet-worker-subnet  Enabled                           Enabled                              Succeeded            ipm-eastus
+```
+
+### 14 - Network Security Groups
+
+An Azure Network Security Group (NSG) filters network traffic to and from Azure resources in an Azure virtual network. An NSG contains security rules that allow/deny network traffic to/from several types of Azure resources.
+
+_NOTE:_
+
+* _The Network Security Groups for the Master & Worker subnets will be automatically created when ARO is setup._
+* _The Network Security Group for the GatewaySubnet will be created when the VPN Gateway is setup._
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/nsg?view=azure-cli-latest](https://docs.microsoft.com/en-us/cli/azure/network/nsg?view=azure-cli-latest)
+* [https://docs.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview](https://docs.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview)
+
+
+**_Command(s):_**
+
+```bash
+env | egrep -e 'ARO_SUBNET(.*)NSG' | egrep -ve 'MASTER|WORKER|VGW' | sort -V
+```
+
+**_Example Output:_**
+
+```
+ARO_SUBNET_AGW_NSG_NAME=ipm-vnet-agw-subnet-nsg
+ARO_SUBNET_DB_NSG_NAME=ipm-vnet-db-subnet-nsg
+ARO_SUBNET_DMZ_NSG_NAME=ipm-vnet-dmz-subnet-nsg
+ARO_SUBNET_TRUSTED_NSG_NAME=ipm-vnet-trusted-subnet-nsg
+```
+
+#### 14.1 - Create Network Security Groups
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/nsg?view=azure-cli-latest#az_network_nsg_create](https://docs.microsoft.com/en-us/cli/azure/network/nsg?view=azure-cli-latest#az_network_nsg_create)
+
+
+**_Command(s):_**
+
+```bash
+az network nsg create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_AGW_NSG_NAME}
+```
+
+**_Example Output:_**
+
+```
+{
+  "NewNSG": {
+    "defaultSecurityRules": [
+      {
+        "access": "Allow",
+        "description": "Allow inbound traffic from all VMs in VNET",
+        "destinationAddressPrefix": "VirtualNetwork",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "etag": "W/\"d027819d-19f6-46fb-abf8-78c7a235af42\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-agw-subnet-nsg/defaultSecurityRules/AllowVnetInBound",
+        "name": "AllowVnetInBound",
+        "priority": 65000,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "VirtualNetwork",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Allow",
+        "description": "Allow inbound traffic from azure load balancer",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "etag": "W/\"d027819d-19f6-46fb-abf8-78c7a235af42\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-agw-subnet-nsg/defaultSecurityRules/AllowAzureLoadBalancerInBound",
+        "name": "AllowAzureLoadBalancerInBound",
+        "priority": 65001,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "AzureLoadBalancer",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Deny",
+        "description": "Deny all inbound traffic",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "etag": "W/\"d027819d-19f6-46fb-abf8-78c7a235af42\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-agw-subnet-nsg/defaultSecurityRules/DenyAllInBound",
+        "name": "DenyAllInBound",
+        "priority": 65500,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Allow",
+        "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+        "destinationAddressPrefix": "VirtualNetwork",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Outbound",
+        "etag": "W/\"d027819d-19f6-46fb-abf8-78c7a235af42\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-agw-subnet-nsg/defaultSecurityRules/AllowVnetOutBound",
+        "name": "AllowVnetOutBound",
+        "priority": 65000,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "VirtualNetwork",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Allow",
+        "description": "Allow outbound traffic from all VMs to Internet",
+        "destinationAddressPrefix": "Internet",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Outbound",
+        "etag": "W/\"d027819d-19f6-46fb-abf8-78c7a235af42\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-agw-subnet-nsg/defaultSecurityRules/AllowInternetOutBound",
+        "name": "AllowInternetOutBound",
+        "priority": 65001,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Deny",
+        "description": "Deny all outbound traffic",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Outbound",
+        "etag": "W/\"d027819d-19f6-46fb-abf8-78c7a235af42\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-agw-subnet-nsg/defaultSecurityRules/DenyAllOutBound",
+        "name": "DenyAllOutBound",
+        "priority": 65500,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      }
+    ],
+    "etag": "W/\"d027819d-19f6-46fb-abf8-78c7a235af42\"",
+    "flowLogs": null,
+    "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-agw-subnet-nsg",
+    "location": "eastus",
+    "name": "ipm-vnet-agw-subnet-nsg",
+    "networkInterfaces": null,
+    "provisioningState": "Succeeded",
+    "resourceGroup": "ipm-eastus",
+    "resourceGuid": "c2d0ee75-979b-49b8-88a8-f922db86e3d6",
+    "securityRules": [],
+    "subnets": null,
+    "tags": null,
+    "type": "Microsoft.Network/networkSecurityGroups"
+  }
+}
+{
+  "NewNSG": {
+    "defaultSecurityRules": [
+      {
+        "access": "Allow",
+        "description": "Allow inbound traffic from all VMs in VNET",
+        "destinationAddressPrefix": "VirtualNetwork",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "etag": "W/\"87a253bb-7e14-4ecd-a945-be1be733cc6d\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-db-subnet-nsg/defaultSecurityRules/AllowVnetInBound",
+        "name": "AllowVnetInBound",
+        "priority": 65000,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "VirtualNetwork",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Allow",
+        "description": "Allow inbound traffic from azure load balancer",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "etag": "W/\"87a253bb-7e14-4ecd-a945-be1be733cc6d\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-db-subnet-nsg/defaultSecurityRules/AllowAzureLoadBalancerInBound",
+        "name": "AllowAzureLoadBalancerInBound",
+        "priority": 65001,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "AzureLoadBalancer",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Deny",
+        "description": "Deny all inbound traffic",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "etag": "W/\"87a253bb-7e14-4ecd-a945-be1be733cc6d\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-db-subnet-nsg/defaultSecurityRules/DenyAllInBound",
+        "name": "DenyAllInBound",
+        "priority": 65500,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Allow",
+        "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+        "destinationAddressPrefix": "VirtualNetwork",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Outbound",
+        "etag": "W/\"87a253bb-7e14-4ecd-a945-be1be733cc6d\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-db-subnet-nsg/defaultSecurityRules/AllowVnetOutBound",
+        "name": "AllowVnetOutBound",
+        "priority": 65000,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "VirtualNetwork",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Allow",
+        "description": "Allow outbound traffic from all VMs to Internet",
+        "destinationAddressPrefix": "Internet",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Outbound",
+        "etag": "W/\"87a253bb-7e14-4ecd-a945-be1be733cc6d\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-db-subnet-nsg/defaultSecurityRules/AllowInternetOutBound",
+        "name": "AllowInternetOutBound",
+        "priority": 65001,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Deny",
+        "description": "Deny all outbound traffic",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Outbound",
+        "etag": "W/\"87a253bb-7e14-4ecd-a945-be1be733cc6d\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-db-subnet-nsg/defaultSecurityRules/DenyAllOutBound",
+        "name": "DenyAllOutBound",
+        "priority": 65500,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      }
+    ],
+    "etag": "W/\"87a253bb-7e14-4ecd-a945-be1be733cc6d\"",
+    "flowLogs": null,
+    "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-db-subnet-nsg",
+    "location": "eastus",
+    "name": "ipm-vnet-db-subnet-nsg",
+    "networkInterfaces": null,
+    "provisioningState": "Succeeded",
+    "resourceGroup": "ipm-eastus",
+    "resourceGuid": "afdc5960-4c05-4324-9d24-4dbf6e59edd4",
+    "securityRules": [],
+    "subnets": null,
+    "tags": null,
+    "type": "Microsoft.Network/networkSecurityGroups"
+  }
+}
+{
+  "NewNSG": {
+    "defaultSecurityRules": [
+      {
+        "access": "Allow",
+        "description": "Allow inbound traffic from all VMs in VNET",
+        "destinationAddressPrefix": "VirtualNetwork",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "etag": "W/\"b528d1f9-09e1-48ae-bcbd-341c4bf30c62\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-dmz-subnet-nsg/defaultSecurityRules/AllowVnetInBound",
+        "name": "AllowVnetInBound",
+        "priority": 65000,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "VirtualNetwork",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Allow",
+        "description": "Allow inbound traffic from azure load balancer",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "etag": "W/\"b528d1f9-09e1-48ae-bcbd-341c4bf30c62\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-dmz-subnet-nsg/defaultSecurityRules/AllowAzureLoadBalancerInBound",
+        "name": "AllowAzureLoadBalancerInBound",
+        "priority": 65001,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "AzureLoadBalancer",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Deny",
+        "description": "Deny all inbound traffic",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "etag": "W/\"b528d1f9-09e1-48ae-bcbd-341c4bf30c62\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-dmz-subnet-nsg/defaultSecurityRules/DenyAllInBound",
+        "name": "DenyAllInBound",
+        "priority": 65500,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Allow",
+        "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+        "destinationAddressPrefix": "VirtualNetwork",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Outbound",
+        "etag": "W/\"b528d1f9-09e1-48ae-bcbd-341c4bf30c62\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-dmz-subnet-nsg/defaultSecurityRules/AllowVnetOutBound",
+        "name": "AllowVnetOutBound",
+        "priority": 65000,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "VirtualNetwork",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Allow",
+        "description": "Allow outbound traffic from all VMs to Internet",
+        "destinationAddressPrefix": "Internet",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Outbound",
+        "etag": "W/\"b528d1f9-09e1-48ae-bcbd-341c4bf30c62\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-dmz-subnet-nsg/defaultSecurityRules/AllowInternetOutBound",
+        "name": "AllowInternetOutBound",
+        "priority": 65001,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Deny",
+        "description": "Deny all outbound traffic",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Outbound",
+        "etag": "W/\"b528d1f9-09e1-48ae-bcbd-341c4bf30c62\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-dmz-subnet-nsg/defaultSecurityRules/DenyAllOutBound",
+        "name": "DenyAllOutBound",
+        "priority": 65500,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      }
+    ],
+    "etag": "W/\"b528d1f9-09e1-48ae-bcbd-341c4bf30c62\"",
+    "flowLogs": null,
+    "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-dmz-subnet-nsg",
+    "location": "eastus",
+    "name": "ipm-vnet-dmz-subnet-nsg",
+    "networkInterfaces": null,
+    "provisioningState": "Succeeded",
+    "resourceGroup": "ipm-eastus",
+    "resourceGuid": "aedba6af-8e52-4d88-a59f-9c994eeab570",
+    "securityRules": [],
+    "subnets": null,
+    "tags": null,
+    "type": "Microsoft.Network/networkSecurityGroups"
+  }
+}
+{
+  "NewNSG": {
+    "defaultSecurityRules": [
+      {
+        "access": "Allow",
+        "description": "Allow inbound traffic from all VMs in VNET",
+        "destinationAddressPrefix": "VirtualNetwork",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "etag": "W/\"1b6c973a-5754-49f1-a637-bf6288acb10e\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-trusted-subnet-nsg/defaultSecurityRules/AllowVnetInBound",
+        "name": "AllowVnetInBound",
+        "priority": 65000,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "VirtualNetwork",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Allow",
+        "description": "Allow inbound traffic from azure load balancer",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "etag": "W/\"1b6c973a-5754-49f1-a637-bf6288acb10e\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-trusted-subnet-nsg/defaultSecurityRules/AllowAzureLoadBalancerInBound",
+        "name": "AllowAzureLoadBalancerInBound",
+        "priority": 65001,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "AzureLoadBalancer",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Deny",
+        "description": "Deny all inbound traffic",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "etag": "W/\"1b6c973a-5754-49f1-a637-bf6288acb10e\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-trusted-subnet-nsg/defaultSecurityRules/DenyAllInBound",
+        "name": "DenyAllInBound",
+        "priority": 65500,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Allow",
+        "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+        "destinationAddressPrefix": "VirtualNetwork",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Outbound",
+        "etag": "W/\"1b6c973a-5754-49f1-a637-bf6288acb10e\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-trusted-subnet-nsg/defaultSecurityRules/AllowVnetOutBound",
+        "name": "AllowVnetOutBound",
+        "priority": 65000,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "VirtualNetwork",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Allow",
+        "description": "Allow outbound traffic from all VMs to Internet",
+        "destinationAddressPrefix": "Internet",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Outbound",
+        "etag": "W/\"1b6c973a-5754-49f1-a637-bf6288acb10e\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-trusted-subnet-nsg/defaultSecurityRules/AllowInternetOutBound",
+        "name": "AllowInternetOutBound",
+        "priority": 65001,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      },
+      {
+        "access": "Deny",
+        "description": "Deny all outbound traffic",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationApplicationSecurityGroups": null,
+        "destinationPortRange": "*",
+        "destinationPortRanges": [],
+        "direction": "Outbound",
+        "etag": "W/\"1b6c973a-5754-49f1-a637-bf6288acb10e\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-trusted-subnet-nsg/defaultSecurityRules/DenyAllOutBound",
+        "name": "DenyAllOutBound",
+        "priority": 65500,
+        "protocol": "*",
+        "provisioningState": "Succeeded",
+        "resourceGroup": "ipm-eastus",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourceApplicationSecurityGroups": null,
+        "sourcePortRange": "*",
+        "sourcePortRanges": [],
+        "type": "Microsoft.Network/networkSecurityGroups/defaultSecurityRules"
+      }
+    ],
+    "etag": "W/\"1b6c973a-5754-49f1-a637-bf6288acb10e\"",
+    "flowLogs": null,
+    "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-trusted-subnet-nsg",
+    "location": "eastus",
+    "name": "ipm-vnet-trusted-subnet-nsg",
+    "networkInterfaces": null,
+    "provisioningState": "Succeeded",
+    "resourceGroup": "ipm-eastus",
+    "resourceGuid": "eaf34267-aea0-49b8-b556-db612f38d399",
+    "securityRules": [],
+    "subnets": null,
+    "tags": null,
+    "type": "Microsoft.Network/networkSecurityGroups"
+  }
+}
+```
+
+#### 14.2 - Verify Network Security Groups
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/nsg?view=azure-cli-latest#az_network_nsg_show](https://docs.microsoft.com/en-us/cli/azure/network/nsg?view=azure-cli-latest#az_network_nsg_show)
+
+
+**_Command(s):_**
+
+```bash
+az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_AGW_NSG_NAME} --output table && echo
+az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_DB_NSG_NAME} --output table && echo
+az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_DMZ_NSG_NAME} --output table && echo
+az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_TRUSTED_NSG_NAME} --output table && echo
+```
+
+**_Example Output:_**
+
+```
+Location    Name                     ProvisioningState    ResourceGroup    ResourceGuid
+----------  -----------------------  -------------------  ---------------  ------------------------------------
+eastus      ipm-vnet-agw-subnet-nsg  Succeeded            ipm-eastus       c2d0ee75-979b-49b8-88a8-f922db86e3d6
+
+Location    Name                    ProvisioningState    ResourceGroup    ResourceGuid
+----------  ----------------------  -------------------  ---------------  ------------------------------------
+eastus      ipm-vnet-db-subnet-nsg  Succeeded            ipm-eastus       afdc5960-4c05-4324-9d24-4dbf6e59edd4
+
+Location    Name                     ProvisioningState    ResourceGroup    ResourceGuid
+----------  -----------------------  -------------------  ---------------  ------------------------------------
+eastus      ipm-vnet-dmz-subnet-nsg  Succeeded            ipm-eastus       aedba6af-8e52-4d88-a59f-9c994eeab570
+
+Location    Name                         ProvisioningState    ResourceGroup    ResourceGuid
+----------  ---------------------------  -------------------  ---------------  ------------------------------------
+eastus      ipm-vnet-trusted-subnet-nsg  Succeeded            ipm-eastus       eaf34267-aea0-49b8-b556-db612f38d399
+
+```
+### 15 - Network Security Group Rules
+
+Network Security Group (NSG) Rules are evaluated by priority using the 5-tuple information (source, source port, destination, destination port, and protocol) to allow or deny the traffic. A flow record is created for existing connections. Communication is allowed or denied based on the connection state of the flow record. The flow record allows an NSG to be stateful.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview](https://docs.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview)
+
+
+**_Command(s):_**
+
+```bash
+env | grep ARO.*NSG | egrep -ve 'MASTER|WORKER|VGW' | sort -V
+```
+
+**_Example Output:_**
+
+```
+ARO_SUBNET_AGW_NSG_NAME=ipm-vnet-agw-subnet-nsg
+ARO_SUBNET_DB_NSG_NAME=ipm-vnet-db-subnet-nsg
+ARO_SUBNET_DMZ_NSG_NAME=ipm-vnet-dmz-subnet-nsg
+ARO_SUBNET_TRUSTED_NSG_NAME=ipm-vnet-trusted-subnet-nsg
+```
+
+#### 15.1 - Create DMZ NSG Rule (AllowSSH)
+
+
+To be able to access the Jump Server (jumpbox) via the Internet, without a VPN setup, tcp port 22 must be opened for ssh.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/nsg/rule?view=azure-cli-latest#az_network_nsg_rule_show](https://docs.microsoft.com/en-us/cli/azure/network/nsg/rule?view=azure-cli-latest#az_network_nsg_rule_show)
+
+
+**_Command(s):_**
+
+```bash
+az network nsg rule create --resource-group ${ARO_RESOURCE_GROUP_NAME} --nsg-name ${ARO_SUBNET_DMZ_NSG_NAME} --name AllowSSH --protocol tcp --priority 1000 --destination-port-range 22 --access allow
+```
+
+**_Example Output:_**
+
+```
+{
+  "access": "Allow",
+  "description": null,
+  "destinationAddressPrefix": "*",
+  "destinationAddressPrefixes": [],
+  "destinationApplicationSecurityGroups": null,
+  "destinationPortRange": "22",
+  "destinationPortRanges": [],
+  "direction": "Inbound",
+  "etag": "W/\"87006231-62a7-4e2d-94b5-2ffe5a71cbaa\"",
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-dmz-subnet-nsg/securityRules/AllowSSH",
+  "name": "AllowSSH",
+  "priority": 1000,
+  "protocol": "Tcp",
+  "provisioningState": "Succeeded",
+  "resourceGroup": "ipm-eastus",
+  "sourceAddressPrefix": "*",
+  "sourceAddressPrefixes": [],
+  "sourceApplicationSecurityGroups": null,
+  "sourcePortRange": "*",
+  "sourcePortRanges": [],
+  "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+}
+```
+
+
+#### 15.2 - Verify DMZ NSG Rules
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/nsg/rule?view=azure-cli-latest#az_network_nsg_rule_show](https://docs.microsoft.com/en-us/cli/azure/network/nsg/rule?view=azure-cli-latest#az_network_nsg_rule_show)
+
+
+**_Command(s):_**
+
+```bash
+az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_DMZ_NSG_NAME} --query securityRules --output table
+```
+
+**_Example Output:_**
+
+```
+Protocol    SourcePortRange    DestinationPortRange    SourceAddressPrefix    DestinationAddressPrefix    Access    Priority    Direction    ProvisioningState    Name      ResourceGroup
+----------  -----------------  ----------------------  ---------------------  --------------------------  --------  ----------  -----------  -------------------  --------  ---------------
+Tcp         *                  22                      *                      *                           Allow     1000        Inbound      Succeeded            AllowSSH  ipm-eastus
+```
+
+### 16 - Related Subnets
+
+IBM Product Manager requires related subnets for supplementary virtual machines, to host applications such as DB2.  These subnets should be within the same resource group and VNet range previously defined.  The network numbers should be IPv4 RFC1918 compliant and prefixed.
+
+Using a virtual network (VNet) prefix /21, with the OpenShift master & worker subnet prefixed /23, then that will leave an additional four (4) /24 prefixes, or eight (8) /25 prefixes available.
+
+This document will use /25 prefixes for the related subnets, e.g.
+
+* 10.11.4.0/25 - Application Gateway Subnet
+* 10.11.4.128/25 - Database Subnet
+* 10.11.5.0/25 - DMZ Subnet
+* 10.11.5.128/25 - Trusted Subnet
+* 10.11.6.0/25 - VPN Gateway Subnet (GatewaySubnet)
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest)
+* [https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x](https://docs.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x)
+* [https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview)
+* [https://azure.microsoft.com/en-us/updates/azure-network-watcher-will-be-enabled-by-default-for-subscriptions-containing-virtual-networks/](https://azure.microsoft.com/en-us/updates/azure-network-watcher-will-be-enabled-by-default-for-subscriptions-containing-virtual-networks/)
+* [https://azure.microsoft.com/en-us/pricing/details/network-watcher/](https://azure.microsoft.com/en-us/pricing/details/network-watcher/)
+* [https://tools.ietf.org/html/rfc1918](https://tools.ietf.org/html/rfc1918)
+
+
+**_Command(s):_**
+
+```bash
+env | grep ^ARO_SUBNET | egrep -ve 'MASTER|WORKER|VGW' | sort -V
+```
+
+**_Example Output:_**
+
+```
+ARO_SUBNET_AGW_ADDRESS_PREFIX=10.11.4.0/25
+ARO_SUBNET_AGW_NAME=ipm-vnet-agw-subnet
+ARO_SUBNET_AGW_NSG_NAME=ipm-vnet-agw-subnet-nsg
+ARO_SUBNET_DB_ADDRESS_PREFIX=10.11.4.128/25
+ARO_SUBNET_DB_NAME=ipm-vnet-db-subnet
+ARO_SUBNET_DB_NSG_NAME=ipm-vnet-db-subnet-nsg
+ARO_SUBNET_DMZ_ADDRESS_PREFIX=10.11.5.0/25
+ARO_SUBNET_DMZ_NAME=ipm-vnet-dmz-subnet
+ARO_SUBNET_DMZ_NSG_NAME=ipm-vnet-dmz-subnet-nsg
+ARO_SUBNET_TRUSTED_ADDRESS_PREFIX=10.11.5.128/25
+ARO_SUBNET_TRUSTED_NAME=ipm-vnet-trusted-subnet
+ARO_SUBNET_TRUSTED_NSG_NAME=ipm-vnet-trusted-subnet-nsg
+```
+
+#### 16.1 - Create Application Gateway Subnet
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_create](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_create)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_AGW_NAME} --address-prefixes ${ARO_SUBNET_AGW_ADDRESS_PREFIX} --network-security-group=${ARO_SUBNET_AGW_NSG_NAME}
+```
+
+**_Example Output:_**
+
+```
+{
+  "addressPrefix": "10.11.4.0/25",
+  "addressPrefixes": null,
+  "delegations": [],
+  "etag": "W/\"aca8a7b3-b8f4-4868-a3e5-39086494c64e\"",
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/ipm-vnet-agw-subnet",
+  "ipAllocations": null,
+  "ipConfigurationProfiles": null,
+  "ipConfigurations": null,
+  "name": "ipm-vnet-agw-subnet",
+  "natGateway": null,
+  "networkSecurityGroup": {
+    "defaultSecurityRules": null,
+    "etag": null,
+    "flowLogs": null,
+    "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-agw-subnet-nsg",
+    "location": null,
+    "name": null,
+    "networkInterfaces": null,
+    "provisioningState": null,
+    "resourceGroup": "ipm-eastus",
+    "resourceGuid": null,
+    "securityRules": null,
+    "subnets": null,
+    "tags": null,
+    "type": null
+  },
+  "privateEndpointNetworkPolicies": "Enabled",
+  "privateEndpoints": null,
+  "privateLinkServiceNetworkPolicies": "Enabled",
+  "provisioningState": "Succeeded",
+  "purpose": null,
+  "resourceGroup": "ipm-eastus",
+  "resourceNavigationLinks": null,
+  "routeTable": null,
+  "serviceAssociationLinks": null,
+  "serviceEndpointPolicies": null,
+  "serviceEndpoints": null,
+  "type": "Microsoft.Network/virtualNetworks/subnets"
+}
+```
+
+
+#### 16.2 - Verify Application Gateway Subnet
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_show](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_show)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_AGW_NAME} --output table
+```
+
+**_Example Output:_**
+
+```
+AddressPrefix    Name                 PrivateEndpointNetworkPolicies    PrivateLinkServiceNetworkPolicies    ProvisioningState    ResourceGroup
+---------------  -------------------  --------------------------------  -----------------------------------  -------------------  ---------------
+10.11.4.0/25     ipm-vnet-agw-subnet  Enabled                           Enabled                              Succeeded            ipm-eastus
+```
+
+
+#### 16.3 - Create Database Subnet
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_create](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_create)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DB_NAME} --address-prefixes ${ARO_SUBNET_DB_ADDRESS_PREFIX} --network-security-group=${ARO_SUBNET_DB_NSG_NAME}
+```
+
+**_Example Output:_**
+
+```
+{
+  "addressPrefix": "10.11.4.128/25",
+  "addressPrefixes": null,
+  "delegations": [],
+  "etag": "W/\"e2d7b5fb-8c45-4bee-8ce8-02095cb523f4\"",
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/ipm-vnet-db-subnet",
+  "ipAllocations": null,
+  "ipConfigurationProfiles": null,
+  "ipConfigurations": null,
+  "name": "ipm-vnet-db-subnet",
+  "natGateway": null,
+  "networkSecurityGroup": {
+    "defaultSecurityRules": null,
+    "etag": null,
+    "flowLogs": null,
+    "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-db-subnet-nsg",
+    "location": null,
+    "name": null,
+    "networkInterfaces": null,
+    "provisioningState": null,
+    "resourceGroup": "ipm-eastus",
+    "resourceGuid": null,
+    "securityRules": null,
+    "subnets": null,
+    "tags": null,
+    "type": null
+  },
+  "privateEndpointNetworkPolicies": "Enabled",
+  "privateEndpoints": null,
+  "privateLinkServiceNetworkPolicies": "Enabled",
+  "provisioningState": "Succeeded",
+  "purpose": null,
+  "resourceGroup": "ipm-eastus",
+  "resourceNavigationLinks": null,
+  "routeTable": null,
+  "serviceAssociationLinks": null,
+  "serviceEndpointPolicies": null,
+  "serviceEndpoints": null,
+  "type": "Microsoft.Network/virtualNetworks/subnets"
+}
+```
+
+
+#### 16.4 - Verify Database Subnet
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_show](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_show)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DB_NAME} --output table
+```
+
+**_Example Output:_**
+
+```
+AddressPrefix    Name                PrivateEndpointNetworkPolicies    PrivateLinkServiceNetworkPolicies    ProvisioningState    ResourceGroup
+---------------  ------------------  --------------------------------  -----------------------------------  -------------------  ---------------
+10.11.4.128/25   ipm-vnet-db-subnet  Enabled                           Enabled                              Succeeded            ipm-eastus
+```
+
+
+#### 16.5 - Create DMZ Subnet
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_create](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_create)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DMZ_NAME} --address-prefixes ${ARO_SUBNET_DMZ_ADDRESS_PREFIX} --network-security-group=${ARO_SUBNET_DMZ_NSG_NAME}
+```
+
+**_Example Output:_**
+
+```
+{
+  "addressPrefix": "10.11.5.0/25",
+  "addressPrefixes": null,
+  "delegations": [],
+  "etag": "W/\"c49f4e1e-1dd6-423e-9572-725799b10a1e\"",
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/ipm-vnet-dmz-subnet",
+  "ipAllocations": null,
+  "ipConfigurationProfiles": null,
+  "ipConfigurations": null,
+  "name": "ipm-vnet-dmz-subnet",
+  "natGateway": null,
+  "networkSecurityGroup": {
+    "defaultSecurityRules": null,
+    "etag": null,
+    "flowLogs": null,
+    "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-dmz-subnet-nsg",
+    "location": null,
+    "name": null,
+    "networkInterfaces": null,
+    "provisioningState": null,
+    "resourceGroup": "ipm-eastus",
+    "resourceGuid": null,
+    "securityRules": null,
+    "subnets": null,
+    "tags": null,
+    "type": null
+  },
+  "privateEndpointNetworkPolicies": "Enabled",
+  "privateEndpoints": null,
+  "privateLinkServiceNetworkPolicies": "Enabled",
+  "provisioningState": "Succeeded",
+  "purpose": null,
+  "resourceGroup": "ipm-eastus",
+  "resourceNavigationLinks": null,
+  "routeTable": null,
+  "serviceAssociationLinks": null,
+  "serviceEndpointPolicies": null,
+  "serviceEndpoints": null,
+  "type": "Microsoft.Network/virtualNetworks/subnets"
+}
+```
+
+
+#### 16.6 - Verify DMZ Subnet
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_show](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_show)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DMZ_NAME} --output table
+```
+
+**_Example Output:_**
+
+```
+AddressPrefix    Name                 PrivateEndpointNetworkPolicies    PrivateLinkServiceNetworkPolicies    ProvisioningState    ResourceGroup
+---------------  -------------------  --------------------------------  -----------------------------------  -------------------  ---------------
+10.11.5.0/25     ipm-vnet-dmz-subnet  Enabled                           Enabled                              Succeeded            ipm-eastus
+```
+
+
+#### 16.7 - Create Trusted Subnet
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_create](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_create)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_TRUSTED_NAME} --address-prefixes ${ARO_SUBNET_TRUSTED_ADDRESS_PREFIX} --network-security-group ${ARO_SUBNET_TRUSTED_NSG_NAME}
+```
+
+**_Example Output:_**
+
+```json
+{
+  "addressPrefix": "10.11.5.128/25",
+  "addressPrefixes": null,
+  "delegations": [],
+  "etag": "W/\"3535fe99-45a4-4d10-a61b-729e9284690b\"",
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/ipm-vnet-trusted-subnet",
+  "ipAllocations": null,
+  "ipConfigurationProfiles": null,
+  "ipConfigurations": null,
+  "name": "ipm-vnet-trusted-subnet",
+  "natGateway": null,
+  "networkSecurityGroup": {
+    "defaultSecurityRules": null,
+    "etag": null,
+    "flowLogs": null,
+    "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-trusted-subnet-nsg",
+    "location": null,
+    "name": null,
+    "networkInterfaces": null,
+    "provisioningState": null,
+    "resourceGroup": "ipm-eastus",
+    "resourceGuid": null,
+    "securityRules": null,
+    "subnets": null,
+    "tags": null,
+    "type": null
+  },
+  "privateEndpointNetworkPolicies": "Enabled",
+  "privateEndpoints": null,
+  "privateLinkServiceNetworkPolicies": "Enabled",
+  "provisioningState": "Succeeded",
+  "purpose": null,
+  "resourceGroup": "ipm-eastus",
+  "resourceNavigationLinks": null,
+  "routeTable": null,
+  "serviceAssociationLinks": null,
+  "serviceEndpointPolicies": null,
+  "serviceEndpoints": null,
+  "type": "Microsoft.Network/virtualNetworks/subnets"
+}
+```
+
+#### 16.8 - Verify Trusted Subnet
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_show](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_show)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_TRUSTED_NAME} --output table
+```
+
+**_Example Output:_**
+
+```bash
+AddressPrefix    Name                     PrivateEndpointNetworkPolicies    PrivateLinkServiceNetworkPolicies    ProvisioningState    ResourceGroup
+---------------  -----------------------  --------------------------------  -----------------------------------  -------------------  ---------------
+10.11.5.128/25   ipm-vnet-trusted-subnet  Enabled                           Enabled                              Succeeded            ipm-eastus
+```
+### 17 - Jump Server Virtual Machine
+
+A jump server, jump host, or jump box is a system on a network used to access and manage devices in a separate security zone. A jump server is a hardened and monitored device that spans two dissimilar security zones and provides a controlled means of access between them. The most common example of a jump server is a host in a DMZ.
+
+All hosts within the DMZ may be prevented from connecting to the internal network by the Network Security Group (firewall) that separates them, unless the Network Security Group (firewall) permits the connection.
+
+In the following steps, the jump server (jumpbox) will be put on the DMZ subnet, with tcp port 22 opened from the Internet. It will be allowed to communicate with the other internal subnets.  The NSGs may be further tune to allow specific access, as it will be done for the ARO master subnet when ARO is installed.
+
+The jumpbox should be created prior to the VPN Gateway, so that there is at least one machine available for connectivity testing from two different security zones: Public (Internet) and Private (RFC1918).
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/azure/virtual-machines/linux/create-cli-complete](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/create-cli-complete)
+* [https://en.wikipedia.org/wiki/Jump_server](https://en.wikipedia.org/wiki/Jump_server)
+* [https://en.wikipedia.org/wiki/DMZ](https://en.wikipedia.org/wiki/DMZ)
+
+
+**_Command(s):_**
+
+```bash
+env | egrep ARO.*JUMP | sort -V
+```
+
+**_Example Output:_**
+
+```bash
+ARO_VM_JUMP_ADMIN_NAME=ipm-vm-jumpbox-admin
+ARO_VM_JUMP_IMAGE_MARKETPLACE=true
+ARO_VM_JUMP_IMAGE_URN=cognosys:docker-ce-with-centos-8-0-free:docker-ce-with-centos-8-0-free:1.2019.0710
+ARO_VM_JUMP_NAME=ipm-vm-jumpbox
+ARO_VM_JUMP_PUBLIC_ADDRESS_NAME=ipm-vm-jumpbox-public-ip
+ARO_VM_JUMP_SIZE=Standard_B1ms
+```
+
+#### 17.1 - Create Jump Server Public IP Address
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az-network-public-ip-create](https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az-network-public-ip-create)
+
+
+**_Command(s):_**
+
+```bash
+az network public-ip create --name ${ARO_VM_JUMP_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --sku "Basic" --allocation-method "Dynamic"
+```
+
+**_Example Output:_**
+
+```json
+{
+  "publicIp": {
+    "ddosSettings": null,
+    "dnsSettings": null,
+    "etag": "W/\"76562ae0-29b7-4f20-97b8-2ffd3a53f2ac\"",
+    "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/publicIPAddresses/ipm-vm-jumpbox-public-ip",
+    "idleTimeoutInMinutes": 4,
+    "ipAddress": null,
+    "ipConfiguration": null,
+    "ipTags": [],
+    "location": "eastus",
+    "name": "ipm-vm-jumpbox-public-ip",
+    "provisioningState": "Succeeded",
+    "publicIpAddressVersion": "IPv4",
+    "publicIpAllocationMethod": "Dynamic",
+    "publicIpPrefix": null,
+    "resourceGroup": "ipm-eastus",
+    "resourceGuid": "ab73bda0-9dcf-4aa0-a96b-ca2306dd2e00",
+    "sku": {
+      "name": "Basic"
+    },
+    "tags": null,
+    "type": "Microsoft.Network/publicIPAddresses",
+    "zones": null
+  }
+}
+```
+
+#### 17.2 - Verify Jump Server Public IP Address
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az_network_public_ip_show](https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az_network_public_ip_show)
+
+
+**_Command(s):_**
+
+```bash
+az network public-ip show --name ${ARO_VM_JUMP_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --query ipAddress --output tsv
+az network public-ip show --name ${ARO_VM_JUMP_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME}
+```
+
+**_Example Output:_**
+
+```bash
+```
+```json
+{
+  "ddosSettings": null,
+  "dnsSettings": null,
+  "etag": "W/\"76562ae0-29b7-4f20-97b8-2ffd3a53f2ac\"",
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/publicIPAddresses/ipm-vm-jumpbox-public-ip",
+  "idleTimeoutInMinutes": 4,
+  "ipAddress": null,
+  "ipConfiguration": null,
+  "ipTags": [],
+  "location": "eastus",
+  "name": "ipm-vm-jumpbox-public-ip",
+  "provisioningState": "Succeeded",
+  "publicIpAddressVersion": "IPv4",
+  "publicIpAllocationMethod": "Dynamic",
+  "publicIpPrefix": null,
+  "resourceGroup": "ipm-eastus",
+  "resourceGuid": "ab73bda0-9dcf-4aa0-a96b-ca2306dd2e00",
+  "sku": {
+    "name": "Basic"
+  },
+  "tags": null,
+  "type": "Microsoft.Network/publicIPAddresses",
+  "zones": null
+}
+```
+
+#### 17.3 - Create Jump Server Virtual NIC
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/nic?view=azure-cli-latest#az_network_nic_create](https://docs.microsoft.com/en-us/cli/azure/network/nic?view=azure-cli-latest#az_network_nic_create)
+
+
+**_Command(s):_**
+
+```bash
+az network nic create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}-nic --vnet-name ${ARO_VNET_NAME} --subnet ${ARO_SUBNET_DMZ_NAME} --public-ip-address ${ARO_VM_JUMP_PUBLIC_ADDRESS_NAME} --network-security-group ${ARO_SUBNET_DMZ_NSG_NAME}
+```
+
+**_Example Output:_**
+
+```json
+{
+  "NewNIC": {
+    "dnsSettings": {
+      "appliedDnsServers": [],
+      "dnsServers": [],
+      "internalDnsNameLabel": null,
+      "internalDomainNameSuffix": "vvown2s0fyeutoasubbkbaspbe.bx.internal.cloudapp.net",
+      "internalFqdn": null
+    },
+    "dscpConfiguration": null,
+    "enableAcceleratedNetworking": false,
+    "enableIpForwarding": false,
+    "etag": "W/\"f988e643-ffdf-4322-9ebd-ad4fe98fedcd\"",
+    "hostedWorkloads": [],
+    "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkInterfaces/ipm-vm-jumpbox-nic",
+    "ipConfigurations": [
+      {
+        "applicationGatewayBackendAddressPools": null,
+        "applicationSecurityGroups": null,
+        "etag": "W/\"f988e643-ffdf-4322-9ebd-ad4fe98fedcd\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkInterfaces/ipm-vm-jumpbox-nic/ipConfigurations/ipconfig1",
+        "loadBalancerBackendAddressPools": null,
+        "loadBalancerInboundNatRules": null,
+        "name": "ipconfig1",
+        "primary": true,
+        "privateIpAddress": "10.11.5.4",
+        "privateIpAddressVersion": "IPv4",
+        "privateIpAllocationMethod": "Dynamic",
+        "privateLinkConnectionProperties": null,
+        "provisioningState": "Succeeded",
+        "publicIpAddress": {
+          "ddosSettings": null,
+          "dnsSettings": null,
+          "etag": null,
+          "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/publicIPAddresses/ipm-vm-jumpbox-public-ip",
+          "idleTimeoutInMinutes": null,
+          "ipAddress": null,
+          "ipConfiguration": null,
+          "ipTags": null,
+          "location": null,
+          "name": null,
+          "provisioningState": null,
+          "publicIpAddressVersion": null,
+          "publicIpAllocationMethod": null,
+          "publicIpPrefix": null,
+          "resourceGroup": "ipm-eastus",
+          "resourceGuid": null,
+          "sku": null,
+          "tags": null,
+          "type": null,
+          "zones": null
+        },
+        "resourceGroup": "ipm-eastus",
+        "subnet": {
+          "addressPrefix": null,
+          "addressPrefixes": null,
+          "delegations": null,
+          "etag": null,
+          "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/ipm-vnet-dmz-subnet",
+          "ipAllocations": null,
+          "ipConfigurationProfiles": null,
+          "ipConfigurations": null,
+          "name": null,
+          "natGateway": null,
+          "networkSecurityGroup": null,
+          "privateEndpointNetworkPolicies": null,
+          "privateEndpoints": null,
+          "privateLinkServiceNetworkPolicies": null,
+          "provisioningState": null,
+          "purpose": null,
+          "resourceGroup": "ipm-eastus",
+          "resourceNavigationLinks": null,
+          "routeTable": null,
+          "serviceAssociationLinks": null,
+          "serviceEndpointPolicies": null,
+          "serviceEndpoints": null
+        },
+        "type": "Microsoft.Network/networkInterfaces/ipConfigurations",
+        "virtualNetworkTaps": null
+      }
+    ],
+    "location": "eastus",
+    "macAddress": null,
+    "name": "ipm-vm-jumpbox-nic",
+    "networkSecurityGroup": {
+      "defaultSecurityRules": null,
+      "etag": null,
+      "flowLogs": null,
+      "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkSecurityGroups/ipm-vnet-dmz-subnet-nsg",
+      "location": null,
+      "name": null,
+      "networkInterfaces": null,
+      "provisioningState": null,
+      "resourceGroup": "ipm-eastus",
+      "resourceGuid": null,
+      "securityRules": null,
+      "subnets": null,
+      "tags": null,
+      "type": null
+    },
+    "primary": null,
+    "privateEndpoint": null,
+    "provisioningState": "Succeeded",
+    "resourceGroup": "ipm-eastus",
+    "resourceGuid": "259c2e9b-73de-4fed-a358-75c682324606",
+    "tags": null,
+    "tapConfigurations": [],
+    "type": "Microsoft.Network/networkInterfaces",
+    "virtualMachine": null
+  }
+}
+```
+
+#### 17.4 - Verify Jump Server Virtual NIC
+
+
+A network interface enables an Azure Virtual Machine to communicate with internet, Azure, and on-premises resources.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/nic?view=azure-cli-latest#az_network_nic_show](https://docs.microsoft.com/en-us/cli/azure/network/nic?view=azure-cli-latest#az_network_nic_show)
+* [https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-network-interface](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-network-interface)
+
+
+**_Command(s):_**
+
+```bash
+az network nic show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}-nic --output table
+```
+
+**_Example Output:_**
+
+```bash
+EnableAcceleratedNetworking    EnableIpForwarding    Location    Name                ProvisioningState    ResourceGroup    ResourceGuid
+-----------------------------  --------------------  ----------  ------------------  -------------------  ---------------  ------------------------------------
+False                          False                 eastus      ipm-vm-jumpbox-nic  Succeeded            ipm-eastus       259c2e9b-73de-4fed-a358-75c682324606
+```
+
+#### 17.5 - Create Jump Server Availability Set
+
+
+Availability sets help spread VMs across fault domains and update domains. It's best practice to use availability sets to make it easier to expand in the future.
+
+Fault domains define a grouping of virtual machines that share a common power source and network switch. By default, the virtual machines that are configured within the availability set are separated across up to three fault domains. A hardware issue in one of these fault domains does not affect the VM.
+
+Update domains indicate groups of virtual machines and underlying physical hardware that can be rebooted at the same time. During planned maintenance, the order in which update domains are rebooted might not be sequential, but only one update domain is rebooted at a time.
+
+Azure automatically distributes VMs across the fault and update domains when placing them in an availability set. For more information, see managing the availability of VMs.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/vm/availability-set?view=azure-cli-latest#az_vm_availability_set_create](https://docs.microsoft.com/en-us/cli/azure/vm/availability-set?view=azure-cli-latest#az_vm_availability_set_create)
+* [https://docs.microsoft.com/en-us/azure/virtual-machines/linux/manage-availability](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/manage-availability)
+
+
+**_Command(s):_**
+
+```bash
+az vm availability-set create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}-as
+```
+
+**_Example Output:_**
+
+```json
+{
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Compute/availabilitySets/ipm-vm-jumpbox-as",
+  "location": "eastus",
+  "name": "ipm-vm-jumpbox-as",
+  "platformFaultDomainCount": 2,
+  "platformUpdateDomainCount": 5,
+  "proximityPlacementGroup": null,
+  "resourceGroup": "ipm-eastus",
+  "sku": {
+    "capacity": null,
+    "name": "Aligned",
+    "tier": null
+  },
+  "statuses": null,
+  "tags": {},
+  "type": "Microsoft.Compute/availabilitySets",
+  "virtualMachines": []
+}
+```
+
+#### 17.6 - Verify Jump Server Availability Set
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/vm/availability-set?view=azure-cli-latest#az_vm_availability_set_show](https://docs.microsoft.com/en-us/cli/azure/vm/availability-set?view=azure-cli-latest#az_vm_availability_set_show)
+
+
+**_Command(s):_**
+
+```bash
+az vm availability-set show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}-as --output table
+```
+
+**_Example Output:_**
+
+```bash
+Location    Name               PlatformFaultDomainCount    PlatformUpdateDomainCount    ResourceGroup
+----------  -----------------  --------------------------  ---------------------------  ---------------
+eastus      ipm-vm-jumpbox-as  2                           5                            ipm-eastus
+```
+
+#### 17.7 - Accept Jump Server Image Terms
+
+
+Some VM images in the Azure Marketplace have additional license and purchase terms that you must accept before you can deploy them programmatically.
+
+To deploy a VM from such an image, you'll need to both accept the image's terms and enable programmatic deployment. You'll only need to do this once per subscription. Afterward, each time you deploy a VM programmatically from the image you'll also need to specify purchase plan parameters.
+
+For Azure Marketplace images, the terms must be accepted.
+
+We chose a free marketplace image for this documentation, so the image terms must be accepted.
+
+The image URN is:
+
+* cognosys:docker-ce-with-centos-8-0-free:docker-ce-with-centos-8-0-free:1.2019.0710
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/vm/image/terms?view=azure-cli-latest#az_vm_image_terms_accept](https://docs.microsoft.com/en-us/cli/azure/vm/image/terms?view=azure-cli-latest#az_vm_image_terms_accept)
+* [https://docs.microsoft.com/en-us/azure/virtual-machines/windows/cli-ps-findimage](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/cli-ps-findimage)
+
+
+**_Command(s):_**
+
+```bash
+az vm image terms accept --urn ${ARO_VM_JUMP_IMAGE_URN}
+```
+
+**_Example Output:_**
+
+```json
+{
+  "accepted": true,
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.MarketplaceOrdering/offerTypes/Microsoft.MarketplaceOrdering/offertypes/publishers/cognosys/offers/docker-ce-with-centos-8-0-free/plans/docker-ce-with-centos-8-0-free/agreements/current",
+  "licenseTextLink": "https://storelegalterms.blob.core.windows.net/legalterms/3E5ED_legalterms_COGNOSYS%253a24DOCKER%253a2DCE%253a2DWITH%253a2DCENTOS%253a2D8%253a2D0%253a2DFREE%253a24DOCKER%253a2DCE%253a2DWITH%253a2DCENTOS%253a2D8%253a2D0%253a2DFREE%253a24T622IBUBKL6J3MHL5NUAWG2XNZ5H5FVSJGLCOC54LB63AGIONYH5CDZVDEYDONEFK2NHKCZROAP7ZU5PLZHXJ5ZNBFEUCBOWWMC4DSY.txt",
+  "name": "docker-ce-with-centos-8-0-free",
+  "plan": "docker-ce-with-centos-8-0-free",
+  "privacyPolicyLink": "http://www.cogno-sys.com/cognosys-technologies-partners/privacy-policy/",
+  "product": "docker-ce-with-centos-8-0-free",
+  "publisher": "cognosys",
+  "retrieveDatetime": "2020-09-24T01:07:02.4105145Z",
+  "signature": "M4EY3YVNRI2P7B64TGO4THFR375SAMBJT3AFEWAQY7EFZMHLQ43CZ3MHKMVF7DPHY3PODVCGFYJKHOPB6M2WTSCDSZZ2VN3USNK4KYA",
+  "type": "Microsoft.MarketplaceOrdering/offertypes"
+}
+```
+
+#### 17.8 - Verify Jump Server Image Terms
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/vm/image/terms?view=azure-cli-latest#az_vm_image_terms_show](https://docs.microsoft.com/en-us/cli/azure/vm/image/terms?view=azure-cli-latest#az_vm_image_terms_show)
+* [https://azuremarketplace.microsoft.com/en-us/marketplace/apps/cognosys.docker-ce-with-centos-8-0-free?tab=Overview](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/cognosys.docker-ce-with-centos-8-0-free?tab=Overview)
+
+
+**_Command(s):_**
+
+```bash
+az vm image terms show --urn ${ARO_VM_JUMP_IMAGE_URN} --query '[{accepted:accepted, name:name, plan:plan, product:product, publisher:publisher, type:type}]' --output table
+```
+
+**_Example Output:_**
+
+```bash
+Accepted    Name                            Plan                            Product                         Publisher
+----------  ------------------------------  ------------------------------  ------------------------------  -----------
+True        docker-ce-with-centos-8-0-free  docker-ce-with-centos-8-0-free  docker-ce-with-centos-8-0-free  cognosys
+```
+
+#### 17.9 - Create Jump Server Virtual Machine
+
+
+An Azure Virtual Machines (VM) is one of several types of on-demand, scalable computing resources that Azure offers.  An Azure VM gives you the flexibility of virtualization without having to buy and maintain the physical hardware that runs it. However, you still need to maintain the VM by performing tasks, such as configuring, patching, and installing the software that runs on it.
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest#az_vm_create](https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest#az_vm_create)
+* [https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm)
+* [https://docs.microsoft.com/en-us/azure/virtual-machines/linux/](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/)
+
+
+**_Command(s):_**
+
+```bash
+az vm create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME} --location ${ARO_LOCATION_NAME} --availability-set ${ARO_VM_JUMP_NAME}-as --nics ${ARO_VM_JUMP_NAME}-nic --image ${ARO_VM_JUMP_IMAGE_URN} --admin-username ${ARO_VM_JUMP_ADMIN_NAME} --size ${ARO_VM_JUMP_SIZE} --generate-ssh-keys
+```
+
+**_Example Output:_**
+
+```json
+{
+  "fqdns": "",
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Compute/virtualMachines/ipm-vm-jumpbox",
+  "location": "eastus",
+  "macAddress": "00-0D-3A-8B-F2-B2",
+  "powerState": "VM running",
+  "privateIpAddress": "10.11.5.4",
+  "publicIpAddress": "52.188.23.229",
+  "resourceGroup": "ipm-eastus",
+  "zones": ""
+}
+```
+
+#### 17.10 - Verify Jump Server Virtual Machine
+
+
+**_Reference(s):_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest#az_vm_show](https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest#az_vm_show)
+
+
+**_Command(s):_**
+
+```bash
+az vm show -d -g ${ARO_RESOURCE_GROUP_NAME} -n ${ARO_VM_JUMP_NAME} --query publicIps -o tsv
+az vm show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}
+```
+
+**_Example Output:_**
+
+```bash
+52.188.23.229
+```
+```json
+{
+  "additionalCapabilities": null,
+  "availabilitySet": {
+    "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Compute/availabilitySets/IPM-VM-JUMPBOX-AS",
+    "resourceGroup": "ipm-eastus"
+  },
+  "billingProfile": null,
+  "diagnosticsProfile": null,
+  "evictionPolicy": null,
+  "extensionsTimeBudget": null,
+  "hardwareProfile": {
+    "vmSize": "Standard_B1ms"
+  },
+  "host": null,
+  "hostGroup": null,
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Compute/virtualMachines/ipm-vm-jumpbox",
+  "identity": null,
+  "instanceView": null,
+  "licenseType": null,
+  "location": "eastus",
+  "name": "ipm-vm-jumpbox",
+  "networkProfile": {
+    "networkInterfaces": [
+      {
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/networkInterfaces/ipm-vm-jumpbox-nic",
+        "primary": true,
+        "resourceGroup": "ipm-eastus"
+      }
+    ]
+  },
+  "osProfile": {
+    "adminPassword": null,
+    "adminUsername": "ipm-vm-jumpbox-admin",
+    "allowExtensionOperations": true,
+    "computerName": "ipm-vm-jumpbox",
+    "customData": null,
+    "linuxConfiguration": {
+      "disablePasswordAuthentication": true,
+      "patchSettings": {
+        "patchMode": "ImageDefault"
+      },
+      "provisionVmAgent": true,
+      "ssh": {
+        "publicKeys": [
+          {
+            "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDec9G5K26hxFj+Ha0gQChwhSW4fT6mlZrb0066h+moGMJKMJ2YiHMaNMUULFT8SkJch4KYjQfqgJE8YnSGRHPzmUWwF/v7AwcozIlwralduUdYNIScDnzaFCBa55pLQwCWIN7zXFCdtEG935XwaV+A+tOgokiGvGXMAUj/Dz0A5ClIhbD/i3dr2AFKuuSwMGpFc1EqZDh72ZsYTcDaZT5hhPPUCUyTqOfEJuWQYeE3DAuA1EoI2tmBQWNl2S1jtdHa/69BBAmA6t0MZXuMKpk0udzQjw/d6b64hKYHDDlfxaTEBnt1Vbd8Rv5bxJSI1y2QgCutRZwVa/dt1X71fwpAq4yr0H8JCrabKrIumgqyZ6VQyCTVu3AXZ3E/yMQmJhLK2RvPHrHp8DedZ3su62zvU9aUACyd6b89R6S4eYOmIE+nNG/M/yqS2Ru3GPUalsQXE5/auCsg6rPetxMNoEbZz5qTfJUfq3Xx61WQuLrAsyvEiIiM5rrgA/FhYbthxKKacYr0b6oi6HQW6KQ3JnPMm/QF2UxDxoNOG+NHi2UBfgiXLEHZQ3YnkS4QkB9aCK4YJyOJ5I/34gAGcUIPQ8nkUSky7btjsQlHNB6pHPI+8Xd2SntRmfgBwJwOUS+LqjK4OCCpkqUTSopXQ8vL8L/e2gw+8QIdTYe47/P0IG5zVQ== jtingiris@jt\n",
+            "path": "/home/ipm-vm-jumpbox-admin/.ssh/authorized_keys"
+          }
+        ]
+      }
+    },
+    "requireGuestProvisionSignal": true,
+    "secrets": [],
+    "windowsConfiguration": null
+  },
+  "plan": {
+    "name": "docker-ce-with-centos-8-0-free",
+    "product": "docker-ce-with-centos-8-0-free",
+    "promotionCode": null,
+    "publisher": "cognosys"
+  },
+  "priority": null,
+  "provisioningState": "Succeeded",
+  "proximityPlacementGroup": null,
+  "resourceGroup": "ipm-eastus",
+  "resources": null,
+  "securityProfile": null,
+  "storageProfile": {
+    "dataDisks": [],
+    "imageReference": {
+      "exactVersion": "1.2019.0710",
+      "id": null,
+      "offer": "docker-ce-with-centos-8-0-free",
+      "publisher": "cognosys",
+      "sku": "docker-ce-with-centos-8-0-free",
+      "version": "1.2019.0710"
+    },
+    "osDisk": {
+      "caching": "ReadWrite",
+      "createOption": "FromImage",
+      "diffDiskSettings": null,
+      "diskSizeGb": 30,
+      "encryptionSettings": null,
+      "image": null,
+      "managedDisk": {
+        "diskEncryptionSet": null,
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/IPM-EASTUS/providers/Microsoft.Compute/disks/ipm-vm-jumpbox_OsDisk_1_53c3d107c90c4456b12a5f842caa2161",
+        "resourceGroup": "IPM-EASTUS",
+        "storageAccountType": "Premium_LRS"
+      },
+      "name": "ipm-vm-jumpbox_OsDisk_1_53c3d107c90c4456b12a5f842caa2161",
+      "osType": "Linux",
+      "vhd": null,
+      "writeAcceleratorEnabled": null
+    }
+  },
+  "tags": {},
+  "type": "Microsoft.Compute/virtualMachines",
+  "virtualMachineScaleSet": null,
+  "vmId": "ae6064cc-f42b-4662-9176-3bd7a3b18757",
+  "zones": null
+}
+```
+
+#### 17.11 - Login to Jump Server Virtual Machine
+
+
+**_Reference(s):_**
+
+* [https://man7.org/linux/man-pages/man1/ssh.1.html](https://man7.org/linux/man-pages/man1/ssh.1.html)
+
+
+**_Command(s):_**
+
+```bash
+export ARO_VM_JUMP_IP=$(az vm show -d -g ${ARO_RESOURCE_GROUP_NAME} -n ${ARO_VM_JUMP_NAME} --query publicIps -o tsv)
+echo "${ARO_VM_JUMP_IP}"
+ssh -i ~/.ssh/id_rsa.pub ${ARO_VM_JUMP_ADMIN_NAME}@${ARO_VM_JUMP_IP} "hostname && uptime"
+```
+
+**_Example Output:_**
+
+```bash
+52.188.23.229
+ipm-vm-jumpbox
+ 01:09:13 up 1 min,  0 users,  load average: 1.56, 0.53, 0.19
+```
+### 18 - VPN Gateway
+
+A VPN gateway is a specific type of virtual network gateway that is used to send encrypted traffic between an Azure virtual network and a remote location, over the public Internet.
+
+This document will focus on creating the newer, Resrouce Manager deployment model with Azure certificate authentication.
+
+**_References:_**
+
+* [https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpngateways](https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpngateways)
+* [https://docs.microsoft.com/en-us/azure/vpn-gateway/point-to-site-about](https://docs.microsoft.com/en-us/azure/vpn-gateway/point-to-site-about)
+* [https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-point-to-site-resource-manager-portal](https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-point-to-site-resource-manager-portal)
+* [https://docs.microsoft.com/en-us/azure/vpn-gateway/create-routebased-vpn-gateway-cli](https://docs.microsoft.com/en-us/azure/vpn-gateway/create-routebased-vpn-gateway-cli)
+
+
+#### 18.1 - Create VPN Gateway Subnet
+
+
+**_References:_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az-network-vnet-subnet-create](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az-network-vnet-subnet-create)
+* [https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpn-gateway-settings#gwsub](https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpn-gateway-settings#gwsub)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_VGW_NAME} --address-prefixes ${ARO_SUBNET_VGW_ADDRESS_PREFIX}
+```
+
+**_Example Output:_**
+
+```
+{
+  "addressPrefix": "10.11.6.0/25",
+  "addressPrefixes": null,
+  "delegations": [],
+  "etag": "W/\"1f425eef-efa5-4ab0-b60f-196062082dca\"",
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/GatewaySubnet",
+  "ipAllocations": null,
+  "ipConfigurationProfiles": null,
+  "ipConfigurations": null,
+  "name": "GatewaySubnet",
+  "natGateway": null,
+  "networkSecurityGroup": null,
+  "privateEndpointNetworkPolicies": "Enabled",
+  "privateEndpoints": null,
+  "privateLinkServiceNetworkPolicies": "Enabled",
+  "provisioningState": "Succeeded",
+  "purpose": null,
+  "resourceGroup": "ipm-eastus",
+  "resourceNavigationLinks": null,
+  "routeTable": null,
+  "serviceAssociationLinks": null,
+  "serviceEndpointPolicies": null,
+  "serviceEndpoints": null,
+  "type": "Microsoft.Network/virtualNetworks/subnets"
+}
+```
+
+
+#### 18.2 - Verify VPN Gateway Subnet
+
+
+**_References:_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az-network-vnet-subnet-show](https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az-network-vnet-subnet-show)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_VGW_NAME} --output table
+```
+
+**_Example Output:_**
+
+```
+AddressPrefix    Name           PrivateEndpointNetworkPolicies    PrivateLinkServiceNetworkPolicies    ProvisioningState    ResourceGroup
+---------------  -------------  --------------------------------  -----------------------------------  -------------------  ---------------
+10.11.6.0/25     GatewaySubnet  Enabled                           Enabled                              Succeeded            ipm-eastus
+```
+
+
+#### 18.3 - Create VPN Gateway Public IP Address
+
+
+The VPN Gateway requires a Public IP Address.
+
+Zone-redundant VPN gateways and zonal gateways both rely on the Azure public IP resource Standard SKU. The configuration of the Azure public IP resource determines whether the gateway that you deploy is zone-redundant, or zonal. If you create a public IP resource with a Basic SKU, the gateway will not have any zone redundancy, and the gateway resources will be regional.
+
+**_References:_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az-network-public-ip-create](https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az-network-public-ip-create)
+* [https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-point-to-site-resource-manager-portal](https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-point-to-site-resource-manager-portal)
+* [https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-addresses](https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-addresses)
+
+**_Commands:_**
+
+* Basic (Not Redundant)
+
+```
+az network public-ip create --name ${ARO_VGW_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --sku "Basic" --allocation-method "Dynamic"
+```
+
+* Standard (Redundant)
+
+```
+az network public-ip create --name ${ARO_VGW_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --sku "Standard" --allocation-method "Static" --zone 1
+```
+
+```
+{
+  "publicIp": {
+    "ddosSettings": null,
+    "dnsSettings": null,
+    "etag": "W/\"51eb511f-a8d7-46c5-b49e-9a1fd8fbc665\"",
+    "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/publicIPAddresses/ipm-vpn-public-ip",
+    "idleTimeoutInMinutes": 4,
+    "ipAddress": "20.55.17.173",
+    "ipConfiguration": null,
+    "ipTags": [],
+    "location": "eastus",
+    "name": "ipm-vpn-public-ip",
+    "provisioningState": "Succeeded",
+    "publicIpAddressVersion": "IPv4",
+    "publicIpAllocationMethod": "Static",
+    "publicIpPrefix": null,
+    "resourceGroup": "ipm-eastus",
+    "resourceGuid": "d24f7792-dd45-4d76-b198-6d2de77c8136",
+    "sku": {
+      "name": "Standard"
+    },
+    "tags": null,
+    "type": "Microsoft.Network/publicIPAddresses",
+    "zones": [
+      "1"
+    ]
+  }
+}
+```
+
+
+#### 18.4 - Verify VPN Gateway Public IP Address
+
+
+**_References:_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az_network_public_ip_show](https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az_network_public_ip_show)
+
+
+**_Command(s):_**
+
+```bash
+az network public-ip show --name ${ARO_VGW_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --output table
+```
+
+**_Example Output:_**
+
+```
+Name               ResourceGroup    Location    Zones    Address       AddressVersion    AllocationMethod    IdleTimeoutInMinutes    ProvisioningState
+-----------------  ---------------  ----------  -------  ------------  ----------------  ------------------  ----------------------  -------------------
+ipm-vpn-public-ip  ipm-eastus       eastus      1        20.55.17.173  IPv4              Static              4                       Succeeded
+```
+
+
+#### 18.5 - Create VPN Gateway
+
+
+There are two types of Azure VPN Gateways, the Classic and Resource Manager deployment models.
+
+Each virtual network can have only one VPN gateway.
+
+Creating a virtual network gateway can take up to 45 minutes to complete.
+
+**_References:_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet-gateway?view=azure-cli-latest#az_network_vnet_gateway_create](https://docs.microsoft.com/en-us/cli/azure/network/vnet-gateway?view=azure-cli-latest#az_network_vnet_gateway_create)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet-gateway create --name ${ARO_VGW_NAME} --location ${ARO_LOCATION_NAME} --public-ip-address ${ARO_VGW_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet ${ARO_VNET_NAME} --gateway-type VPN --sku ${ARO_VGW_SKU} --vpn-type ${ARO_VGW_TYPE} --address-prefixes ${ARO_VGW_POOL_ADDRESS_PREFIX} --no-wait
+```
+
+**_Example Output:_**
+
+```diff
++ success does not produce any output
+```
+
+#### 18.6 - Verify VPN Gateway
+
+
+**_References:_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet-gateway?view=azure-cli-latest#az_network_vnet_gateway_show](https://docs.microsoft.com/en-us/cli/azure/network/vnet-gateway?view=azure-cli-latest#az_network_vnet_gateway_show)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet-gateway show --name ${ARO_VGW_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --output table
+```
+
+**_Example Output:_**
+
+```
+ActiveActive    EnableBgp    EnablePrivateIpAddress    GatewayType    Location    Name     ProvisioningState    ResourceGroup    ResourceGuid                          VpnGatewayGeneration    VpnType
+--------------  -----------  ------------------------  -------------  ----------  -------  -------------------  ---------------  ------------------------------------  ----------------------  ----------
+False           False        False                     Vpn            eastus      ipm-vpn  Updating             ipm-eastus       44ee10a6-15cd-4d30-bcc9-b528e4d23702  Generation1             RouteBased
+```
+
+### 19 - VPN Gateway Certificate Authentication
+
+When using the native VPN Gateway Azure Certificate Authentication, a client certificate is used to authenticate the connecting user. Client certificates are generated from a trusted Root Certificate and then installed on each client computer.
+
+The validation of the Client Certificate is performed by the VPN Gateway and happens during establishment of the point-to-site (P2S) VPN connection.
+
+**_References:_**
+
+* [https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-point-to-site-resource-manager-portal](https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-point-to-site-resource-manager-portal)
+
+#### 19.1 - Create VPN Gateway Root Key
+
+
+**_References:_**
+
+* [https://www.openssl.org/docs/man1.1.1/man1/openssl-genrsa.html](https://www.openssl.org/docs/man1.1.1/man1/openssl-genrsa.html)
+
+
+**_Command(s):_**
+
+```bash
+openssl genrsa -aes256 -out ${ARO_VGW_PKI_ROOT_KEY_FILE} -passout env:ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE ${ARO_VGW_PKI_BITS}
+```
+
+**_Example Output:_**
+
+```bash
+Generating RSA private key, 2048 bit long modulus (2 primes)
+....+++++
+................................+++++
+e is 65537 (0x010001)
+```
+
+#### 19.2 - Verify VPN Gateway Root Key
+
+
+**_References:_**
+
+* [https://www.openssl.org/docs/man1.1.1/man1/openssl-rsa.html](https://www.openssl.org/docs/man1.1.1/man1/openssl-rsa.html)
+
+
+**_Command(s):_**
+
+```bash
+openssl rsa -in ${ARO_VGW_PKI_ROOT_KEY_FILE} -noout -passin env:ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE
+```
+
+**_Example Output:_**
+
+```diff
++ success does not produce any output
+```
+
+#### 19.3 - Create VPN Gateway Root Certificate
+
+
+This step creates a root certificate that is valid for 10 years (3650 days).
+
+**_References:_**
+
+* [https://www.openssl.org/docs/man1.1.1/man1/openssl-req.html](https://www.openssl.org/docs/man1.1.1/man1/openssl-req.html)
+
+
+**_Command(s):_**
+
+```bash
+openssl req -x509 -sha256 -new -key "${ARO_VGW_PKI_ROOT_KEY_FILE}" -out "${ARO_VGW_PKI_ROOT_CRT_FILE}" -days 3650 -subj /CN="${ARO_VGW_NAME}" -passin env:ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE
+```
+
+**_Example Output:_**
+
+```diff
++ success does not produce any output
+```
+
+#### 19.4 - Verify VPN Gateway Root Certificate
+
+
+**_References:_**
+
+* [https://www.openssl.org/docs/man1.1.1/man1/openssl-x509.html](https://www.openssl.org/docs/man1.1.1/man1/openssl-x509.html)
+
+
+**_Command(s):_**
+
+```bash
+openssl x509 -in "${ARO_VGW_PKI_ROOT_CRT_FILE}" -noout -text
+```
+
+**_Example Output:_**
+
+```bash
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            18:35:93:23:a2:1a:a4:b9:5f:75:3a:fd:5b:e0:db:32:29:90:c3:3c
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = ipm-vpn
+        Validity
+            Not Before: Sep 24 01:36:50 2020 GMT
+            Not After : Sep 22 01:36:50 2030 GMT
+        Subject: CN = ipm-vpn
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                RSA Public-Key: (2048 bit)
+                Modulus:
+                    00:c6:d3:29:91:da:f1:86:51:3b:53:a5:b3:d3:23:
+                    f8:fe:32:75:f8:07:74:c5:e5:50:e5:f8:c1:96:e1:
+                    e7:93:bf:5d:2a:f3:84:f5:42:6b:dd:c3:8a:1b:57:
+                    81:f9:e9:a0:e2:c3:61:f1:c0:81:cd:b2:d2:19:8c:
+                    af:a7:89:53:27:93:0d:05:b9:06:64:b0:8c:24:84:
+                    38:02:b6:31:fd:b8:83:63:26:1f:40:6d:ad:19:2d:
+                    47:80:b0:d7:5f:5c:ce:65:4f:35:75:ff:55:d9:0e:
+                    af:bd:bd:47:ad:cf:e1:b5:99:3b:bd:12:78:9e:81:
+                    73:3a:37:14:f6:d1:86:5b:f1:20:f6:26:29:d1:9c:
+                    cb:10:6f:88:08:4a:22:63:57:4b:0b:03:c1:cf:90:
+                    b9:6e:4e:8d:04:b0:ef:34:80:e1:64:ca:9f:e8:4f:
+                    58:87:1b:c2:5f:a6:82:57:bb:d1:41:76:8c:8a:91:
+                    67:77:1c:89:0e:8b:9f:93:38:97:47:3c:7d:3a:f8:
+                    a9:82:5d:e9:28:48:62:90:b5:48:74:1b:b9:00:f7:
+                    43:81:f3:9e:d6:54:9e:2b:49:7f:bd:28:ad:46:35:
+                    7c:7d:1e:fb:e0:7c:75:38:bc:a2:94:26:5c:d4:d6:
+                    ef:89:8e:4b:b7:38:86:c1:ec:15:12:c5:3a:ee:05:
+                    95:e5
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Key Identifier: 
+                49:14:D2:80:80:FB:6D:B0:17:CF:46:77:7D:00:AE:18:BC:B5:4B:CA
+            X509v3 Authority Key Identifier: 
+                keyid:49:14:D2:80:80:FB:6D:B0:17:CF:46:77:7D:00:AE:18:BC:B5:4B:CA
+
+            X509v3 Basic Constraints: critical
+                CA:TRUE
+    Signature Algorithm: sha256WithRSAEncryption
+         87:bd:a5:19:f0:e3:7b:d5:14:f0:bf:76:e8:41:71:c6:34:21:
+         3b:e2:7f:cd:0a:f1:a5:ca:a1:8c:b5:a3:9d:e8:87:b4:fa:f2:
+         11:01:18:73:5f:9d:a9:d1:f5:ec:2a:47:32:f5:db:b4:d1:9b:
+         75:82:6b:78:4b:83:26:04:e9:16:28:0c:3c:cc:1a:5a:76:37:
+         d2:6d:10:83:79:2a:cd:e8:91:a0:a3:a4:f0:b5:8e:2d:73:21:
+         39:57:3c:3e:1b:f3:21:ce:8b:02:dc:55:d8:ea:a0:73:5b:4b:
+         cc:44:58:1d:26:7d:1f:cf:de:b6:d3:52:de:33:d1:cc:5c:98:
+         2e:7e:dd:24:ba:c6:88:ba:27:24:a1:eb:d1:46:de:d4:ea:22:
+         72:2a:eb:c5:70:24:0e:9a:b1:59:4c:65:33:66:29:db:d1:1c:
+         04:1f:3d:2d:1b:d9:8b:9f:43:a6:6c:2e:a3:f9:dd:15:69:5e:
+         86:33:e8:7b:ac:4f:19:62:f8:4f:cb:15:42:37:ec:92:2b:8e:
+         06:0b:cb:dc:d9:0c:9c:8e:38:0e:e7:4f:05:8e:d0:b2:4b:7f:
+         27:4f:af:d3:b5:8a:9d:fe:da:42:8b:5f:ef:ea:e2:2f:d1:34:
+         8e:8e:ff:01:d9:67:8b:c0:ce:73:b6:e7:97:f7:0a:84:07:a8:
+         ee:aa:28:e8
+```
+
+#### 19.5 - Verify VPN Gateway Root Certificate Moduli
+
+
+This step verifies the modulus for the root certificate and key match.
+
+Mismatched moduli will prevent a successful connection to the VPN Gateway.
+
+*If the md5sums are different, then do not proceed.*
+
+**_References:_**
+
+* [https://www.openssl.org/docs/man1.1.1/man1/openssl-x509.html](https://www.openssl.org/docs/man1.1.1/man1/openssl-x509.html)
+* [https://www.openssl.org/docs/man1.1.1/man1/openssl-rsa.html](https://www.openssl.org/docs/man1.1.1/man1/openssl-rsa.html)
+
+
+**_Command(s):_**
+
+```bash
+echo -n "md5sum for /home/jtingiris/prj/mit/aei/pki/ipm-vpn-root.key = "; openssl rsa -noout -modulus -in "/home/jtingiris/prj/mit/aei/pki/ipm-vpn-root.key" -passin env:ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE | md5sum
+echo -n "md5sum for /home/jtingiris/prj/mit/aei/pki/ipm-vpn-root.crt = "; openssl x509 -noout -modulus -in "/home/jtingiris/prj/mit/aei/pki/ipm-vpn-root.crt" | md5sum
+```
+
+**_Example Output:_**
+
+```
+md5sum for /home/jtingiris/prj/mit/aei/pki/ipm-vpn-root.key = 953abdb8ef0906b12c63cecbf4c3eb52  -
+```
+
+```
+md5sum for /home/jtingiris/prj/mit/aei/pki/ipm-vpn-root.crt = 953abdb8ef0906b12c63cecbf4c3eb52  -
+```
+
+#### 19.6 - Create VPN Gateway Root Certificate Data
+
+
+In a previous step, the root certificate was created in the Privacy Enhanced Mail (PEM) format.
+
+PEM is the most common format for X.509 certificates. A PEM file is a text file containing one or more items in base64 ASCII encoding identified by plain-text headers and footers (i.e. -----BEGIN CERTIFICATE----- and -----END CERTIFICATE-----).
+
+The VPN Gateway requires the public Root Certificate Data to be uploaded as the base64 ASCII encoding of the Distinguished Encoding Rules (DER) format.
+
+DER is a binary encoding for X.509 certificates and private keys. Unlike PEM, DER-encoded files do not contain plain text statements such as -----BEGIN CERTIFICATE-----.  DER is a binary format for data structures described by ASN.1.
+
+**_References:_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet-gateway/root-cert?view=azure-cli-latest#az_network_vnet_gateway_root_cert_create](https://docs.microsoft.com/en-us/cli/azure/network/vnet-gateway/root-cert?view=azure-cli-latest#az_network_vnet_gateway_root_cert_create)
+* [https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail](https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail)
+* [https://en.wikipedia.org/wiki/X.690#DER_encoding](https://en.wikipedia.org/wiki/X.690#DER_encoding)
+* [https://en.wikipedia.org/wiki/ASN.1](https://en.wikipedia.org/wiki/ASN.1)
+
+
+**_Command(s):_**
+
+```bash
+az network vnet-gateway root-cert create --gateway-name ${ARO_VGW_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --name "${ARO_VGW_PKI_ROOT_CRT_FILE_NAME}" --public-cert-data "$(openssl x509 -in "${ARO_VGW_PKI_ROOT_CRT_FILE}" -outform der | base64 -w0)"
+```
+
+**_Example Output:_**
+
+```json
+{
+  "activeActive": false,
+  "bgpSettings": {
+    "asn": 65515,
+    "bgpPeeringAddress": "10.11.6.126",
+    "bgpPeeringAddresses": [
+      {
+        "customBgpIpAddresses": [],
+        "defaultBgpIpAddresses": [
+          "10.11.6.126"
+        ],
+        "ipconfigurationId": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworkGateways/ipm-vpn/ipConfigurations/vnetGatewayConfig0",
+        "tunnelIpAddresses": [
+          "20.55.17.173"
+        ]
+      }
+    ],
+    "peerWeight": 0
+  },
+  "customRoutes": null,
+  "enableBgp": false,
+  "enableDnsForwarding": null,
+  "enablePrivateIpAddress": false,
+  "etag": "W/\"78f7e6de-c213-4954-92ae-e4557e2c22e1\"",
+  "gatewayDefaultSite": null,
+  "gatewayType": "Vpn",
+  "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworkGateways/ipm-vpn",
+  "inboundDnsForwardingEndpoint": null,
+  "ipConfigurations": [
+    {
+      "etag": "W/\"78f7e6de-c213-4954-92ae-e4557e2c22e1\"",
+      "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworkGateways/ipm-vpn/ipConfigurations/vnetGatewayConfig0",
+      "name": "vnetGatewayConfig0",
+      "privateIpAddress": null,
+      "privateIpAllocationMethod": "Dynamic",
+      "provisioningState": "Succeeded",
+      "publicIpAddress": {
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/publicIPAddresses/ipm-vpn-public-ip",
+        "resourceGroup": "ipm-eastus"
+      },
+      "resourceGroup": "ipm-eastus",
+      "subnet": {
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/GatewaySubnet",
+        "resourceGroup": "ipm-eastus"
+      },
+      "type": "Microsoft.Network/virtualNetworkGateways/ipConfigurations"
+    }
+  ],
+  "location": "eastus",
+  "name": "ipm-vpn",
+  "provisioningState": "Succeeded",
+  "resourceGroup": "ipm-eastus",
+  "resourceGuid": "44ee10a6-15cd-4d30-bcc9-b528e4d23702",
+  "sku": {
+    "capacity": 2,
+    "name": "VpnGw1AZ",
+    "tier": "VpnGw1AZ"
+  },
+  "tags": null,
+  "type": "Microsoft.Network/virtualNetworkGateways",
+  "vpnClientConfiguration": {
+    "aadAudience": null,
+    "aadIssuer": null,
+    "aadTenant": null,
+    "radiusServerAddress": null,
+    "radiusServerSecret": null,
+    "radiusServers": [],
+    "vpnClientAddressPool": {
+      "addressPrefixes": [
+        "172.16.11.0/24"
+      ]
+    },
+    "vpnClientConnectionHealth": {
+      "totalEgressBytesTransferred": 0,
+      "totalIngressBytesTransferred": 0,
+      "vpnClientConnectionsCount": 0
+    },
+    "vpnClientIpsecPolicies": [],
+    "vpnClientProtocols": [
+      "IkeV2",
+      "OpenVPN"
+    ],
+    "vpnClientRevokedCertificates": [],
+    "vpnClientRootCertificates": [
+      {
+        "etag": "W/\"78f7e6de-c213-4954-92ae-e4557e2c22e1\"",
+        "id": "/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworkGateways/ipm-vpn/vpnClientRootCertificates/ipm-vpn-root.crt",
+        "name": "ipm-vpn-root.crt",
+        "provisioningState": "Succeeded",
+        "publicCertData": "MIIDBTCCAe2gAwIBAgIUGDWTI6IapLlfdTr9W+DbMimQwzwwDQYJKoZIhvcNAQELBQAwEjEQMA4GA1UEAwwHaXBtLXZwbjAeFw0yMDA5MjQwMTM2NTBaFw0zMDA5MjIwMTM2NTBaMBIxEDAOBgNVBAMMB2lwbS12cG4wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDG0ymR2vGGUTtTpbPTI/j+MnX4B3TF5VDl+MGW4eeTv10q84T1Qmvdw4obV4H56aDiw2HxwIHNstIZjK+niVMnkw0FuQZksIwkhDgCtjH9uINjJh9Aba0ZLUeAsNdfXM5lTzV1/1XZDq+9vUetz+G1mTu9EniegXM6NxT20YZb8SD2JinRnMsQb4gISiJjV0sLA8HPkLluTo0EsO80gOFkyp/oT1iHG8JfpoJXu9FBdoyKkWd3HIkOi5+TOJdHPH06+KmCXekoSGKQtUh0G7kA90OB857WVJ4rSX+9KK1GNXx9HvvgfHU4vKKUJlzU1u+Jjku3OIbB7BUSxTruBZXlAgMBAAGjUzBRMB0GA1UdDgQWBBRJFNKAgPttsBfPRnd9AK4YvLVLyjAfBgNVHSMEGDAWgBRJFNKAgPttsBfPRnd9AK4YvLVLyjAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQCHvaUZ8ON71RTwv3boQXHGNCE74n/NCvGlyqGMtaOd6Ie0+vIRARhzX52p0fXsKkcy9du00Zt1gmt4S4MmBOkWKAw8zBpadjfSbRCDeSrN6JGgo6TwtY4tcyE5Vzw+G/MhzosC3FXY6qBzW0vMRFgdJn0fz96201LeM9HMXJguft0kusaIuickoevRRt7U6iJyKuvFcCQOmrFZTGUzZinb0RwEHz0tG9mLn0OmbC6j+d0VaV6GM+h7rE8ZYvhPyxVCN+ySK44GC8vc2QycjjgO508FjtCyS38nT6/TtYqd/tpCi1/v6uIv0TSOjv8B2WeLwM5ztueX9wqEB6juqijo",
+        "resourceGroup": "ipm-eastus",
+        "type": "Microsoft.Network/virtualNetworkGateways/vpnClientRootCertificates"
+      }
+    ]
+  },
+  "vpnGatewayGeneration": "Generation1",
+  "vpnType": "RouteBased"
+}
+```
+
+#### 19.7 - Verify VPN Gateway Root Certificate Data
+
+
+**_References:_**
+
+* [https://docs.microsoft.com/en-us/cli/azure/network/vnet-gateway?view=azure-cli-latest#az_network_vnet_gateway_show](https://docs.microsoft.com/en-us/cli/azure/network/vnet-gateway?view=azure-cli-latest#az_network_vnet_gateway_show)
+
+
+**_Command(s):_**
+
+```bash
+AZ_UPLOAD_OK=false; while read AZ_VERIFY_CERTIFICATE_NAME; do echo "found ${ARO_VGW_NAME} root certificate name = ${AZ_VERIFY_CERTIFICATE_NAME}"; if [ "${AZ_VERIFY_CERTIFICATE_NAME}" == "${ARO_VGW_PKI_ROOT_CRT_FILE_NAME}" ]; then AZ_UPLOAD_OK=true; fi; done <<< "$(az network vnet-gateway show --name ${ARO_VGW_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --query vpnClientConfiguration.vpnClientRootCertificates[].[name] --output tsv)"; if ${AZ_UPLOAD_OK}; then echo "verified ${ARO_VGW_PKI_ROOT_CRT_FILE_NAME} exists as a root certificate name for ${ARO_VGW_NAME}"; else echo "failed to verify ${ARO_VGW_PKI_ROOT_CRT_FILE_NAME} exists as a root certificate name for ${ARO_VGW_NAME}"; fi
+```
+
+**_Example Output:_**
+
+```
+found ipm-vpn root certificate name = ipm-vpn-root.crt
+verified ipm-vpn-root.crt exists as a root certificate name for ipm-vpn
+```
+
