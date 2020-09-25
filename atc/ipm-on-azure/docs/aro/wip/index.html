@@ -29,6 +29,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-52523818-5', 'mitaei.github.io');
+      ga('send', 'pageview');
+  </script>
+  
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -88,96 +98,309 @@
           <div role="main">
             <div class="section">
               
-                <h3 id="23-azure-red-hat-openshift">23 - Azure Red Hat OpenShift</h3>
+                <h3 id="19-vpn-gateway-pki">19 - VPN Gateway PKI</h3>
+<p>An Azure VPN Gateway supports using a Public Key Infrastructure (PKI) for Certificate Authentication.</p>
+<p>With VPN Gateway Certificate Authentication, a client certificate is used to authenticate the connecting user. Client certificates are generated from a trusted Root Certificate and then installed on each client computer.  The validation of the Client Certificate is performed by the VPN Gateway and happens during establishment of the point-to-site (P2S) VPN connection.</p>
+<p>This series of steps establishes a private Certificate Authority (CA) by creating a Root Key &amp; Certificate.  The Certificate Data wil be uploaded to the Azure VPN Gateway, so that VPN Clients Certificates will be authenticated.  To be valid for authentication, the VPN Client Certificates must be signed by the Root Certificate.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>VPN Client Certificates will be created later.</p>
+</div>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
-<li><a href="https://azure.microsoft.com/en-us/services/openshift/">https://azure.microsoft.com/en-us/services/openshift/</a></li>
-<li><a href="https://docs.microsoft.com/en-us/cli/azure/aro?view=azure-cli-latest">https://docs.microsoft.com/en-us/cli/azure/aro?view=azure-cli-latest</a></li>
+<li><a href="https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-point-to-site-resource-manager-portal">https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-point-to-site-resource-manager-portal</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Public_key_infrastructure">https://en.wikipedia.org/wiki/Public_key_infrastructure</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Root_certificate">https://en.wikipedia.org/wiki/Root_certificate</a></li>
 </ul>
 <p><strong><em>Command(s):</em></strong></p>
-<pre><code class="bash">env | egrep -e 'ARO_CLUSTER_NAME|ARO_REDHAT_PULL_SECRET_FILE|ARO_RESOURCE_GROUP_NAME|ARO_VNET_NAME|ARO_SUBNET_MASTER_NAME|ARO_SUBNET_WORKER_NAME' | sort -V
+<pre><code class="bash">env | grep ARO_VGW_PKI | grep -v CLIENT | sort -V
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<pre><code class="bash">ARO_CLUSTER_NAME=ipm-cluster
-ARO_REDHAT_PULL_SECRET_FILE=/home/jtingiris/prj/mit/aei/secrets/ipm-redhat-pull-secret.txt
-ARO_RESOURCE_GROUP_NAME=ipm-eastus
-ARO_SUBNET_MASTER_NAME=ipm-vnet-master-subnet
-ARO_SUBNET_WORKER_NAME=ipm-vnet-worker-subnet
-ARO_VNET_NAME=ipm-vnet
+<pre><code class="bash">ARO_VGW_PKI_BITS=2048
+ARO_VGW_PKI_DIR=/home/jtingiris/prj/mit/aei/pki
+ARO_VGW_PKI_ROOT_CA_SERIAL_FILE=/home/jtingiris/prj/mit/aei/pki/test-vpn-root.serial
+ARO_VGW_PKI_ROOT_CRT_FILE=/home/jtingiris/prj/mit/aei/pki/test-vpn-root.crt
+ARO_VGW_PKI_ROOT_CRT_NAME=test-vpn-root.crt
+ARO_VGW_PKI_ROOT_KEY_FILE=/home/jtingiris/prj/mit/aei/pki/test-vpn-root.key
+ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
+ARO_VGW_PKI_ROOT_KEY_NAME=test-vpn-root.key
 </code></pre>
 
-<h4 id="231-create-aro-cluster">23.1 - Create ARO Cluster</h4>
-<p>This can take up to an hour.</p>
+<h4 id="191-create-root-key">19.1 - Create Root Key</h4>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
-<li><a href="https://docs.microsoft.com/en-us/cli/azure/aro?view=azure-cli-latest#az_aro_create">https://docs.microsoft.com/en-us/cli/azure/aro?view=azure-cli-latest#az_aro_create</a></li>
+<li><a href="https://www.openssl.org/docs/man1.1.1/man1/openssl-genrsa.html">https://www.openssl.org/docs/man1.1.1/man1/openssl-genrsa.html</a></li>
 </ul>
 <p><strong><em>Command(s):</em></strong></p>
-<pre><code class="bash">az aro create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_CLUSTER_NAME} --vnet ${ARO_VNET_NAME} --master-subnet ${ARO_SUBNET_MASTER_NAME} --worker-subnet ${ARO_SUBNET_WORKER_NAME} --apiserver-visibility Private --ingress-visibility Private --pull-secret @${ARO_REDHAT_PULL_SECRET_FILE} --no-wait
+<pre><code class="bash">openssl genrsa -aes256 -out ${ARO_VGW_PKI_ROOT_KEY_FILE} -passout env:ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE ${ARO_VGW_PKI_BITS}
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<pre><code class="json"></code></pre>
+<pre><code class="bash">Generating RSA private key, 2048 bit long modulus (2 primes)
+......+++++
+.......................+++++
+e is 65537 (0x010001)
+</code></pre>
 
-<h4 id="232-verify-aro-cluster">23.2 - Verify ARO Cluster</h4>
+<h4 id="192-verify-root-key">19.2 - Verify Root Key</h4>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://www.openssl.org/docs/man1.1.1/man1/openssl-rsa.html">https://www.openssl.org/docs/man1.1.1/man1/openssl-rsa.html</a></li>
+</ul>
 <p><strong><em>Command(s):</em></strong></p>
-<pre><code class="bash">az aro list-credentials --name ${ARO_CLUSTER_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME}
-az aro show --name ${ARO_CLUSTER_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --query consoleProfile.url --output tsv
+<pre><code class="bash">openssl rsa -in ${ARO_VGW_PKI_ROOT_KEY_FILE} -noout -passin env:ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
+<h4 id="193-create-root-certificate">19.3 - Create Root Certificate</h4>
+<p>This step creates a root certificate that is valid for 10 years (3650 days).</p>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://www.openssl.org/docs/man1.1.1/man1/openssl-req.html">https://www.openssl.org/docs/man1.1.1/man1/openssl-req.html</a></li>
+</ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">openssl req -x509 -sha256 -new -key &quot;${ARO_VGW_PKI_ROOT_KEY_FILE}&quot; -out &quot;${ARO_VGW_PKI_ROOT_CRT_FILE}&quot; -days 3650 -subj /CN=&quot;${ARO_VGW_NAME}&quot; -passin env:ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
+<h4 id="194-verify-root-certificate">19.4 - Verify Root Certificate</h4>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://www.openssl.org/docs/man1.1.1/man1/openssl-x509.html">https://www.openssl.org/docs/man1.1.1/man1/openssl-x509.html</a></li>
+</ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">openssl x509 -in &quot;${ARO_VGW_PKI_ROOT_CRT_FILE}&quot; -noout -text
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="bash">Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            62:75:7a:91:6d:87:b0:af:e2:d5:56:99:aa:37:3a:b8:81:8d:c2:e9
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = test-vpn
+        Validity
+            Not Before: Sep 25 03:48:35 2020 GMT
+            Not After : Sep 23 03:48:35 2030 GMT
+        Subject: CN = test-vpn
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                RSA Public-Key: (2048 bit)
+                Modulus:
+                    00:e3:7f:cd:07:7d:4a:eb:58:97:90:38:a0:f4:02:
+                    9d:70:e8:50:d7:3e:ba:63:4a:e2:7a:b2:59:e8:28:
+                    5f:d8:45:2e:e3:93:58:de:8c:e5:ba:77:c8:3e:ca:
+                    e1:0e:59:6a:3e:a1:08:12:72:0f:67:36:52:65:00:
+                    8d:3a:fe:7f:2c:85:bf:02:f3:b3:6d:20:59:82:f0:
+                    ca:7e:7c:0e:89:61:0c:e3:4b:e7:9d:76:34:b9:ce:
+                    d1:45:78:cd:f6:0e:35:47:38:bc:85:e8:70:bc:da:
+                    c5:ed:be:81:75:bc:78:62:9d:8f:c1:05:dc:6d:05:
+                    25:31:a2:2d:2b:08:c9:92:12:04:a1:58:2e:52:00:
+                    14:0e:4b:61:2b:a9:31:bd:48:b4:29:aa:1e:63:db:
+                    e7:53:fa:f2:e2:58:fc:01:f4:31:9a:5b:d6:af:95:
+                    f8:52:6c:ee:9c:53:ad:59:3d:85:ea:b4:82:86:ab:
+                    1a:42:24:f0:f8:3a:e8:8f:f6:c9:9a:ea:7e:1e:49:
+                    ad:a1:ac:f3:6c:b2:28:42:80:01:64:76:08:56:c9:
+                    ef:63:7c:de:ac:ab:89:dc:6c:d0:56:0f:6d:51:49:
+                    0d:f7:32:67:97:fb:ca:b0:a4:08:57:62:3d:cc:b3:
+                    c2:a0:1b:b6:37:ea:10:33:15:1e:ca:a0:3a:4c:27:
+                    21:13
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Key Identifier: 
+                AB:66:C5:5F:44:44:C8:A0:A4:90:76:27:FA:4D:96:5C:F6:ED:21:FE
+            X509v3 Authority Key Identifier: 
+                keyid:AB:66:C5:5F:44:44:C8:A0:A4:90:76:27:FA:4D:96:5C:F6:ED:21:FE
+
+            X509v3 Basic Constraints: critical
+                CA:TRUE
+    Signature Algorithm: sha256WithRSAEncryption
+         4e:1d:5f:29:9a:c8:ed:d4:31:f3:84:1f:a6:21:06:91:5e:eb:
+         a5:c4:63:3b:1c:d3:36:ed:88:26:e4:ce:62:e7:b3:98:10:33:
+         8e:3e:7f:2d:33:77:5c:27:cf:41:33:c5:48:8b:8b:8b:2d:48:
+         67:fd:04:d7:9c:52:d7:94:e0:f5:f1:8c:e9:bf:71:40:9a:e6:
+         19:7f:c8:29:2b:1b:fb:02:ba:5f:3e:a8:b6:18:9b:55:bd:3d:
+         e8:8a:00:ed:2b:3a:e1:c0:c7:fc:6d:53:af:16:69:5b:06:57:
+         08:bb:c8:0a:70:85:70:93:80:f9:6d:de:48:0b:fa:47:14:43:
+         87:03:b5:f9:ae:c7:8b:39:ec:9c:9a:91:dd:a9:29:34:b0:a1:
+         bd:84:2e:58:48:3f:df:d5:71:b4:b0:72:69:6c:59:3f:f1:85:
+         6b:e1:a3:f2:28:ce:f3:95:e5:c9:09:83:a1:61:1a:16:48:1d:
+         c4:a4:50:d4:3e:b9:58:d2:f6:e0:87:4d:f0:9a:16:a0:c4:72:
+         fa:ac:6a:7c:93:9b:f6:7e:8a:f2:51:2e:02:0d:21:bc:29:e3:
+         13:ba:a7:70:26:69:70:19:81:a2:c6:ed:bf:31:b9:af:63:3f:
+         0a:d4:80:31:59:b1:fe:11:ce:69:45:7b:17:ae:b0:f2:09:0f:
+         2f:a1:a8:b8
+</code></pre>
+
+<h4 id="195-verify-root-certificate-moduli">19.5 - Verify Root Certificate Moduli</h4>
+<p>This step verifies the modulus for the root certificate and key match.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Mismatched moduli will prevent a successful connection to the VPN Gateway.  If the md5sums are different, then do not proceed until they match.</p>
+</div>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://www.openssl.org/docs/man1.1.1/man1/openssl-x509.html">https://www.openssl.org/docs/man1.1.1/man1/openssl-x509.html</a></li>
+<li><a href="https://www.openssl.org/docs/man1.1.1/man1/openssl-rsa.html">https://www.openssl.org/docs/man1.1.1/man1/openssl-rsa.html</a></li>
+</ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">echo -n &quot;md5sum for /home/jtingiris/prj/mit/aei/pki/test-vpn-root.key = &quot;; openssl rsa -noout -modulus -in &quot;/home/jtingiris/prj/mit/aei/pki/test-vpn-root.key&quot; -passin env:ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE | md5sum
+echo -n &quot;md5sum for /home/jtingiris/prj/mit/aei/pki/test-vpn-root.crt = &quot;; openssl x509 -noout -modulus -in &quot;/home/jtingiris/prj/mit/aei/pki/test-vpn-root.crt&quot; | md5sum
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="bash">md5sum for /home/jtingiris/prj/mit/aei/pki/test-vpn-root.key = 83d451dc1160fa46e161499ab5da1bbd  -
+</code></pre>
+
+<pre><code class="bash">md5sum for /home/jtingiris/prj/mit/aei/pki/test-vpn-root.crt = 83d451dc1160fa46e161499ab5da1bbd  -
+</code></pre>
+
+<h4 id="196-create-root-certificate-data">19.6 - Create Root Certificate Data</h4>
+<p>In a previous step, the root certificate was created in the Privacy Enhanced Mail (PEM) format.</p>
+<p>PEM is the most common format for X.509 certificates. A PEM file is a text file containing one or more items, encoded in base64 ASCII, and identified by plain-text headers and footers</p>
+<p>PEM, an example:</p>
+<pre><code>-----BEGIN CERTIFICATE-----
+DATA
+-----END CERTIFICATE-----
+</code></pre>
+
+<p><em>DER files do <strong>NOT</strong> contain plain text headers</em>.  DER is a binary format for data structures described by ASN.1.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The Azure VPN Gateway requires the Root Certificate Data use the Distinguished Encoding Rules (DER) format, encoded as base64 ASCII.  The conversion from PEM to base64 DER is done in the Command(s).</p>
+</div>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/network/vnet-gateway/root-cert?view=azure-cli-latest#az_network_vnet_gateway_root_cert_create">https://docs.microsoft.com/en-us/cli/azure/network/vnet-gateway/root-cert?view=azure-cli-latest#az_network_vnet_gateway_root_cert_create</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail">https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail</a></li>
+<li><a href="https://en.wikipedia.org/wiki/X.690#DER_encoding">https://en.wikipedia.org/wiki/X.690#DER_encoding</a></li>
+<li><a href="https://en.wikipedia.org/wiki/ASN.1">https://en.wikipedia.org/wiki/ASN.1</a></li>
+</ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az network vnet-gateway root-cert create --gateway-name ${ARO_VGW_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --name &quot;${ARO_VGW_PKI_ROOT_CRT_NAME}&quot; --public-cert-data &quot;$(openssl x509 -in &quot;${ARO_VGW_PKI_ROOT_CRT_FILE}&quot; -outform der | base64 -w0)&quot;
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
 <pre><code class="json">{
-  &quot;apiserverProfile&quot;: {
-    &quot;ip&quot;: null,
-    &quot;url&quot;: null,
-    &quot;visibility&quot;: &quot;Private&quot;
+  &quot;activeActive&quot;: false,
+  &quot;bgpSettings&quot;: {
+    &quot;asn&quot;: 65515,
+    &quot;bgpPeeringAddress&quot;: &quot;10.11.6.126&quot;,
+    &quot;bgpPeeringAddresses&quot;: [
+      {
+        &quot;customBgpIpAddresses&quot;: [],
+        &quot;defaultBgpIpAddresses&quot;: [
+          &quot;10.11.6.126&quot;
+        ],
+        &quot;ipconfigurationId&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/test-eastus/providers/Microsoft.Network/virtualNetworkGateways/test-vpn/ipConfigurations/vnetGatewayConfig0&quot;,
+        &quot;tunnelIpAddresses&quot;: [
+          &quot;20.55.48.28&quot;
+        ]
+      }
+    ],
+    &quot;peerWeight&quot;: 0
   },
-  &quot;clusterProfile&quot;: {
-    &quot;domain&quot;: &quot;y9xvppfp&quot;,
-    &quot;pullSecret&quot;: null,
-    &quot;resourceGroupId&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/aro-y9xvppfp&quot;,
-    &quot;version&quot;: &quot;4.4.17&quot;
-  },
-  &quot;consoleProfile&quot;: {
-    &quot;url&quot;: null
-  },
-  &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.RedHatOpenShift/openShiftClusters/ipm-cluster&quot;,
-  &quot;ingressProfiles&quot;: [
+  &quot;customRoutes&quot;: null,
+  &quot;enableBgp&quot;: false,
+  &quot;enableDnsForwarding&quot;: null,
+  &quot;enablePrivateIpAddress&quot;: false,
+  &quot;etag&quot;: &quot;W/\&quot;56847eb9-e650-4b53-a27b-624066fdc516\&quot;&quot;,
+  &quot;gatewayDefaultSite&quot;: null,
+  &quot;gatewayType&quot;: &quot;Vpn&quot;,
+  &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/test-eastus/providers/Microsoft.Network/virtualNetworkGateways/test-vpn&quot;,
+  &quot;inboundDnsForwardingEndpoint&quot;: null,
+  &quot;ipConfigurations&quot;: [
     {
-      &quot;ip&quot;: null,
-      &quot;name&quot;: &quot;default&quot;,
-      &quot;visibility&quot;: &quot;Private&quot;
+      &quot;etag&quot;: &quot;W/\&quot;56847eb9-e650-4b53-a27b-624066fdc516\&quot;&quot;,
+      &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/test-eastus/providers/Microsoft.Network/virtualNetworkGateways/test-vpn/ipConfigurations/vnetGatewayConfig0&quot;,
+      &quot;name&quot;: &quot;vnetGatewayConfig0&quot;,
+      &quot;privateIpAddress&quot;: null,
+      &quot;privateIpAllocationMethod&quot;: &quot;Dynamic&quot;,
+      &quot;provisioningState&quot;: &quot;Succeeded&quot;,
+      &quot;publicIpAddress&quot;: {
+        &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/test-eastus/providers/Microsoft.Network/publicIPAddresses/test-vpn-public-ip&quot;,
+        &quot;resourceGroup&quot;: &quot;test-eastus&quot;
+      },
+      &quot;resourceGroup&quot;: &quot;test-eastus&quot;,
+      &quot;subnet&quot;: {
+        &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/test-eastus/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/GatewaySubnet&quot;,
+        &quot;resourceGroup&quot;: &quot;test-eastus&quot;
+      },
+      &quot;type&quot;: &quot;Microsoft.Network/virtualNetworkGateways/ipConfigurations&quot;
     }
   ],
   &quot;location&quot;: &quot;eastus&quot;,
-  &quot;masterProfile&quot;: {
-    &quot;subnetId&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/ipm-vnet-master-subnet&quot;,
-    &quot;vmSize&quot;: &quot;Standard_D8s_v3&quot;
-  },
-  &quot;name&quot;: &quot;ipm-cluster&quot;,
-  &quot;networkProfile&quot;: {
-    &quot;podCidr&quot;: &quot;10.128.0.0/14&quot;,
-    &quot;serviceCidr&quot;: &quot;172.30.0.0/16&quot;
-  },
-  &quot;provisioningState&quot;: &quot;Creating&quot;,
-  &quot;resourceGroup&quot;: &quot;ipm-eastus&quot;,
-  &quot;servicePrincipalProfile&quot;: {
-    &quot;clientId&quot;: &quot;be13a0e9-021c-40a0-a684-a1527f3863fb&quot;,
-    &quot;clientSecret&quot;: null
+  &quot;name&quot;: &quot;test-vpn&quot;,
+  &quot;provisioningState&quot;: &quot;Succeeded&quot;,
+  &quot;resourceGroup&quot;: &quot;test-eastus&quot;,
+  &quot;resourceGuid&quot;: &quot;5c02d345-38ae-427d-ae00-c77bce9818fb&quot;,
+  &quot;sku&quot;: {
+    &quot;capacity&quot;: 2,
+    &quot;name&quot;: &quot;VpnGw1AZ&quot;,
+    &quot;tier&quot;: &quot;VpnGw1AZ&quot;
   },
   &quot;tags&quot;: null,
-  &quot;type&quot;: &quot;Microsoft.RedHatOpenShift/openShiftClusters&quot;,
-  &quot;workerProfiles&quot;: [
-    {
-      &quot;count&quot;: 3,
-      &quot;diskSizeGb&quot;: 128,
-      &quot;name&quot;: &quot;worker&quot;,
-      &quot;subnetId&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/ipm-eastus/providers/Microsoft.Network/virtualNetworks/ipm-vnet/subnets/ipm-vnet-worker-subnet&quot;,
-      &quot;vmSize&quot;: &quot;Standard_D4s_v3&quot;
-    }
-  ]
+  &quot;type&quot;: &quot;Microsoft.Network/virtualNetworkGateways&quot;,
+  &quot;vpnClientConfiguration&quot;: {
+    &quot;aadAudience&quot;: null,
+    &quot;aadIssuer&quot;: null,
+    &quot;aadTenant&quot;: null,
+    &quot;radiusServerAddress&quot;: null,
+    &quot;radiusServerSecret&quot;: null,
+    &quot;radiusServers&quot;: [],
+    &quot;vpnClientAddressPool&quot;: {
+      &quot;addressPrefixes&quot;: [
+        &quot;172.16.11.0/24&quot;
+      ]
+    },
+    &quot;vpnClientConnectionHealth&quot;: {
+      &quot;totalEgressBytesTransferred&quot;: 0,
+      &quot;totalIngressBytesTransferred&quot;: 0,
+      &quot;vpnClientConnectionsCount&quot;: 0
+    },
+    &quot;vpnClientIpsecPolicies&quot;: [],
+    &quot;vpnClientProtocols&quot;: [
+      &quot;IkeV2&quot;,
+      &quot;OpenVPN&quot;
+    ],
+    &quot;vpnClientRevokedCertificates&quot;: [],
+    &quot;vpnClientRootCertificates&quot;: [
+      {
+        &quot;etag&quot;: &quot;W/\&quot;56847eb9-e650-4b53-a27b-624066fdc516\&quot;&quot;,
+        &quot;id&quot;: &quot;/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/resourceGroups/test-eastus/providers/Microsoft.Network/virtualNetworkGateways/test-vpn/vpnClientRootCertificates/test-vpn-root.crt&quot;,
+        &quot;name&quot;: &quot;test-vpn-root.crt&quot;,
+        &quot;provisioningState&quot;: &quot;Succeeded&quot;,
+        &quot;publicCertData&quot;: &quot;MIIDBzCCAe+gAwIBAgIUYnV6kW2HsK/i1VaZqjc6uIGNwukwDQYJKoZIhvcNAQELBQAwEzERMA8GA1UEAwwIdGVzdC12cG4wHhcNMjAwOTI1MDM0ODM1WhcNMzAwOTIzMDM0ODM1WjATMREwDwYDVQQDDAh0ZXN0LXZwbjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAON/zQd9SutYl5A4oPQCnXDoUNc+umNK4nqyWegoX9hFLuOTWN6M5bp3yD7K4Q5Zaj6hCBJyD2c2UmUAjTr+fyyFvwLzs20gWYLwyn58DolhDONL5512NLnO0UV4zfYONUc4vIXocLzaxe2+gXW8eGKdj8EF3G0FJTGiLSsIyZISBKFYLlIAFA5LYSupMb1ItCmqHmPb51P68uJY/AH0MZpb1q+V+FJs7pxTrVk9heq0goarGkIk8Pg66I/2yZrqfh5JraGs82yyKEKAAWR2CFbJ72N83qyridxs0FYPbVFJDfcyZ5f7yrCkCFdiPcyzwqAbtjfqEDMVHsqgOkwnIRMCAwEAAaNTMFEwHQYDVR0OBBYEFKtmxV9ERMigpJB2J/pNllz27SH+MB8GA1UdIwQYMBaAFKtmxV9ERMigpJB2J/pNllz27SH+MA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAE4dXymayO3UMfOEH6YhBpFe66XEYzsc0zbtiCbkzmLns5gQM44+fy0zd1wnz0EzxUiLi4stSGf9BNecUteU4PXxjOm/cUCa5hl/yCkrG/sCul8+qLYYm1W9PeiKAO0rOuHAx/xtU68WaVsGVwi7yApwhXCTgPlt3kgL+kcUQ4cDtfmux4s57Jyakd2pKTSwob2ELlhIP9/VcbSwcmlsWT/xhWvho/IozvOV5ckJg6FhGhZIHcSkUNQ+uVjS9uCHTfCaFqDEcvqsanyTm/Z+ivJRLgINIbwp4xO6p3AmaXAZgaLG7b8xua9jPwrUgDFZsf4RzmlFexeusPIJDy+hqLg=&quot;,
+        &quot;resourceGroup&quot;: &quot;test-eastus&quot;,
+        &quot;type&quot;: &quot;Microsoft.Network/virtualNetworkGateways/vpnClientRootCertificates&quot;
+      }
+    ]
+  },
+  &quot;vpnGatewayGeneration&quot;: &quot;Generation1&quot;,
+  &quot;vpnType&quot;: &quot;RouteBased&quot;
 }
+</code></pre>
+
+<h4 id="197-verify-root-certificate-data">19.7 - Verify Root Certificate Data</h4>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/network/vnet-gateway?view=azure-cli-latest#az_network_vnet_gateway_show">https://docs.microsoft.com/en-us/cli/azure/network/vnet-gateway?view=azure-cli-latest#az_network_vnet_gateway_show</a></li>
+</ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">AZ_UPLOAD_OK=false; while read AZ_VERIFY_CERTIFICATE_NAME; do echo &quot;found ${ARO_VGW_NAME} root certificate name = ${AZ_VERIFY_CERTIFICATE_NAME}&quot;; if [ &quot;${AZ_VERIFY_CERTIFICATE_NAME}&quot; == &quot;${ARO_VGW_PKI_ROOT_CRT_NAME}&quot; ]; then AZ_UPLOAD_OK=true; fi; done &lt;&lt;&lt; &quot;$(az network vnet-gateway show --name ${ARO_VGW_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --query vpnClientConfiguration.vpnClientRootCertificates[].[name] --output tsv)&quot;; if ${AZ_UPLOAD_OK}; then echo &quot;verified ${ARO_VGW_PKI_ROOT_CRT_NAME} exists as a root certificate name for ${ARO_VGW_NAME}&quot;; else echo &quot;failed to verify ${ARO_VGW_PKI_ROOT_CRT_NAME} exists as a root certificate name for ${ARO_VGW_NAME}&quot;; fi
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="bash">found test-vpn root certificate name = test-vpn-root.crt
+verified test-vpn-root.crt exists as a root certificate name for test-vpn
 </code></pre>
               
             </div>

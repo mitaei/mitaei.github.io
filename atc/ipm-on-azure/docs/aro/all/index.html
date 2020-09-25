@@ -5,27 +5,27 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Azure RedHat OpenShift for IBM Product Master">
+  
   <meta name="author" content="joseph.tingiris@mastechinfotrellis.com">
-  <link rel="canonical" href="https://mitaei.github.io/atc/ipm-on-azure/docs/aro/">
-  <link rel="shortcut icon" href="img/favicon.ico">
-  <title>IPM on Azure</title>
+  <link rel="canonical" href="https://mitaei.github.io/atc/ipm-on-azure/docs/aro/all/">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>All - IPM on Azure</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
-  <link rel="stylesheet" href="css/theme.css" />
-  <link rel="stylesheet" href="css/theme_extra.css" />
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
-  <link href="css/mit-extra.css" rel="stylesheet" />
+  <link href="../css/mit-extra.css" rel="stylesheet" />
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Index";
-    var mkdocs_page_input_path = "index.md";
-    var mkdocs_page_url = "/atc/ipm-on-azure/docs/aro/";
+    var mkdocs_page_name = "All";
+    var mkdocs_page_input_path = "all.md";
+    var mkdocs_page_url = "/atc/ipm-on-azure/docs/aro/all/";
   </script>
   
-  <script src="js/jquery-2.1.1.min.js" defer></script>
-  <script src="js/modernizr-2.8.3.min.js" defer></script>
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
@@ -49,357 +49,21 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-        <a href="." class="icon icon-home"> IPM on Azure</a>
+        <a href=".." class="icon icon-home"> IPM on Azure</a>
         <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href=".">Index</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#draft">[DRAFT]</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#azure">Azure</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#openshift-container-platform">OpenShift Container Platform</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#azure-red-hat-openshift">Azure Red Hat OpenShift</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#ibm-product-master">IBM Product Master</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#description">Description</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#references">Reference(s)</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#commands">Command(s)</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#example-output">Example Output</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#1-azure-tenant">1 - Azure Tenant</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#11-create-microsoft-account">1.1 - Create Microsoft Account</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#12-create-global-administrator">1.2 - Create Global Administrator</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#13-verify-admin-center-access">1.3 - Verify Admin Center Access</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#14-verify-aad-license">1.4 - Verify AAD License</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#2-azure-subscription">2 - Azure Subscription</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#21-create-azure-subscription">2.1 - Create Azure Subscription</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#3-operating-system">3 - Operating System</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#31-verify-operating-system">3.1 - Verify Operating System</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#32-verify-gnu-bash">3.2 - Verify GNU bash</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#33-verify-gnu-awk">3.3 - Verify GNU awk</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#34-verify-gnu-coreutils">3.4 - Verify GNU coreutils</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#35-verify-gnu-grep">3.5 - Verify GNU grep</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#36-verify-gnu-wget">3.6 - Verify GNU wget</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#37-verify-browser">3.7 - Verify Browser</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#38-verify-openssl">3.8 - Verify OpenSSL</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#4-environment-variables">4 - Environment Variables</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#41-unset-environment-variables">4.1 - Unset Environment Variables</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#42-set-environment-variables">4.2 - Set Environment Variables</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#43-verify-environment-variables">4.3 - Verify Environment Variables</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#5-required-directories">5 - Required Directories</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#51-create-required-directories">5.1 - Create Required Directories</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#52-verify-required-directories">5.2 - Verify Required Directories</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#6-azure-cli">6 - Azure CLI</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#61-install-azure-cli">6.1 - Install Azure CLI</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#62-subscription-owner-login">6.2 - Subscription Owner Login</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#63-verify-azure-tenant">6.3 - Verify Azure Tenant</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#64-set-default-subscription">6.4 - Set Default Subscription</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#65-verify-default-subscription">6.5 - Verify Default Subscription</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#7-subscription-owners">7 - Subscription Owners</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#71-create-subscription-owners">7.1 - Create Subscription Owners</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#72-verify-subscription-owners">7.2 - Verify Subscription Owners</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#8-subscription-details">8 - Subscription Details</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#81-verify-subscription-name">8.1 - Verify Subscription Name</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#82-verify-subscription-id">8.2 - Verify Subscription ID</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#83-verify-subscription-location">8.3 - Verify Subscription Location</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#84-verify-subscription-limits">8.4 - Verify Subscription Limits</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#85-verify-subscription-quotas">8.5 - Verify Subscription Quotas</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#86-standard-dsv3-family-vcpus">8.6 - Standard DSv3 Family vCPUs</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#87-standard-dv2-family-vcpus">8.7 - Standard Dv2 Family vCPUs</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#9-openshift-administrators">9 - OpenShift Administrators</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#91-create-administratorts">9.1 - Create Administratorts</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#92-verify-administratorts">9.2 - Verify Administratorts</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#93-create-administrator-roles">9.3 - Create Administrator Roles</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#94-verify-administrator-roles">9.4 - Verify Administrator Roles</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#10-resource-providers">10 - Resource Providers</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#101-register-provider-microsoftcompute">10.1 - Register Provider Microsoft.Compute</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#102-verify-provider-microsoftcompute">10.2 - Verify Provider Microsoft.Compute</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#103-register-provider-microsoftredhatopenshift">10.3 - Register Provider Microsoft.RedHatOpenShift</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#104-verify-provider-microsoftredhatopenshift">10.4 - Verify Provider Microsoft.RedHatOpenShift</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#105-register-provider-microsoftstorage">10.5 - Register Provider Microsoft.Storage</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#106-verify-provider-microsoftstorage">10.6 - Verify Provider Microsoft.Storage</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#11-resource-group">11 - Resource Group</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#111-create-resource-group">11.1 - Create Resource Group</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#112-verify-resource-group">11.2 - Verify Resource Group</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#12-virtual-network">12 - Virtual Network</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#121-create-virtual-network">12.1 - Create Virtual Network</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#122-verify-virtual-network">12.2 - Verify Virtual Network</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#13-openshift-subnets">13 - OpenShift Subnets</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#131-verify-openshift-cluster">13.1 - Verify OpenShift Cluster</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#132-create-master-subnet">13.2 - Create Master Subnet</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#133-disable-master-subnet-private-link-service">13.3 - Disable Master Subnet Private Link Service</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#134-verify-master-subnet">13.4 - Verify Master Subnet</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#135-create-worker-subnet">13.5 - Create Worker Subnet</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#136-verify-worker-subnet">13.6 - Verify Worker Subnet</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#14-network-security-groups">14 - Network Security Groups</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#141-create-network-security-groups">14.1 - Create Network Security Groups</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#142-verify-network-security-groups">14.2 - Verify Network Security Groups</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#15-network-security-group-rules">15 - Network Security Group Rules</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#151-create-dmz-nsg-rule-allowssh">15.1 - Create DMZ NSG Rule (AllowSSH)</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#152-verify-dmz-nsg-rules">15.2 - Verify DMZ NSG Rules</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#16-related-subnets">16 - Related Subnets</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#161-create-application-gateway-subnet">16.1 - Create Application Gateway Subnet</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#162-verify-application-gateway-subnet">16.2 - Verify Application Gateway Subnet</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#163-create-database-subnet">16.3 - Create Database Subnet</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#164-verify-database-subnet">16.4 - Verify Database Subnet</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#165-create-dmz-subnet">16.5 - Create DMZ Subnet</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#166-verify-dmz-subnet">16.6 - Verify DMZ Subnet</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#167-create-trusted-subnet">16.7 - Create Trusted Subnet</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#168-verify-trusted-subnet">16.8 - Verify Trusted Subnet</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#17-jump-server-virtual-machine">17 - Jump Server Virtual Machine</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#171-create-jump-server-address">17.1 - Create Jump Server Address</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#172-verify-jump-server-address">17.2 - Verify Jump Server Address</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#173-create-jump-server-nic">17.3 - Create Jump Server NIC</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#174-verify-jump-server-nic">17.4 - Verify Jump Server NIC</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#175-create-jump-server-availability-set">17.5 - Create Jump Server Availability Set</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#176-verify-jump-server-availability-set">17.6 - Verify Jump Server Availability Set</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#177-accept-jump-server-image-terms">17.7 - Accept Jump Server Image Terms</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#178-verify-jump-server-image-terms">17.8 - Verify Jump Server Image Terms</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#179-create-jump-server-virtual-machine">17.9 - Create Jump Server Virtual Machine</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#1710-verify-jump-server-virtual-machine">17.10 - Verify Jump Server Virtual Machine</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#1711-login-to-jump-server-virtual-machine">17.11 - Login to Jump Server Virtual Machine</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#18-vpn-gateway">18 - VPN Gateway</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#181-create-vpn-gateway-subnet">18.1 - Create VPN Gateway Subnet</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#182-verify-vpn-gateway-subnet">18.2 - Verify VPN Gateway Subnet</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#183-create-vpn-gateway-address">18.3 - Create VPN Gateway Address</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#184-verify-vpn-gateway-address">18.4 - Verify VPN Gateway Address</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#185-create-vpn-gateway">18.5 - Create VPN Gateway</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#186-verify-vpn-gateway">18.6 - Verify VPN Gateway</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#19-vpn-gateway-pki">19 - VPN Gateway PKI</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#191-create-root-key">19.1 - Create Root Key</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#192-verify-root-key">19.2 - Verify Root Key</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#193-create-root-certificate">19.3 - Create Root Certificate</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#194-verify-root-certificate">19.4 - Verify Root Certificate</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#195-verify-root-certificate-moduli">19.5 - Verify Root Certificate Moduli</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#196-create-root-certificate-data">19.6 - Create Root Certificate Data</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#197-verify-root-certificate-data">19.7 - Verify Root Certificate Data</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#20-client-certificates">20 - Client Certificates</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#201-set-vpn-client-environment-variables">20.1 - Set VPN Client Environment Variables</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#202-verify-vpn-client-environment-variables">20.2 - Verify VPN Client Environment Variables</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#203-create-vpn-client-key">20.3 - Create VPN Client Key</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#204-verify-vpn-client-key">20.4 - Verify VPN Client Key</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#205-create-client-certificate-request">20.5 - Create Client Certificate Request</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#206-verify-client-certificate-request">20.6 - Verify Client Certificate Request</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#207-create-client-certificate-extensions">20.7 - Create Client Certificate Extensions</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#208-verify-client-certificate-extensions">20.8 - Verify Client Certificate Extensions</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#209-create-client-certificate">20.9 - Create Client Certificate</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#2010-verify-client-certificate">20.10 - Verify Client Certificate</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#2011-verify-client-certificate-moduli">20.11 - Verify Client Certificate Moduli</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#2012-create-vpn-client-pfx">20.12 - Create VPN Client PFX</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#2013-verify-vpn-client-pfx">20.13 - Verify VPN Client PFX</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#21-vpn-client">21 - VPN Client</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#211-verify-vpn-client-url">21.1 - Verify VPN Client URL</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#212-download-vpn-client">21.2 - Download VPN Client</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#213-distribute-vpn-client-pfx">21.3 - Distribute VPN Client &amp; PFX</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#22-obtain-pull-secrets">22 - Obtain Pull Secrets</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#221-obtain-red-hat-pull-secret">22.1 - Obtain Red Hat Pull Secret</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#222-verify-red-hat-pull-secret">22.2 - Verify Red Hat Pull Secret</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#23-azure-red-hat-openshift">23 - Azure Red Hat OpenShift</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#231-create-aro-cluster">23.1 - Create ARO Cluster</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#232-verify-aro-cluster">23.2 - Verify ARO Cluster</a>
-    </li>
-        </ul>
-    </li>
-    </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Index</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="about/">About</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
                     </li>
                 </ul>
       </div>
@@ -411,7 +75,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href=".">IPM on Azure</a>
+        <a href="..">IPM on Azure</a>
       </nav>
 
       
@@ -419,11 +83,11 @@
         <div class="rst-content">
           <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".">Docs</a> &raquo;</li>
+    <li><a href="..">Docs</a> &raquo;</li>
     
       
     
-    <li>Index</li>
+    <li>All</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -5130,17 +4794,15 @@ az aro list-credentials --name ${ARO_CLUSTER_NAME} --resource-group ${ARO_RESOUR
   &quot;kubeadminUsername&quot;: &quot;kubeadmin&quot;
 }
 </code></pre>
+
+<h3 id="24-openshift-cli">24 - OpenShift CLI</h3>
+<p>Work in Progress</p>
+<h3 id="25-openshift-authentication">25 - OpenShift Authentication</h3>
+<p>Work in Progress</p>
               
             </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="about/" class="btn btn-neutral float-right" title="About">Next <span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-    </div>
   
 
   <hr/>
@@ -5167,13 +4829,11 @@ az aro list-credentials --name ${ARO_CLUSTER_NAME} --resource-group ${ARO_RESOUR
       
       
       
-        <span style="margin-left: 15px"><a href="about/" style="color: #fcfcfc">Next &raquo;</a></span>
-      
     </span>
 </div>
-    <script>var base_url = '.';</script>
-    <script src="js/theme.js" defer></script>
-      <script src="search/main.js" defer></script>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
     <script defer>
         window.onload = function () {
             SphinxRtdTheme.Navigation.enable(true);
@@ -5182,8 +4842,3 @@ az aro list-credentials --name ${ARO_CLUSTER_NAME} --resource-group ${ARO_RESOUR
 
 </body>
 </html>
-
-<!--
-MkDocs version : 1.1.2
-Build Date UTC : 2020-09-25 21:09:14.113397+00:00
--->

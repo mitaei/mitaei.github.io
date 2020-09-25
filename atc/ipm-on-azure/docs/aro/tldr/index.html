@@ -29,6 +29,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-52523818-5', 'mitaei.github.io');
+      ga('send', 'pageview');
+  </script>
+  
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -91,404 +101,104 @@
                 <h1 id="too-long-didnt-read">Too Long; Didn't Read</h1>
 <p>This is a representation of only the commands from the index, using the example environment configuration file from section 4.2.</p>
 <p>All descriptions, references, and example outputs have been removed.</p>
-<h4 id="1-azure-tenant">1 - Azure Tenant</h4>
-<p><em>1.1 - Create Microsoft Account</em><br>
-<em>1.2 - Create Global Administrator</em><br>
-<em>1.3 - Verify Admin Center Access</em><br>
-<em>1.4 - Verify AAD License</em><br></p>
-<h4 id="2-azure-subscription">2 - Azure Subscription</h4>
-<p><em>2.1 - Create Azure Subscription</em><br></p>
-<h4 id="3-operating-system">3 - Operating System</h4>
-<p><em>3.1 - Verify Operating System</em><br></p>
-<pre><code class="bash">uname -a
+<p><em>20.1 - Set VPN Client Environment Variables</em><br></p>
+<pre><code class="bash">export ARO_VGW_PKI_CLIENT='example'
+export ARO_VGW_PKI_CLIENT_NAME=&quot;${ARO_VGW_NAME}-client-${ARO_VGW_PKI_CLIENT}&quot;
+export ARO_VGW_PKI_CLIENT_EXT_FILE=&quot;${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME}.ext&quot;
+export ARO_VGW_PKI_CLIENT_KEY_FILE=&quot;${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME}.key&quot;
+export ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE='!'&quot;${ARO_VGW_PKI_CLIENT}&quot;'!'
+export ARO_VGW_PKI_CLIENT_REQ_FILE=&quot;${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME}.req&quot;
+export ARO_VGW_PKI_CLIENT_CRT_FILE=&quot;${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME}.crt&quot;
+export ARO_VGW_PKI_CLIENT_SERIAL_FILE=&quot;${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME}.serial&quot;
+export ARO_VGW_PKI_CLIENT_PFX_FILE='${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME}.pfx'
 </code></pre>
 
-<p><em>3.2 - Verify GNU bash</em><br></p>
-<pre><code class="bash">bash --version
+<p><em>20.2 - Verify VPN Client Environment Variables</em><br></p>
+<pre><code class="bash">VERIFY_VARIABLES=(ARO_VGW_PKI_CLIENT_NAME ARO_VGW_PKI_CLIENT_EXT_FILE ARO_VGW_PKI_CLIENT_KEY_FILE ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE ARO_VGW_PKI_CLIENT_REQ_FILE ARO_VGW_PKI_CLIENT_CRT_FILE ARO_VGW_PKI_CLIENT_SERIAL_FILE ARO_VGW_PKI_CLIENT_PFX_FILE ARO_VGW_NAME ARO_VGW_PKI_BITS ARO_VGW_PKI_DIR ARO_VGW_PKI_ROOT_KEY_FILE ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE)
+for VERIFY_VARIABLE in ${VERIFY_VARIABLES[@]}; do if [ &quot;${!VERIFY_VARIABLE}&quot; == &quot;&quot; ]; then echo &quot;ERROR! Environment Variable ${VERIFY_VARIABLE} is NOT set&quot;; else echo &quot;${VERIFY_VARIABLE}=${!VERIFY_VARIABLE}&quot;; fi; done; unset VERIFY_VARIABLE
 </code></pre>
 
-<p><em>3.3 - Verify GNU awk</em><br></p>
-<pre><code class="bash">awk --version
+<p><em>20.3 - Create VPN Client Key</em><br></p>
+<pre><code class="bash">openssl genrsa -aes256 -out &quot;${ARO_VGW_PKI_CLIENT_KEY_FILE}&quot; -passout env:ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE ${ARO_VGW_PKI_BITS} 2&gt;&amp;1
 </code></pre>
 
-<p><em>3.4 - Verify GNU coreutils</em><br></p>
-<pre><code class="bash">base64 --version
-basename --version
-dirname --version
-sort --version
-head --version
-tail --version
+<p><em>20.4 - Verify VPN Client Key</em><br></p>
+<pre><code class="bash">openssl rsa -in &quot;${ARO_VGW_PKI_CLIENT_KEY_FILE}&quot; -noout -passin env:ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE 2&gt;&amp;1
 </code></pre>
 
-<p><em>3.5 - Verify GNU grep</em><br></p>
-<pre><code class="bash">egrep --version
+<p><em>20.5 - Create Client Certificate Request</em><br></p>
+<pre><code class="bash">openssl req -new -out &quot;${ARO_VGW_PKI_CLIENT_REQ_FILE}&quot; -key &quot;${ARO_VGW_PKI_CLIENT_KEY_FILE}&quot; -passin env:ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE -subj /CN=&quot;${ARO_VGW_PKI_CLIENT_NAME}&quot; 2&gt;&amp;1
 </code></pre>
 
-<p><em>3.6 - Verify GNU wget</em><br></p>
-<pre><code class="bash">wget --version
+<p><em>20.6 - Verify Client Certificate Request</em><br></p>
+<pre><code class="bash">openssl req -in &quot;${ARO_VGW_PKI_CLIENT_REQ_FILE}&quot; -noout -text 2&gt;&amp;1
 </code></pre>
 
-<p><em>3.7 - Verify Browser</em><br></p>
-<pre><code class="bash">firefox --version
-google-chrome --version
+<p><em>20.7 - Create Client Certificate Extensions</em><br></p>
+<pre><code class="bash">echo &quot;authorityKeyIdentifier=keyid,issuer&quot; &gt; &quot;${ARO_VGW_PKI_CLIENT_EXT_FILE}&quot;
+echo &quot;basicConstraints=CA:FALSE&quot; &gt;&gt; &quot;${ARO_VGW_PKI_CLIENT_EXT_FILE}&quot;
+echo &quot;extendedKeyUsage=clientAuth&quot; &gt;&gt; &quot;${ARO_VGW_PKI_CLIENT_EXT_FILE}&quot;
+echo &quot;subjectAltName=DNS:${ARO_VGW_PKI_CLIENT_NAME}&quot; &gt;&gt; &quot;${ARO_VGW_PKI_CLIENT_EXT_FILE}&quot;
 </code></pre>
 
-<p><em>3.8 - Verify OpenSSL</em><br></p>
-<pre><code class="bash">openssl version
+<p><em>20.8 - Verify Client Certificate Extensions</em><br></p>
+<pre><code class="bash">grep ^authorityKeyIdentifier=keyid,issuer &quot;${ARO_VGW_PKI_CLIENT_EXT_FILE}&quot; &amp;&amp; grep ^extendedKeyUsage=clientAuth &quot;${ARO_VGW_PKI_CLIENT_EXT_FILE}&quot;
 </code></pre>
 
-<h4 id="4-environment-variables">4 - Environment Variables</h4>
-<p><em>4.1 - Unset Environment Variables</em><br></p>
-<pre><code class="bash">for ARO in $(env | grep ^ARO | awk -F= &quot;{print \$1}&quot; | sort -V); do echo unset $ARO; unset $ARO; done
+<p><em>20.9 - Create Client Certificate</em><br></p>
+<pre><code class="bash">openssl x509 -req -sha256 -in &quot;${ARO_VGW_PKI_CLIENT_REQ_FILE}&quot; -out &quot;${ARO_VGW_PKI_CLIENT_CRT_FILE}&quot; -CAkey &quot;${ARO_VGW_PKI_ROOT_KEY_FILE}&quot; -CA &quot;${ARO_VGW_PKI_ROOT_CRT_FILE}&quot; -passin env:ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE -days 1095 -CAcreateserial -CAserial &quot;${ARO_VGW_PKI_CLIENT_SERIAL_FILE}&quot; 2&gt;&amp;1
 </code></pre>
 
-<p><em>4.2 - Set Environment Variables</em><br></p>
-<pre><code class="bash">cat &quot;ipm.env&quot; &amp;&amp; source &quot;ipm.env&quot;
+<p><em>20.10 - Verify Client Certificate</em><br></p>
+<pre><code class="bash">openssl x509 -in &quot;${ARO_VGW_PKI_CLIENT_CRT_FILE}&quot; -noout -text 2&gt;&amp;1
 </code></pre>
 
-<p><em>4.3 - Verify Environment Variables</em><br></p>
-<pre><code class="bash">env | grep ^ARO | sort -V
+<p><em>20.11 - Verify Client Certificate Moduli</em><br></p>
+<pre><code class="bash">echo -n &quot;md5sum for /home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.key = &quot;; openssl rsa -noout -modulus -in &quot;/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.key&quot; -passin env:ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE | md5sum
+echo -n &quot;md5sum for /home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.crt = &quot;; openssl x509 -noout -modulus -in &quot;/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.crt&quot; | md5sum
+echo -n &quot;md5sum for /home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.req = &quot;; openssl req -noout -modulus -in &quot;/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.req&quot; | md5sum
 </code></pre>
 
-<h4 id="5-required-directories">5 - Required Directories</h4>
-<pre><code class="bash">env | egrep &quot;ARO.*DIR&quot;
+<p><em>20.12 - Create VPN Client PFX</em><br></p>
+<pre><code class="bash">openssl pkcs12 -in &quot;${ARO_VGW_PKI_CLIENT_CRT_FILE}&quot; -out &quot;${ARO_VGW_PKI_CLIENT_PFX_FILE}&quot; -inkey &quot;${ARO_VGW_PKI_CLIENT_KEY_FILE}&quot; -passin env:ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE -passout pass: -certfile &quot;${ARO_VGW_PKI_ROOT_CRT_FILE}&quot; -export 2&gt;&amp;1
 </code></pre>
 
-<p><em>5.1 - Create Required Directories</em><br></p>
-<pre><code class="bash">mkdir -p &quot;${ARO_VGW_PKI_DIR}&quot;
-mkdir -p &quot;${ARO_REDHAT_PULL_SECRET_DIR}&quot;
+<p><em>20.13 - Verify VPN Client PFX</em><br></p>
+<pre><code class="bash">openssl x509 -in &quot;${ARO_VGW_PKI_CLIENT_PFX_FILE}&quot; -noout -text 2&gt;&amp;1
 </code></pre>
 
-<p><em>5.2 - Verify Required Directories</em><br></p>
-<pre><code class="bash">ls -ld &quot;${ARO_VGW_PKI_DIR}&quot;
-ls -ld &quot;${ARO_REDHAT_PULL_SECRET_DIR}&quot;
+<h4 id="21-vpn-client">21 - VPN Client</h4>
+<pre><code class="bash">env | egrep -e &quot;ARO.*PKI_CLIENT|ARO_VGW_NAME|ARO_VGW_PKI_BITS|ARO_VGW_PKI_DIR|ARO_VGW_PKI_ROOT_KEY&quot; | sort -V
 </code></pre>
 
-<h4 id="6-azure-cli">6 - Azure CLI</h4>
-<pre><code class="bash">env | egrep &quot;ARO.*DIR&quot;
+<p><em>21.1 - Verify VPN Client URL</em><br></p>
+<pre><code class="bash">export ARO_VGW_CONFIGURATION_URL=$(az network vnet-gateway vpn-client generate -g ${ARO_RESOURCE_GROUP_NAME} -n ${ARO_VGW_NAME} --processor-architecture Amd64)
+echo &quot;ARO_VGW_CONFIGURATION_URL=${ARO_VGW_CONFIGURATION_URL}&quot;
 </code></pre>
 
-<p><em>6.1 - Install Azure CLI</em><br></p>
-<pre><code class="bash">az --version
+<p><em>21.2 - Download VPN Client</em><br></p>
+<pre><code class="bash">eval wget &quot;${ARO_VGW_CONFIGURATION_URL}&quot; -O &quot;${ARO_VGW_PKI_DIR}/${ARO_VGW_NAME}.zip&quot; 2&gt;&amp;1
 </code></pre>
 
-<p><em>6.2 - Subscription Owner Login</em><br></p>
-<pre><code class="bash">az login
-export AZ_USER=$(az account show --query 'user.name' --output tsv)
-az role assignment list --role Owner --query &quot;[?principalName=='${AZ_USER}'].principalName&quot; --output tsv
+<p><em>21.3 - Distribute VPN Client &amp; PFX</em><br></p>
+<h4 id="22-obtain-pull-secrets">22 - Obtain Pull Secrets</h4>
+<p><em>22.1 - Obtain Red Hat Pull Secret</em><br>
+<em>22.2 - Verify Red Hat Pull Secret</em><br></p>
+<pre><code class="bash">ls -ld &quot;${ARO_REDHAT_PULL_SECRET_FILE}&quot;
 </code></pre>
 
-<p><em>6.3 - Verify Azure Tenant</em><br></p>
-<pre><code class="bash">az account show --query '[{tenantId:tenantId}, {homeTenantId:homeTenantId}]'
-export AZ_TENANT_ID=$(az account show --query 'tenantId' --output tsv 2&gt; /dev/null)
-if [ &quot;${ARO_TENANT_ID}&quot; != &quot;${AZ_TENANT_ID}&quot; ];then; echo &quot;ERROR! ARO_TENANT_ID (${ARO_TENANT_ID}) does not match this tenant id (${AZ_TENANT_ID})&quot;; fi
+<h4 id="23-azure-red-hat-openshift">23 - Azure Red Hat OpenShift</h4>
+<pre><code class="bash">env | egrep -e 'ARO_CLUSTER_NAME|ARO_REDHAT_PULL_SECRET_FILE|ARO_RESOURCE_GROUP_NAME|ARO_VNET_NAME|ARO_SUBNET_MASTER_NAME|ARO_SUBNET_WORKER_NAME' | sort -V
 </code></pre>
 
-<p><em>6.4 - Set Default Subscription</em><br></p>
-<pre><code class="bash">az account set -s &quot;${ARO_SUBSCRIPTION_NAME}&quot;
+<p><em>23.1 - Create ARO Cluster</em><br></p>
+<pre><code class="bash">az aro create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_CLUSTER_NAME} --vnet ${ARO_VNET_NAME} --master-subnet ${ARO_SUBNET_MASTER_NAME} --worker-subnet ${ARO_SUBNET_WORKER_NAME} --apiserver-visibility Private --ingress-visibility Private --pull-secret @${ARO_REDHAT_PULL_SECRET_FILE}
 </code></pre>
 
-<p><em>6.5 - Verify Default Subscription</em><br></p>
-<pre><code class="bash">az account list --query '[?isDefault == `true`]'
-</code></pre>
-
-<h4 id="7-subscription-owners">7 - Subscription Owners</h4>
-<p><em>7.1 - Create Subscription Owners</em><br></p>
-<pre><code class="bash">for ARO_SUBSCRIPTION_OWNER in ${ARO_SUBSCRIPTION_OWNERS[@]}; do az role assignment create --assignee ${ARO_SUBSCRIPTION_OWNER} --role Owner; done
-</code></pre>
-
-<p><em>7.2 - Verify Subscription Owners</em><br></p>
-<pre><code class="bash">az role assignment list --role Owner --output table
-</code></pre>
-
-<h4 id="8-subscription-details">8 - Subscription Details</h4>
-<pre><code class="bash">env | egrep -e '^ARO_SUBSCRIPTION_NAME|^ARO_SUBSCRIPTION_ID|^ARO_TENANT_ID|^ARO_LOCATION_NAME'
-echo &quot;ARO_SUBSCRIPTION_OWNERS=${ARO_SUBSCRIPTION_OWNERS[@]}&quot;
-echo &quot;ARO_VERIFY_QUOTA_NAMES=${ARO_VERIFY_QUOTA_NAMES[@]}&quot;
-</code></pre>
-
-<p><em>8.1 - Verify Subscription Name</em><br></p>
-<pre><code class="bash">az account list --output table
-az account show --subscription &quot;${ARO_SUBSCRIPTION_ID}&quot; --query &quot;[{subscription_name:name},{subscription_id:id}]&quot;
-export AZ_SUBSCRIPTION_NAME=$(az account show --query 'name' --output tsv)
-if [ &quot;${AZ_SUBSCRIPTION_NAME}&quot; != &quot;${ARO_SUBSCRIPTION_NAME}&quot; ]; then echo &quot;ERROR! az subscription name \&quot;${AZ_SUBSCRIPTION_NAME}\&quot; does not match aro subscription name \&quot;${ARO_SUBSCRIPTION_NAME}\&quot;&quot;; fi
-</code></pre>
-
-<p><em>8.2 - Verify Subscription ID</em><br></p>
-<pre><code class="bash">az account show --subscription &quot;${ARO_SUBSCRIPTION_ID}&quot; --query &quot;[{subscription_name:name},{subscription_id:id}]&quot;
-export AZ_SUBSCRIPTION_ID=$(az account show --query 'id' --output tsv 2&gt; /dev/null)
-if [ &quot;${AZ_SUBSCRIPTION_ID}&quot; != &quot;${ARO_SUBSCRIPTION_ID}&quot; ]; then echo &quot;ERROR! az subscription name \&quot;${AZ_SUBSCRIPTION_ID}\&quot; does not match aro subscription name \&quot;${ARO_SUBSCRIPTION_ID}\&quot;&quot;; fi
-</code></pre>
-
-<p><em>8.3 - Verify Subscription Location</em><br></p>
-<pre><code class="bash">az account list-locations --query &quot;[?name=='${ARO_LOCATION_NAME}']&quot; --output table
-export AZ_LOCATION_NAME=$(az account list-locations --query &quot;[?name=='${ARO_LOCATION_NAME}'].name&quot; --output tsv)
-if [ &quot;${AZ_LOCATION_NAME}&quot; != &quot;${ARO_LOCATION_NAME}&quot; ]; then echo &quot;ERROR! az location name \&quot;${AZ_LOCATION_NAME}\&quot; does not match aro location name \&quot;${ARO_LOCATION_NAME}\&quot;&quot;; fi
-</code></pre>
-
-<p><em>8.4 - Verify Subscription Limits</em><br></p>
-<pre><code class="bash">if [ &quot;${ARO_VERIFY_QUOTA_NAMES}&quot; == &quot;&quot; ]; then echo &quot;WARNING! ARO_VERIFY_QUOTA_NAMES is not set&quot;; fi
-</code></pre>
-
-<p><em>8.5 - Verify Subscription Quotas</em><br>
-<em>8.6 - Standard DSv3 Family vCPUs</em><br></p>
-<pre><code class="bash">az vm list-usage --location ${ARO_LOCATION_NAME} --query &quot;[?localName=='Standard DSv3 Family vCPUs']&quot;
-export AZ_VERIFY_QUOTA_LIMIT=$(az vm list-usage --location ${ARO_LOCATION_NAME} --query &quot;[?localName=='Standard DSv3 Family vCPUs'].limit&quot; --output tsv)
-if [ &quot;${AZ_VERIFY_QUOTA_LIMIT}&quot; == &quot;&quot; ] || [ ${AZ_VERIFY_QUOTA_LIMIT} -lt 50  ]; then echo &quot;ERROR! Quota limit for &quot;Standard DSv3 Family vCPUs&quot; is too low!  Open a support case with Microsoft.&quot;; fi
-</code></pre>
-
-<p><em>8.7 - Standard Dv2 Family vCPUs</em><br></p>
-<pre><code class="bash">az vm list-usage --location ${ARO_LOCATION_NAME} --query &quot;[?localName=='Standard Dv2 Family vCPUs']&quot;
-export AZ_VERIFY_QUOTA_LIMIT=$(az vm list-usage --location ${ARO_LOCATION_NAME} --query &quot;[?localName=='Standard Dv2 Family vCPUs'].limit&quot; --output tsv)
-if [ &quot;${AZ_VERIFY_QUOTA_LIMIT}&quot; == &quot;&quot; ] || [ ${AZ_VERIFY_QUOTA_LIMIT} -lt 50  ]; then echo &quot;ERROR! Quota limit for &quot;Standard Dv2 Family vCPUs&quot; is too low!  Open a support case with Microsoft.&quot;; fi
-</code></pre>
-
-<h4 id="9-openshift-administrators">9 - OpenShift Administrators</h4>
-<pre><code class="bash">env | egrep -e '^ARO_DOMAIN_NAME'
-echo &quot;ARO_ADMINISTRATORS=${ARO_ADMINISTRATORS[@]}&quot;
-</code></pre>
-
-<p><em>9.1 - Create Administratorts</em><br></p>
-<pre><code class="bash">az ad user create --display-name openshift-admin@mitaei.net --user-principal-name openshift-admin@mitaei.net --password &quot;DIl3*lks)-${ARO}-r4d0m!&quot; --force-change-password-next-login
-</code></pre>
-
-<p><em>9.2 - Verify Administratorts</em><br></p>
-<pre><code class="bash">for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az ad user show --id ${ARO_ADMINISTRATOR} --query '[{userPrincipalName:userPrincipalName}, {principalId:objectId}]'; if [ $? -ne 0 ]; then echo &quot;WARNING! ${ADMINISTRATOR} aad account was not found&quot;; fi; done
-</code></pre>
-
-<p><em>9.3 - Create Administrator Roles</em><br></p>
-<pre><code class="bash">for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment create --assignee ${ARO_ADMINISTRATOR} --role &quot;Contributor&quot;; if [ $? -ne 0 ]; then echo &quot;ERROR! could not assign Contributor role to ${ARO_ADMINISTRATOR}&quot;; fi; done
-for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment create --assignee ${ARO_ADMINISTRATOR} --role &quot;User Access Administrator&quot;; if [ $? -ne 0 ]; then echo &quot;ERROR! could not assign User Access Administrator role to ${ARO_ADMINISTRATOR}&quot;; fi; done
-</code></pre>
-
-<p><em>9.4 - Verify Administrator Roles</em><br></p>
-<pre><code class="bash">for ARO_ADMINISTRATOR in ${ARO_ADMINISTRATORS[@]}; do az role assignment list --assignee ${ARO_ADMINISTRATOR} --output table; if [ $? -ne 0 ]; then echo &quot;ERROR! failed retrieving subscription roles for \&quot;${ADMINISTRATOR}\&quot;&quot;; fi; echo; done
-</code></pre>
-
-<h4 id="10-resource-providers">10 - Resource Providers</h4>
-<pre><code class="bash">echo &quot;ARO_RESOURCE_PROVIDERS=${ARO_RESOURCE_PROVIDERS[@]}&quot;
-</code></pre>
-
-<p><em>10.1 - Register Provider Microsoft.Compute</em><br></p>
-<pre><code class="bash">az provider register -n Microsoft.Compute --wait
-</code></pre>
-
-<p><em>10.2 - Verify Provider Microsoft.Compute</em><br></p>
-<pre><code class="bash">az provider show --namespace Microsoft.Compute --output table
-</code></pre>
-
-<p><em>10.3 - Register Provider Microsoft.RedHatOpenShift</em><br></p>
-<pre><code class="bash">az provider register -n Microsoft.RedHatOpenShift --wait
-</code></pre>
-
-<p><em>10.4 - Verify Provider Microsoft.RedHatOpenShift</em><br></p>
-<pre><code class="bash">az provider show --namespace Microsoft.RedHatOpenShift --output table
-</code></pre>
-
-<p><em>10.5 - Register Provider Microsoft.Storage</em><br></p>
-<pre><code class="bash">az provider register -n Microsoft.Storage --wait
-</code></pre>
-
-<p><em>10.6 - Verify Provider Microsoft.Storage</em><br></p>
-<pre><code class="bash">az provider show --namespace Microsoft.Storage --output table
-</code></pre>
-
-<h4 id="11-resource-group">11 - Resource Group</h4>
-<pre><code class="bash">env | egrep '^ARO_RESOURCE_GROUP_NAME|^ARO_LOCATION_NAME'
-</code></pre>
-
-<p><em>11.1 - Create Resource Group</em><br></p>
-<pre><code class="bash">az group create --name ${ARO_RESOURCE_GROUP_NAME} --location ${ARO_LOCATION_NAME}
-</code></pre>
-
-<p><em>11.2 - Verify Resource Group</em><br></p>
-<pre><code class="bash">az group show --name ${ARO_RESOURCE_GROUP_NAME}
-</code></pre>
-
-<h4 id="12-virtual-network">12 - Virtual Network</h4>
-<pre><code class="bash">env | grep ^ARO_VNET | sort -V
-</code></pre>
-
-<p><em>12.1 - Create Virtual Network</em><br></p>
-<pre><code class="bash">az network vnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VNET_NAME} --address-prefixes ${ARO_VNET_ADDRESS_PREFIX}
-</code></pre>
-
-<p><em>12.2 - Verify Virtual Network</em><br></p>
-<pre><code class="bash">az network vnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VNET_NAME} --output table
-</code></pre>
-
-<h4 id="13-openshift-subnets">13 - OpenShift Subnets</h4>
-<pre><code class="bash">env | grep ^ARO_SUBNET | egrep -e 'MASTER|WORKER' | sort -V
-</code></pre>
-
-<p><em>13.1 - Verify OpenShift Cluster</em><br></p>
-<pre><code class="bash">az aro show --name &quot;${ARO_CLUSTER_NAME}&quot; --resource-group &quot;${ARO_RESOURCE_GROUP_NAME}&quot; --output table 2&gt; /dev/null; if [ $? -eq 0 ]; then echo &quot;ERROR! ARO cluster ${ARO_CLUSTER_NAME} exists; do not recreate the master or worker subnets&quot;; fi
-</code></pre>
-
-<p><em>13.2 - Create Master Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_MASTER_NAME} --address-prefixes ${ARO_SUBNET_MASTER_ADDRESS_PREFIX} --service-endpoints Microsoft.ContainerRegistry
-</code></pre>
-
-<p><em>13.3 - Disable Master Subnet Private Link Service</em><br></p>
-<pre><code class="bash">az network vnet subnet update --name ${ARO_SUBNET_MASTER_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --disable-private-link-service-network-policies true
-</code></pre>
-
-<p><em>13.4 - Verify Master Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_MASTER_NAME} --output table
-</code></pre>
-
-<p><em>13.5 - Create Worker Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_WORKER_NAME} --address-prefixes ${ARO_SUBNET_WORKER_ADDRESS_PREFIX} --service-endpoints Microsoft.ContainerRegistry
-</code></pre>
-
-<p><em>13.6 - Verify Worker Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_WORKER_NAME} --output table
-</code></pre>
-
-<h4 id="14-network-security-groups">14 - Network Security Groups</h4>
-<pre><code class="bash">env | egrep -e 'ARO_SUBNET(.*)NSG' | egrep -ve 'MASTER|WORKER|VGW' | sort -V
-</code></pre>
-
-<p><em>14.1 - Create Network Security Groups</em><br></p>
-<pre><code class="bash">az network nsg create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_AGW_NSG_NAME}
-</code></pre>
-
-<p><em>14.2 - Verify Network Security Groups</em><br></p>
-<pre><code class="bash">az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_AGW_NSG_NAME} --output table &amp;&amp; echo
-az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_DB_NSG_NAME} --output table &amp;&amp; echo
-az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_DMZ_NSG_NAME} --output table &amp;&amp; echo
-az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_TRUSTED_NSG_NAME} --output table &amp;&amp; echo
-</code></pre>
-
-<h4 id="15-network-security-group-rules">15 - Network Security Group Rules</h4>
-<pre><code class="bash">env | grep ARO.*NSG | egrep -ve 'MASTER|WORKER|VGW' | sort -V
-</code></pre>
-
-<p><em>15.1 - Create DMZ NSG Rule (AllowSSH)</em><br></p>
-<pre><code class="bash">az network nsg rule create --resource-group ${ARO_RESOURCE_GROUP_NAME} --nsg-name ${ARO_SUBNET_DMZ_NSG_NAME} --name AllowSSH --protocol tcp --priority 1000 --destination-port-range 22 --access allow
-</code></pre>
-
-<p><em>15.2 - Verify DMZ NSG Rules</em><br></p>
-<pre><code class="bash">az network nsg show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_SUBNET_DMZ_NSG_NAME} --query securityRules --output table
-</code></pre>
-
-<h4 id="16-related-subnets">16 - Related Subnets</h4>
-<pre><code class="bash">env | grep ^ARO_SUBNET | egrep -ve 'MASTER|WORKER|VGW' | sort -V
-</code></pre>
-
-<p><em>16.1 - Create Application Gateway Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_AGW_NAME} --address-prefixes ${ARO_SUBNET_AGW_ADDRESS_PREFIX} --network-security-group=${ARO_SUBNET_AGW_NSG_NAME}
-</code></pre>
-
-<p><em>16.2 - Verify Application Gateway Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_AGW_NAME} --output table
-</code></pre>
-
-<p><em>16.3 - Create Database Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DB_NAME} --address-prefixes ${ARO_SUBNET_DB_ADDRESS_PREFIX} --network-security-group=${ARO_SUBNET_DB_NSG_NAME}
-</code></pre>
-
-<p><em>16.4 - Verify Database Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DB_NAME} --output table
-</code></pre>
-
-<p><em>16.5 - Create DMZ Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DMZ_NAME} --address-prefixes ${ARO_SUBNET_DMZ_ADDRESS_PREFIX} --network-security-group=${ARO_SUBNET_DMZ_NSG_NAME}
-</code></pre>
-
-<p><em>16.6 - Verify DMZ Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DMZ_NAME} --output table
-</code></pre>
-
-<p><em>16.7 - Create Trusted Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_TRUSTED_NAME} --address-prefixes ${ARO_SUBNET_TRUSTED_ADDRESS_PREFIX} --network-security-group ${ARO_SUBNET_TRUSTED_NSG_NAME}
-</code></pre>
-
-<p><em>16.8 - Verify Trusted Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_TRUSTED_NAME} --output table
-</code></pre>
-
-<h4 id="17-jump-server-virtual-machine">17 - Jump Server Virtual Machine</h4>
-<pre><code class="bash">env | egrep ARO.*JUMP | sort -V
-</code></pre>
-
-<p><em>17.1 - Create Jump Server Public IP Address</em><br></p>
-<pre><code class="bash">az network public-ip create --name ${ARO_VM_JUMP_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --sku &quot;Basic&quot; --allocation-method &quot;Dynamic&quot;
-</code></pre>
-
-<p><em>17.2 - Verify Jump Server Public IP Address</em><br></p>
-<pre><code class="bash">az network public-ip show --name ${ARO_VM_JUMP_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --query ipAddress --output tsv
-az network public-ip show --name ${ARO_VM_JUMP_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME}
-</code></pre>
-
-<p><em>17.3 - Create Jump Server Virtual NIC</em><br></p>
-<pre><code class="bash">az network nic create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}-nic --vnet-name ${ARO_VNET_NAME} --subnet ${ARO_SUBNET_DMZ_NAME} --public-ip-address ${ARO_VM_JUMP_PUBLIC_ADDRESS_NAME} --network-security-group ${ARO_SUBNET_DMZ_NSG_NAME}
-</code></pre>
-
-<p><em>17.4 - Verify Jump Server Virtual NIC</em><br></p>
-<pre><code class="bash">az network nic show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}-nic --output table
-</code></pre>
-
-<p><em>17.5 - Create Jump Server Availability Set</em><br></p>
-<pre><code class="bash">az vm availability-set create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}-as
-</code></pre>
-
-<p><em>17.6 - Verify Jump Server Availability Set</em><br></p>
-<pre><code class="bash">az vm availability-set show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}-as --output table
-</code></pre>
-
-<p><em>17.7 - Accept Jump Server Image Terms</em><br></p>
-<pre><code class="bash">az vm image terms accept --urn ${ARO_VM_JUMP_IMAGE_URN}
-</code></pre>
-
-<p><em>17.8 - Verify Jump Server Image Terms</em><br></p>
-<pre><code class="bash">az vm image terms show --urn ${ARO_VM_JUMP_IMAGE_URN} --query '[{accepted:accepted, name:name, plan:plan, product:product, publisher:publisher, type:type}]' --output table
-</code></pre>
-
-<p><em>17.9 - Create Jump Server Virtual Machine</em><br></p>
-<pre><code class="bash">az vm create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME} --location ${ARO_LOCATION_NAME} --availability-set ${ARO_VM_JUMP_NAME}-as --nics ${ARO_VM_JUMP_NAME}-nic --image ${ARO_VM_JUMP_IMAGE_URN} --admin-username ${ARO_VM_JUMP_ADMIN_NAME} --size ${ARO_VM_JUMP_SIZE} --generate-ssh-keys
-</code></pre>
-
-<p><em>17.10 - Verify Jump Server Virtual Machine</em><br></p>
-<pre><code class="bash">az vm show -d -g ${ARO_RESOURCE_GROUP_NAME} -n ${ARO_VM_JUMP_NAME} --query publicIps -o tsv
-az vm show --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VM_JUMP_NAME}
-</code></pre>
-
-<p><em>17.11 - Login to Jump Server Virtual Machine</em><br></p>
-<pre><code class="bash">export ARO_VM_JUMP_IP=$(az vm show -d -g ${ARO_RESOURCE_GROUP_NAME} -n ${ARO_VM_JUMP_NAME} --query publicIps -o tsv)
-echo &quot;${ARO_VM_JUMP_IP}&quot;
-ssh -i ~/.ssh/id_rsa.pub ${ARO_VM_JUMP_ADMIN_NAME}@${ARO_VM_JUMP_IP} &quot;hostname &amp;&amp; uptime&quot;
-</code></pre>
-
-<h4 id="18-vpn-gateway">18 - VPN Gateway</h4>
-<p><em>18.1 - Create VPN Gateway Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_VGW_NAME} --address-prefixes ${ARO_SUBNET_VGW_ADDRESS_PREFIX}
-</code></pre>
-
-<p><em>18.2 - Verify VPN Gateway Subnet</em><br></p>
-<pre><code class="bash">az network vnet subnet show --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_VGW_NAME} --output table
-</code></pre>
-
-<p><em>18.3 - Create VPN Gateway Public IP Address</em><br>
-<em>18.4 - Verify VPN Gateway Public IP Address</em><br></p>
-<pre><code class="bash">az network public-ip show --name ${ARO_VGW_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --output table
-</code></pre>
-
-<p><em>18.5 - Create VPN Gateway</em><br></p>
-<pre><code class="bash">az network vnet-gateway create --name ${ARO_VGW_NAME} --location ${ARO_LOCATION_NAME} --public-ip-address ${ARO_VGW_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet ${ARO_VNET_NAME} --gateway-type VPN --sku ${ARO_VGW_SKU} --vpn-type ${ARO_VGW_TYPE} --address-prefixes ${ARO_VGW_POOL_ADDRESS_PREFIX} --no-wait
-</code></pre>
-
-<p><em>18.6 - Verify VPN Gateway</em><br></p>
-<pre><code class="bash">az network vnet-gateway show --name ${ARO_VGW_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --output table
-</code></pre>
-
-<h4 id="19-vpn-gateway-certificate-authentication">19 - VPN Gateway Certificate Authentication</h4>
-<p><em>19.1 - Create VPN Gateway Root Key</em><br></p>
-<pre><code class="bash">openssl genrsa -aes256 -out ${ARO_VGW_PKI_ROOT_KEY_FILE} -passout env:ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE ${ARO_VGW_PKI_BITS}
-</code></pre>
-
-<p><em>19.2 - Verify VPN Gateway Root Key</em><br></p>
-<pre><code class="bash">openssl rsa -in ${ARO_VGW_PKI_ROOT_KEY_FILE} -noout -passin env:ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE
+<p><em>23.2 - Verify ARO Cluster</em><br></p>
+<pre><code class="bash">az aro show --name ${ARO_CLUSTER_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --query consoleProfile.url --output tsv
+az aro show --name ${ARO_CLUSTER_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME}
+az aro list-credentials --name ${ARO_CLUSTER_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME}
 </code></pre>
               
             </div>
