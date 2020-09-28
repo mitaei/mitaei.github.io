@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="joseph.tingiris@mastechinfotrellis.com">
-  <link rel="canonical" href="https://mitaei.github.io/atc/ipm-on-azure/docs/aro/all-delete/">
+  <link rel="canonical" href="https://mitaei.github.io/atc/ipm-on-azure/docs/aro/preview-delete/">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>All delete - IPM on Azure</title>
+  <title>Preview delete - IPM on Azure</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -19,9 +19,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "All delete";
-    var mkdocs_page_input_path = "all-delete.md";
-    var mkdocs_page_url = "/atc/ipm-on-azure/docs/aro/all-delete/";
+    var mkdocs_page_name = "Preview delete";
+    var mkdocs_page_input_path = "preview-delete.md";
+    var mkdocs_page_url = "/atc/ipm-on-azure/docs/aro/preview-delete/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
@@ -59,11 +59,15 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
                 <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
+                    </li>
+                </ul>
+                <ul>
                     <li class="toctree-l1"><a class="reference internal" href="..">Index</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../about/">About</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../tldr/">TLDR</a>
                     </li>
                 </ul>
       </div>
@@ -87,7 +91,7 @@
     
       
     
-    <li>All delete</li>
+    <li>Preview delete</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -101,7 +105,7 @@
                 <h3 id="25-openshift-authentication">25 - OpenShift Authentication</h3>
 <p>Work in Progress</p>
 <h3 id="24-openshift-cli">24 - OpenShift CLI</h3>
-<p>Work in Progress</p>
+<p>The OpenShift CLI client <code>oc</code> simplifies working with Kubernetes and OpenShift clusters, offering a number of advantages over <code>kubectl</code> such as easy login, kube config file management, and access to developer tools. The <code>kubectl</code> binary is included for when strict Kubernetes compliance is necessary.</p>
 <h3 id="23-azure-red-hat-openshift">23 - Azure Red Hat OpenShift</h3>
 <h4 id="231-delete-aro-cluster">23.1 - Delete ARO Cluster</h4>
 <p><strong><em>Reference(s):</em></strong></p>
@@ -131,21 +135,12 @@
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>Make sure to update ${ARO_REDHAT_PULL_SECRET_FILE} with the path the pull secret was saved.</p>
+<p>Make sure to update ${ARO_REDHAT_PULL_SECRET_FILE} with the path where the pull secret was saved.</p>
 </div>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://access.redhat.com/solutions/4844461">https://access.redhat.com/solutions/4844461</a></li>
 </ul>
-<h4 id="222-verify-red-hat-pull-secret">22.2 - Verify Red Hat Pull Secret</h4>
-<p><strong><em>Command(s):</em></strong></p>
-<pre><code class="bash">ls -ld &quot;${ARO_REDHAT_PULL_SECRET_FILE}&quot;
-</code></pre>
-
-<p><strong><em>Example Output:</em></strong></p>
-<pre><code class="bash">-rw-rw----. 1 jtingiris mit 2835 Sep 12 10:26 /home/jtingiris/prj/mit/aei/secrets/ipm-redhat-pull-secret.txt
-</code></pre>
-
 <h3 id="21-vpn-client">21 - VPN Client</h3>
 <p>Please follow Microsoft's instructions for installing the VPN Client for your operating system.</p>
 <div class="admonition tip">
@@ -153,6 +148,11 @@
 <p>Commands for using az and wget are given below.</p>
 </div>
 <h4 id="211-delete-vpn-client">21.1 - Delete VPN Client</h4>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">rm -f &quot;${ARO_VGW_PKI_DIR}/${ARO_VGW_NAME}.zip&quot;
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
 <h3 id="20-client-certificates">20 - Client Certificates</h3>
 <p>VPN Clients must present an X.509 version 3 certificate when connecting. Each user should have their own bundle of certificate files.</p>
 <p>This step outlines a procedure to create them with OpenSSL v1.1.1.  It will need to be re-run for everyone who requires connectivity.</p>
@@ -202,12 +202,13 @@ export ARO_VGW_PKI_CLIENT_PFX_FILE='${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME
 <li><a href="https://www.gnu.org/software/bash/manual/html_node/Looping-Constructs.html">https://www.gnu.org/software/bash/manual/html_node/Looping-Constructs.html</a></li>
 </ul>
 <p><strong><em>Command(s):</em></strong></p>
-<pre><code class="bash">VERIFY_VARIABLES=(ARO_VGW_PKI_CLIENT_NAME ARO_VGW_PKI_CLIENT_EXT_FILE ARO_VGW_PKI_CLIENT_KEY_FILE ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE ARO_VGW_PKI_CLIENT_REQ_FILE ARO_VGW_PKI_CLIENT_CRT_FILE ARO_VGW_PKI_CLIENT_SERIAL_FILE ARO_VGW_PKI_CLIENT_PFX_FILE ARO_VGW_NAME ARO_VGW_PKI_BITS ARO_VGW_PKI_DIR ARO_VGW_PKI_ROOT_KEY_FILE ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE)
-for VERIFY_VARIABLE in ${VERIFY_VARIABLES[@]}; do if [ &quot;${!VERIFY_VARIABLE}&quot; == &quot;&quot; ]; then echo &quot;ERROR! Environment Variable ${VERIFY_VARIABLE} is NOT set&quot;; else echo &quot;${VERIFY_VARIABLE}=${!VERIFY_VARIABLE}&quot;; fi; done; unset VERIFY_VARIABLE
+<pre><code class="bash">ARO_VERIFY_VARIABLES=(ARO_VGW_NAME ARO_VGW_PKI_CLIENT_NAME ARO_VGW_PKI_CLIENT_EXT_FILE ARO_VGW_PKI_CLIENT_KEY_FILE ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE ARO_VGW_PKI_CLIENT_REQ_FILE ARO_VGW_PKI_CLIENT_CRT_FILE ARO_VGW_PKI_CLIENT_SERIAL_FILE ARO_VGW_PKI_CLIENT_PFX_FILE ARO_VGW_PKI_BITS ARO_VGW_PKI_DIR ARO_VGW_PKI_ROOT_KEY_FILE ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE)
+for ARO_VERIFY_VARIABLE in ${ARO_VERIFY_VARIABLES[@]}; do if [ &quot;${!ARO_VERIFY_VARIABLE}&quot; == &quot;&quot; ]; then echo &quot;ERROR! Environment Variable ${ARO_VERIFY_VARIABLE} is NOT set&quot;; else echo &quot;${ARO_VERIFY_VARIABLE}=${!ARO_VERIFY_VARIABLE}&quot;; fi; done; unset ARO_VERIFY_VARIABLE
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<pre><code class="bash">ARO_VGW_PKI_CLIENT_NAME=ipm-vpn-client-example
+<pre><code class="bash">ARO_VGW_NAME=ipm-vpn
+ARO_VGW_PKI_CLIENT_NAME=ipm-vpn-client-example
 ARO_VGW_PKI_CLIENT_EXT_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.ext
 ARO_VGW_PKI_CLIENT_KEY_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.key
 ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE=!example!
@@ -215,7 +216,6 @@ ARO_VGW_PKI_CLIENT_REQ_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-examp
 ARO_VGW_PKI_CLIENT_CRT_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.crt
 ARO_VGW_PKI_CLIENT_SERIAL_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.serial
 ARO_VGW_PKI_CLIENT_PFX_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-client-example.pfx
-ARO_VGW_NAME=ipm-vpn
 ARO_VGW_PKI_BITS=2048
 ARO_VGW_PKI_DIR=/home/jtingiris/prj/mit/aei/pki
 ARO_VGW_PKI_ROOT_KEY_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-root.key
@@ -223,11 +223,47 @@ ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 </code></pre>
 
 <h4 id="203-delete-vpn-client-key">20.3 - Delete VPN Client Key</h4>
+<p>missing './help/Delete VPN Client Key.md'</p>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">rm -f &quot;${ARO_VGW_PKI_CLIENT_KEY_FILE}&quot;
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
 <h4 id="204-delete-client-certificate-request">20.4 - Delete Client Certificate Request</h4>
+<p>missing './help/Delete Client Certificate Request.md'</p>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">rm -f &quot;${ARO_VGW_PKI_CLIENT_REQ_FILE}&quot;
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
 <h4 id="205-delete-client-certificate-extensions">20.5 - Delete Client Certificate Extensions</h4>
+<p>missing './help/Delete Client Certificate Extensions.md'</p>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">rm -f &quot;${ARO_VGW_PKI_CLIENT_EXT_FILE}&quot;
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
 <h4 id="206-delete-client-certificate">20.6 - Delete Client Certificate</h4>
+<p>missing './help/Delete Client Certificate.md'</p>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">rm -f &quot;${ARO_VGW_PKI_CLIENT_CRT_FILE}&quot;
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
 <h4 id="207-delete-vpn-client-serial">20.7 - Delete VPN Client Serial</h4>
+<p>missing './help/Delete VPN Client Serial.md'</p>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">rm -f &quot;${ARO_VGW_PKI_CLIENT_SERIAL_FILE}&quot;
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
 <h4 id="208-delete-vpn-client-pfx">20.8 - Delete VPN Client PFX</h4>
+<p>missing './help/Delete VPN Client PFX.md'</p>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">rm &quot;${ARO_VGW_PKI_CLIENT_PFX_FILE}&quot;
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
 <h3 id="19-vpn-gateway-pki">19 - VPN Gateway PKI</h3>
 <p>An Azure VPN Gateway supports using a Public Key Infrastructure (PKI) for Certificate Authentication.</p>
 <p>With VPN Gateway Certificate Authentication, a client certificate is used to authenticate the connecting user. Client certificates are generated from a trusted Root Certificate and then installed on each client computer.  The validation of the Client Certificate is performed by the VPN Gateway and happens during establishment of the point-to-site (P2S) VPN connection.</p>
@@ -255,7 +291,7 @@ ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 </code></pre>
 
 <h3 id="18-vpn-gateway">18 - VPN Gateway</h3>
-<p>A VPN gateway is a specific type of virtual network gateway that is used to send encrypted traffic between an Azure virtual network and a remote location, over the public Internet.</p>
+<p>A Virtual Private Network (VPN) Gateway is needed to connect to a private ARO cluster.  It is a specific type of gateway that is used to send encrypted traffic between an Azure VNet and a remote location, over the public Internet.</p>
 <p>This document will focus on creating the newer, Resrouce Manager deployment model with Azure certificate authentication.</p>
 <h4 id="181-delete-vpn-gateway">18.1 - Delete VPN Gateway</h4>
 <p><strong><em>Reference(s):</em></strong></p>
@@ -267,11 +303,10 @@ ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete vnet-gateway ipm-vpn</p>
-</div>
-<h4 id="182-delete-vpn-gateway-address">18.2 - Delete VPN Gateway Address</h4>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
+<h4 id="182-delete-vpn-address">18.2 - Delete VPN Address</h4>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az_network_public_ip_delete">https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az_network_public_ip_delete</a></li>
@@ -281,11 +316,11 @@ ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete public-ip ipm-vpn-public-ip</p>
-</div>
-<h4 id="183-delete-vpn-gateway-subnet">18.3 - Delete VPN Gateway Subnet</h4>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
+<h4 id="183-delete-vpn-subnet">18.3 - Delete VPN Subnet</h4>
+<p>missing './help/Delete VPN Subnet.md'</p>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_delete">https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_delete</a></li>
@@ -295,16 +330,18 @@ ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete subnet GatewaySubnet</p>
-</div>
-<h3 id="17-jump-server-virtual-machine">17 - Jump Server Virtual Machine</h3>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
+<h3 id="17-jump-server-vm">17 - Jump Server VM</h3>
 <p>A jump server, jump host, or jump box is a system on a network used to access and manage devices in a separate security zone. A jump server is a hardened and monitored device that spans two dissimilar security zones and provides a controlled means of access between them. The most common example of a jump server is a host in a DMZ.</p>
 <p>All hosts within the DMZ may be prevented from connecting to the internal network by the Network Security Group (firewall) that separates them, unless the Network Security Group (firewall) permits the connection.</p>
 <p>In the following steps, the jump server (jumpbox) will be put on the DMZ subnet, with tcp port 22 opened from the Internet. It will be allowed to communicate with the other internal subnets.  The NSGs may be further tune to allow specific access, as it will be done for the ARO master subnet when ARO is installed.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>The jumpbox should be created prior to the VPN Gateway, so that there is at least one machine available for connectivity testing from two different security zones: Public (Internet) and Private (RFC1918).</p>
-<h4 id="171-delete-jump-server-virtual-machine">17.1 - Delete Jump Server Virtual Machine</h4>
+</div>
+<h4 id="171-delete-jump-server-vm">17.1 - Delete Jump Server VM</h4>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest#az_vm_delete">https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest#az_vm_delete</a></li>
@@ -314,11 +351,11 @@ ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete vm ipm-vm-jumpbox</p>
-</div>
-<h4 id="172-cancel-jump-server-image-terms">17.2 - Cancel Jump Server Image Terms</h4>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
+<h4 id="172-cancel-jump-server-image-urn">17.2 - Cancel Jump Server Image URN</h4>
+<p>missing './help/Cancel Jump Server Image URN.md'</p>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/vm/image/terms?view=azure-cli-latest#az_vm_image_terms_cancel">https://docs.microsoft.com/en-us/cli/azure/vm/image/terms?view=azure-cli-latest#az_vm_image_terms_cancel</a></li>
@@ -332,7 +369,7 @@ ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 <pre><code class="diff">+ success does not produce any output
 </code></pre>
 
-<h4 id="173-delete-jump-server-availability-set">17.3 - Delete Jump Server Availability Set</h4>
+<h4 id="173-delete-jump-server-as">17.3 - Delete Jump Server AS</h4>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/vm/availability-set?view=azure-cli-latest#az_vm_availability_set_delete">https://docs.microsoft.com/en-us/cli/azure/vm/availability-set?view=azure-cli-latest#az_vm_availability_set_delete</a></li>
@@ -342,10 +379,9 @@ ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete vm availability-set for ipm-vm-jumpbox</p>
-</div>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
 <h4 id="174-delete-jump-server-nic">17.4 - Delete Jump Server NIC</h4>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
@@ -356,10 +392,9 @@ ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete nic ipm-vm-jumpbox-nic</p>
-</div>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
 <h4 id="175-delete-jump-server-address">17.5 - Delete Jump Server Address</h4>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
@@ -370,60 +405,89 @@ ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete public-ip ipm-vm-jumpbox-public-ip</p>
-</div>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
 <h3 id="16-related-subnets">16 - Related Subnets</h3>
 <p>IBM Product Manager requires related subnets for supplementary virtual machines, to host applications such as DB2.  These subnets should be within the same resource group and VNet range previously defined.  The network numbers should be IPv4 RFC1918 compliant and prefixed.</p>
-<p>Using a virtual network (VNet) prefix /21, with the OpenShift master &amp; worker subnet prefixed /23, then that will leave an additional four (4) /24 prefixes, or eight (8) /25 prefixes available.</p>
-<p>This document will use /25 prefixes for the related subnets, e.g.</p>
+<p>These are the subnets used in this document, and the suggested CIDR prefixes for installing ARO and IPM.</p>
 <ul>
-<li>10.11.4.0/25 - Application Gateway Subnet</li>
-<li>10.11.4.128/25 - Database Subnet</li>
-<li>10.11.5.0/25 - DMZ Subnet</li>
-<li>10.11.5.128/25 - Trusted Subnet</li>
-<li>10.11.6.0/25 - VPN Gateway Subnet (GatewaySubnet)</li>
+<li>10.10.0.0/16 - VNet</li>
+<li>10.10.0.0/23 - Master</li>
+<li>10.10.2.0/23 - Worker</li>
+<li>10.10.10.0/24 - VPN Gateway (GatewaySubnet)</li>
+<li>10.10.11.0/24 - Application Gateway</li>
+<li>10.10.12.0/24 - Database</li>
+<li>10.10.13.0/24 - DMZ</li>
+<li>10.10.14.0/24 - Trusted</li>
+<li>10.11.0.0/16 - Service</li>
+<li>10.12.4.0/14 - Pod</li>
+<li>172.16.13.0/24 - VPN Gateway (Pool)</li>
 </ul>
 <h4 id="161-delete-application-gateway-subnet">16.1 - Delete Application Gateway Subnet</h4>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_delete">https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_delete</a></li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete agw subnet</p>
-</div>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az network vnet subnet delete --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_AGW_NAME}
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
 <h4 id="162-delete-database-subnet">16.2 - Delete Database Subnet</h4>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_delete">https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_delete</a></li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete db subnet</p>
-</div>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az network vnet subnet delete --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DB_NAME}
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
 <h4 id="163-delete-dmz-subnet">16.3 - Delete DMZ Subnet</h4>
 <p><strong><em>Reference(s):</em></strong></p>
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_delete">https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_delete</a></li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete dmz subnet</p>
-</div>
-<h4 id="164-create-trusted-subnet">16.4 - Create Trusted Subnet</h4>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete trusted subnet</p>
-</div>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az network vnet subnet delete --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DMZ_NAME}
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
+<h4 id="164-delete-trusted-subnet">16.4 - Delete Trusted Subnet</h4>
+<p>missing './help/Delete Trusted Subnet.md'</p>
+<p><strong><em>Reference(s):</em></strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_delete">https://docs.microsoft.com/en-us/cli/azure/network/vnet/subnet?view=azure-cli-latest#az_network_vnet_subnet_delete</a></li>
+</ul>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az network vnet subnet delete --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_TRUSTED_NAME}
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
 <h3 id="15-network-security-group-rules">15 - Network Security Group Rules</h3>
 <p>Network Security Group (NSG) Rules are evaluated by priority using the 5-tuple information (source, source port, destination, destination port, and protocol) to allow or deny the traffic. A flow record is created for existing connections. Communication is allowed or denied based on the connection state of the flow record. The flow record allows an NSG to be stateful.</p>
 <h4 id="151-delete-dmz-nsg-rule-allowssh">15.1 - Delete DMZ NSG Rule (AllowSSH)</h4>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete dmz nsg (AllowSSH)</p>
-</div>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az network nsg rule delete --resource-group ${ARO_RESOURCE_GROUP_NAME} --nsg-name ${ARO_SUBNET_DMZ_NSG_NAME} --name AllowSSH
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
 <h3 id="14-network-security-groups">14 - Network Security Groups</h3>
 <p>An Azure Network Security Group (NSG) filters network traffic to and from Azure resources in an Azure virtual network. An NSG contains security rules that allow/deny network traffic to/from several types of Azure resources.</p>
 <div class="admonition note">
@@ -443,40 +507,69 @@ ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to nsg delete ipm-vnet-agw-subnet-nsg</p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to nsg delete ipm-vnet-db-subnet-nsg</p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to nsg delete ipm-vnet-dmz-subnet-nsg</p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to nsg delete ipm-vnet-trusted-subnet-nsg</p>
-</div>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
 <h3 id="13-openshift-subnets">13 - OpenShift Subnets</h3>
-<p>Azure Red Hat OpenShift clusters require a virtual network with two empty subnets, for the master and worker nodes.   The networks must be in the same resource group.  The network numbers should be IPv4 RFC1918 compliant and prefixed.</p>
+<p>Before installing, Azure Red Hat OpenShift clusters require manually creating a virtual network with two empty subnets for the master and worker VMs.   Additionally, the Pod &amp; Service subnets will automatically assigned during the installation.  The networks must be in the same resource group.  The network numbers should be IPv4 RFC1918 compliant and prefixed.</p>
 <p>Additional subnets are needed for related virtual machines and a VPN.  The VPN subnet must be named GatewaySubnet.</p>
-<p>It is suggested the virtual network (VNet) prefix be /21 and each (master and worker) vnet subnet prefix be /23, which will allow for a total of 510 master nodes and 510 worker nodes.</p>
+<p>These are the subnets used in this document, and the suggested CIDR prefixes for installing ARO and IPM.</p>
+<ul>
+<li>10.10.0.0/16 - VNet</li>
+<li>10.10.0.0/23 - Master</li>
+<li>10.10.2.0/23 - Worker</li>
+<li>10.10.10.0/24 - VPN Gateway (GatewaySubnet)</li>
+<li>10.10.11.0/24 - Application Gateway</li>
+<li>10.10.12.0/24 - Database</li>
+<li>10.10.13.0/24 - DMZ</li>
+<li>10.10.14.0/24 - Trusted</li>
+<li>10.11.0.0/16 - Service</li>
+<li>10.12.4.0/14 - Pod</li>
+<li>172.16.13.0/24 - VPN Gateway (Pool)</li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul>
+<li>Pod and Service Network CIDRs are configurable.</li>
+<li>Workers and masters must be in different subnets.</li>
+<li>Workers and masters virtual network subnets should be minimum /27.</li>
+<li>Pod CIDR should be minimum /18 in size.</li>
+<li>The pod network is non-routable IPs, and is only used inside the OpenShift SDN.</li>
+<li>Each node is allocated /23 subnet (512 IPs) for its pods. This value cannot be changed.</li>
+<li>You cannot attach a pod to multiple networks.</li>
+</ul>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In 2018, Microsoft started automatically enabling Network Watcher when a new vnet is created.  There is not strictly required for ARO and there is an additional cost associated.  This will be seen as a new resource group named NetworkWatcherRG and a new vnet named NetworkWatercher_<region>; Please see the references in this section for more details.</p>
 </div>
 <h4 id="131-delete-master-subnet">13.1 - Delete Master Subnet</h4>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete master subnet</p>
-</div>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az network vnet subnet delete --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_MASTER_NAME}
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
 <h4 id="132-delete-worker-subnet">13.2 - Delete Worker Subnet</h4>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to delete worker subnet</p>
-</div>
+<p><strong><em>Command(s):</em></strong></p>
+<pre><code class="bash">az network vnet subnet delete --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_MASTER_NAME}
+</code></pre>
+
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
 <h3 id="12-virtual-network">12 - Virtual Network</h3>
 <p>An Azure Virtual Network (VNet) is the fundamental building block for private networks in Azure. VNet enables many types of Azure resources, such as Azure Virtual Machines (VM), to securely communicate with each other, the internet, and on-premises networks. VNet is similar to a traditional network that you'd operate in your own data center, but brings with it additional benefits of Azure's infrastructure such as scale, availability, and isolation.</p>
 <h4 id="121-delete-virtual-network">12.1 - Delete Virtual Network</h4>
@@ -488,10 +581,10 @@ ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 <pre><code class="bash">az network vnet delete --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VNET_NAME}
 </code></pre>
 
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to vnet delete ipm-vnet</p>
-</div>
+<p><strong><em>Example Output:</em></strong></p>
+<pre><code class="diff">+ success does not produce any output
+</code></pre>
+
 <h3 id="11-resource-group">11 - Resource Group</h3>
 <p>An Azure resource group is a logical group in which Azure resources are deployed and managed.</p>
 <p>To create ARO resources, a resource group location must be specified. This is where the physical datacenter is located, where resource group metadata is stored, and where the Azure resources are hosted.</p>
@@ -502,12 +595,15 @@ az group delete --name ${ARO_RESOURCE_GROUP_NAME --yes
 </code></pre>
 
 <p><strong><em>Example Output:</em></strong></p>
-<pre><code class="bash"></code></pre>
+<pre><code class="bash">Deleting ipm orphan id (/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/2630de73-19ad-4d1c-bf96-041de8f96943) ...
+Deleting ipm orphan id (/subscriptions/12c7070f-83e5-453b-96d0-90770d2cf942/providers/Microsoft.Authorization/roleAssignments/fcea5c23-99dc-4d94-bee8-0cd4043e0f11) ...
+```diff
++ success does not produce any output
+</code></pre>
 
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>failed to group delete ipm-eastus</p>
-</div>
+<pre><code>```diff
++ success does not produce any output
+</code></pre>
               
             </div>
           </div>

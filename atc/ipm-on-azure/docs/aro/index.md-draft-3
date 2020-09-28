@@ -542,25 +542,25 @@ unset ARO_RESOURCE_GROUP_NAME
 unset ARO_SERVICE_PRINCIPAL_NAME
 unset ARO_SERVICE_PRINCIPAL_PASSWORD
 unset ARO_SUBDOMAIN_NAME
-unset ARO_SUBNET_AGW_ADDRESS_PREFIX
+unset ARO_SUBNET_AGW_CIDR
 unset ARO_SUBNET_AGW_NAME
 unset ARO_SUBNET_AGW_NSG_NAME
-unset ARO_SUBNET_DB_ADDRESS_PREFIX
+unset ARO_SUBNET_DB_CIDR
 unset ARO_SUBNET_DB_NAME
 unset ARO_SUBNET_DB_NSG_NAME
-unset ARO_SUBNET_DMZ_ADDRESS_PREFIX
+unset ARO_SUBNET_DMZ_CIDR
 unset ARO_SUBNET_DMZ_NAME
 unset ARO_SUBNET_DMZ_NSG_NAME
-unset ARO_SUBNET_MASTER_ADDRESS_PREFIX
+unset ARO_SUBNET_MASTER_CIDR
 unset ARO_SUBNET_MASTER_NAME
 unset ARO_SUBNET_MASTER_NSG_NAME
-unset ARO_SUBNET_TRUSTED_ADDRESS_PREFIX
+unset ARO_SUBNET_TRUSTED_CIDR
 unset ARO_SUBNET_TRUSTED_NAME
 unset ARO_SUBNET_TRUSTED_NSG_NAME
-unset ARO_SUBNET_VGW_ADDRESS_PREFIX
+unset ARO_SUBNET_VGW_CIDR
 unset ARO_SUBNET_VGW_NAME
 unset ARO_SUBNET_VGW_NSG_NAME
-unset ARO_SUBNET_WORKER_ADDRESS_PREFIX
+unset ARO_SUBNET_WORKER_CIDR
 unset ARO_SUBNET_WORKER_NAME
 unset ARO_SUBNET_WORKER_NSG_NAME
 unset ARO_SUBSCRIPTION_ID
@@ -585,7 +585,7 @@ unset ARO_VGW_PKI_ROOT_CRT_NAME
 unset ARO_VGW_PKI_ROOT_KEY_FILE
 unset ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE
 unset ARO_VGW_PKI_ROOT_KEY_NAME
-unset ARO_VGW_POOL_ADDRESS_PREFIX
+unset ARO_SUBNET_VGW_POOL_CIDR
 unset ARO_VGW_PUBLIC_ADDRESS_NAME
 unset ARO_VGW_REDUNDANCY
 unset ARO_VGW_SKU
@@ -596,7 +596,7 @@ unset ARO_VM_JUMP_IMAGE_URN
 unset ARO_VM_JUMP_NAME
 unset ARO_VM_JUMP_PUBLIC_ADDRESS_NAME
 unset ARO_VM_JUMP_SIZE
-unset ARO_VNET_ADDRESS_PREFIX
+unset ARO_VNET_CIDR
 unset ARO_VNET_NAME
 ```
 
@@ -655,31 +655,31 @@ export ARO_SUBSCRIPTION_ID=$(az account show --query 'id' --output tsv 2> /dev/n
 export ARO_SUBSCRIPTION_NAME="Azure subscription for mitaei"
 export ARO_TENANT_ID=$(az account show --query 'tenantId' --output tsv 2> /dev/null)
 export ARO_TENANT_NAME=mitaei.net
-export ARO_VNET_ADDRESS_PREFIX=10.11.0.0/21
+export ARO_VNET_CIDR=10.11.0.0/21
 export ARO_VNET_NAME=${ARO}-vnet
 
 # ARO subnets: MASTER, WORKER
-export ARO_SUBNET_MASTER_ADDRESS_PREFIX=10.11.0.0/23
+export ARO_SUBNET_MASTER_CIDR=10.11.0.0/23
 export ARO_SUBNET_MASTER_NAME=${ARO_VNET_NAME}-master-subnet
 export ARO_SUBNET_MASTER_NSG_NAME=${ARO_SUBNET_MASTER_NAME}-nsg
-export ARO_SUBNET_WORKER_ADDRESS_PREFIX=10.11.2.0/23
+export ARO_SUBNET_WORKER_CIDR=10.11.2.0/23
 export ARO_SUBNET_WORKER_NAME=${ARO_VNET_NAME}-worker-subnet
 export ARO_SUBNET_WORKER_NSG_NAME=${ARO_SUBNET_WORKER_NAME}-nsg
 
 # non-ARO subnets AGW, DB, DMZ, TRUSTED, VPN (GatewaySubnet)
-export ARO_SUBNET_AGW_ADDRESS_PREFIX=10.11.4.0/25
+export ARO_SUBNET_AGW_CIDR=10.11.4.0/25
 export ARO_SUBNET_AGW_NAME=${ARO_VNET_NAME}-agw-subnet
 export ARO_SUBNET_AGW_NSG_NAME=${ARO_SUBNET_AGW_NAME}-nsg
-export ARO_SUBNET_DB_ADDRESS_PREFIX=10.11.4.128/25
+export ARO_SUBNET_DB_CIDR=10.11.4.128/25
 export ARO_SUBNET_DB_NAME=${ARO_VNET_NAME}-db-subnet
 export ARO_SUBNET_DB_NSG_NAME=${ARO_SUBNET_DB_NAME}-nsg
-export ARO_SUBNET_DMZ_ADDRESS_PREFIX=10.11.5.0/25
+export ARO_SUBNET_DMZ_CIDR=10.11.5.0/25
 export ARO_SUBNET_DMZ_NAME=${ARO_VNET_NAME}-dmz-subnet
 export ARO_SUBNET_DMZ_NSG_NAME=${ARO_SUBNET_DMZ_NAME}-nsg
-export ARO_SUBNET_TRUSTED_ADDRESS_PREFIX=10.11.5.128/25
+export ARO_SUBNET_TRUSTED_CIDR=10.11.5.128/25
 export ARO_SUBNET_TRUSTED_NAME=${ARO_VNET_NAME}-trusted-subnet
 export ARO_SUBNET_TRUSTED_NSG_NAME=${ARO_SUBNET_TRUSTED_NAME}-nsg
-export ARO_SUBNET_VGW_ADDRESS_PREFIX=10.11.6.0/25
+export ARO_SUBNET_VGW_CIDR=10.11.6.0/25
 export ARO_SUBNET_VGW_NAME=GatewaySubnet # this MUST be named GatewaySubnet
 export ARO_SUBNET_VGW_NSG_NAME=${ARO_SUBNET_VGW_NAME}-nsg # this can't be used?
 
@@ -702,7 +702,7 @@ export ARO_VGW_PKI_ROOT_CRT_FILE="${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_ROOT_CRT_NAME
 export ARO_VGW_PKI_ROOT_KEY_NAME="${ARO_VGW_NAME}-root.key"
 export ARO_VGW_PKI_ROOT_KEY_FILE="${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_ROOT_KEY_NAME}"
 export ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE="Pk1P4ssphr4s3!!"
-export ARO_VGW_POOL_ADDRESS_PREFIX=172.16.11.0/24
+export ARO_SUBNET_VGW_POOL_CIDR=172.16.11.0/24
 export ARO_VGW_PUBLIC_ADDRESS_NAME=${ARO_VGW_NAME}-public-ip
 export ARO_VGW_REDUNDANCY=true # more costly; set to false for lower environments
 export ARO_VGW_SKU="VpnGw1" # Not Redundant; reverse the order for redundant
@@ -783,25 +783,25 @@ ARO_RESOURCE_GROUP_NAME=ipm-eastus
 ARO_SERVICE_PRINCIPAL_NAME=http://ipm-app
 ARO_SERVICE_PRINCIPAL_PASSWORD=S3rv1c3Pr1cip4lP4ssw0rd!
 ARO_SUBDOMAIN_NAME=ipm.mitaei.net
-ARO_SUBNET_AGW_ADDRESS_PREFIX=10.11.4.0/25
+ARO_SUBNET_AGW_CIDR=10.11.4.0/25
 ARO_SUBNET_AGW_NAME=ipm-vnet-agw-subnet
 ARO_SUBNET_AGW_NSG_NAME=ipm-vnet-agw-subnet-nsg
-ARO_SUBNET_DB_ADDRESS_PREFIX=10.11.4.128/25
+ARO_SUBNET_DB_CIDR=10.11.4.128/25
 ARO_SUBNET_DB_NAME=ipm-vnet-db-subnet
 ARO_SUBNET_DB_NSG_NAME=ipm-vnet-db-subnet-nsg
-ARO_SUBNET_DMZ_ADDRESS_PREFIX=10.11.5.0/25
+ARO_SUBNET_DMZ_CIDR=10.11.5.0/25
 ARO_SUBNET_DMZ_NAME=ipm-vnet-dmz-subnet
 ARO_SUBNET_DMZ_NSG_NAME=ipm-vnet-dmz-subnet-nsg
-ARO_SUBNET_MASTER_ADDRESS_PREFIX=10.11.0.0/23
+ARO_SUBNET_MASTER_CIDR=10.11.0.0/23
 ARO_SUBNET_MASTER_NAME=ipm-vnet-master-subnet
 ARO_SUBNET_MASTER_NSG_NAME=ipm-vnet-master-subnet-nsg
-ARO_SUBNET_TRUSTED_ADDRESS_PREFIX=10.11.5.128/25
+ARO_SUBNET_TRUSTED_CIDR=10.11.5.128/25
 ARO_SUBNET_TRUSTED_NAME=ipm-vnet-trusted-subnet
 ARO_SUBNET_TRUSTED_NSG_NAME=ipm-vnet-trusted-subnet-nsg
-ARO_SUBNET_VGW_ADDRESS_PREFIX=10.11.6.0/25
+ARO_SUBNET_VGW_CIDR=10.11.6.0/25
 ARO_SUBNET_VGW_NAME=GatewaySubnet
 ARO_SUBNET_VGW_NSG_NAME=GatewaySubnet-nsg
-ARO_SUBNET_WORKER_ADDRESS_PREFIX=10.11.2.0/23
+ARO_SUBNET_WORKER_CIDR=10.11.2.0/23
 ARO_SUBNET_WORKER_NAME=ipm-vnet-worker-subnet
 ARO_SUBNET_WORKER_NSG_NAME=ipm-vnet-worker-subnet-nsg
 ARO_SUBSCRIPTION_ID=12c7070f-83e5-453b-96d0-90770d2cf942
@@ -826,7 +826,7 @@ ARO_VGW_PKI_ROOT_CRT_NAME=ipm-vpn-root.crt
 ARO_VGW_PKI_ROOT_KEY_FILE=/home/jtingiris/prj/mit/aei/pki/ipm-vpn-root.key
 ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE=Pk1P4ssphr4s3!!
 ARO_VGW_PKI_ROOT_KEY_NAME=ipm-vpn-root.key
-ARO_VGW_POOL_ADDRESS_PREFIX=172.16.11.0/24
+ARO_SUBNET_VGW_POOL_CIDR=172.16.11.0/24
 ARO_VGW_PUBLIC_ADDRESS_NAME=ipm-vpn-public-ip
 ARO_VGW_REDUNDANCY=true
 ARO_VGW_SKU=VpnGw1AZ
@@ -837,7 +837,7 @@ ARO_VM_JUMP_IMAGE_URN=cognosys:docker-ce-with-centos-8-0-free:docker-ce-with-cen
 ARO_VM_JUMP_NAME=ipm-vm-jumpbox
 ARO_VM_JUMP_PUBLIC_ADDRESS_NAME=ipm-vm-jumpbox-public-ip
 ARO_VM_JUMP_SIZE=Standard_B1ms
-ARO_VNET_ADDRESS_PREFIX=10.11.0.0/21
+ARO_VNET_CIDR=10.11.0.0/21
 ARO_VNET_NAME=ipm-vnet
 ```
 
@@ -1441,10 +1441,10 @@ ARO_DOMAIN_NAME=mitaei.net
 ARO_ADMINISTRATORS=openshift-admin@mitaei.net arun.babu@mitaei.net joseph.tingiris@mitaei.net sivaprasad.k@mitaei.net
 ```
 
-#### 9.1 - Create Administratorts
+#### 9.1 - Create Administrators
 
 
-missing './help/Create Administratorts.md'
+missing './help/Create Administrators.md'
 
 
 **_Command(s):_**
@@ -1519,7 +1519,7 @@ az ad user create --display-name openshift-admin@mitaei.net --user-principal-nam
 }
 ```
 
-#### 9.2 - Verify Administratorts
+#### 9.2 - Verify Administrators
 
 
 **_Command(s):_**
@@ -1998,7 +1998,7 @@ env | grep ^ARO_VNET | sort -V
 **_Example Output:_**
 
 ```
-ARO_VNET_ADDRESS_PREFIX=10.11.0.0/21
+ARO_VNET_CIDR=10.11.0.0/21
 ARO_VNET_NAME=ipm-vnet
 ```
 
@@ -2014,7 +2014,7 @@ ARO_VNET_NAME=ipm-vnet
 **_Command(s):_**
 
 ```bash
-az network vnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VNET_NAME} --address-prefixes ${ARO_VNET_ADDRESS_PREFIX}
+az network vnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --name ${ARO_VNET_NAME} --address-prefixes ${ARO_VNET_CIDR}
 ```
 
 **_Example Output:_**
@@ -2102,10 +2102,10 @@ It is suggested the virtual network (VNet) prefix be /21 and each (master and wo
 env | grep ^ARO_SUBNET | egrep -e 'MASTER|WORKER' | sort -V
 ```
 ```
-ARO_SUBNET_MASTER_ADDRESS_PREFIX=10.11.0.0/23
+ARO_SUBNET_MASTER_CIDR=10.11.0.0/23
 ARO_SUBNET_MASTER_NAME=ipm-vnet-master-subnet
 ARO_SUBNET_MASTER_NSG_NAME=ipm-vnet-master-subnet-nsg
-ARO_SUBNET_WORKER_ADDRESS_PREFIX=10.11.2.0/23
+ARO_SUBNET_WORKER_CIDR=10.11.2.0/23
 ARO_SUBNET_WORKER_NAME=ipm-vnet-worker-subnet
 ARO_SUBNET_WORKER_NSG_NAME=ipm-vnet-worker-subnet-nsg
 ```
@@ -2142,7 +2142,7 @@ az aro show --name "${ARO_CLUSTER_NAME}" --resource-group "${ARO_RESOURCE_GROUP_
 **_Command(s):_**
 
 ```bash
-az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_MASTER_NAME} --address-prefixes ${ARO_SUBNET_MASTER_ADDRESS_PREFIX} --service-endpoints Microsoft.ContainerRegistry
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_MASTER_NAME} --address-prefixes ${ARO_SUBNET_MASTER_CIDR} --service-endpoints Microsoft.ContainerRegistry
 ```
 
 **_Example Output:_**
@@ -2273,7 +2273,7 @@ AddressPrefix    Name                    PrivateEndpointNetworkPolicies    Priva
 **_Command(s):_**
 
 ```bash
-az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_WORKER_NAME} --address-prefixes ${ARO_SUBNET_WORKER_ADDRESS_PREFIX} --service-endpoints Microsoft.ContainerRegistry
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_WORKER_NAME} --address-prefixes ${ARO_SUBNET_WORKER_CIDR} --service-endpoints Microsoft.ContainerRegistry
 ```
 
 **_Example Output:_**
@@ -3174,16 +3174,16 @@ env | grep ^ARO_SUBNET | egrep -ve 'MASTER|WORKER|VGW' | sort -V
 **_Example Output:_**
 
 ```
-ARO_SUBNET_AGW_ADDRESS_PREFIX=10.11.4.0/25
+ARO_SUBNET_AGW_CIDR=10.11.4.0/25
 ARO_SUBNET_AGW_NAME=ipm-vnet-agw-subnet
 ARO_SUBNET_AGW_NSG_NAME=ipm-vnet-agw-subnet-nsg
-ARO_SUBNET_DB_ADDRESS_PREFIX=10.11.4.128/25
+ARO_SUBNET_DB_CIDR=10.11.4.128/25
 ARO_SUBNET_DB_NAME=ipm-vnet-db-subnet
 ARO_SUBNET_DB_NSG_NAME=ipm-vnet-db-subnet-nsg
-ARO_SUBNET_DMZ_ADDRESS_PREFIX=10.11.5.0/25
+ARO_SUBNET_DMZ_CIDR=10.11.5.0/25
 ARO_SUBNET_DMZ_NAME=ipm-vnet-dmz-subnet
 ARO_SUBNET_DMZ_NSG_NAME=ipm-vnet-dmz-subnet-nsg
-ARO_SUBNET_TRUSTED_ADDRESS_PREFIX=10.11.5.128/25
+ARO_SUBNET_TRUSTED_CIDR=10.11.5.128/25
 ARO_SUBNET_TRUSTED_NAME=ipm-vnet-trusted-subnet
 ARO_SUBNET_TRUSTED_NSG_NAME=ipm-vnet-trusted-subnet-nsg
 ```
@@ -3199,7 +3199,7 @@ ARO_SUBNET_TRUSTED_NSG_NAME=ipm-vnet-trusted-subnet-nsg
 **_Command(s):_**
 
 ```bash
-az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_AGW_NAME} --address-prefixes ${ARO_SUBNET_AGW_ADDRESS_PREFIX} --network-security-group=${ARO_SUBNET_AGW_NSG_NAME}
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_AGW_NAME} --address-prefixes ${ARO_SUBNET_AGW_CIDR} --network-security-group=${ARO_SUBNET_AGW_NSG_NAME}
 ```
 
 **_Example Output:_**
@@ -3280,7 +3280,7 @@ AddressPrefix    Name                 PrivateEndpointNetworkPolicies    PrivateL
 **_Command(s):_**
 
 ```bash
-az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DB_NAME} --address-prefixes ${ARO_SUBNET_DB_ADDRESS_PREFIX} --network-security-group=${ARO_SUBNET_DB_NSG_NAME}
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DB_NAME} --address-prefixes ${ARO_SUBNET_DB_CIDR} --network-security-group=${ARO_SUBNET_DB_NSG_NAME}
 ```
 
 **_Example Output:_**
@@ -3361,7 +3361,7 @@ AddressPrefix    Name                PrivateEndpointNetworkPolicies    PrivateLi
 **_Command(s):_**
 
 ```bash
-az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DMZ_NAME} --address-prefixes ${ARO_SUBNET_DMZ_ADDRESS_PREFIX} --network-security-group=${ARO_SUBNET_DMZ_NSG_NAME}
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_DMZ_NAME} --address-prefixes ${ARO_SUBNET_DMZ_CIDR} --network-security-group=${ARO_SUBNET_DMZ_NSG_NAME}
 ```
 
 **_Example Output:_**
@@ -3442,7 +3442,7 @@ AddressPrefix    Name                 PrivateEndpointNetworkPolicies    PrivateL
 **_Command(s):_**
 
 ```bash
-az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_TRUSTED_NAME} --address-prefixes ${ARO_SUBNET_TRUSTED_ADDRESS_PREFIX} --network-security-group ${ARO_SUBNET_TRUSTED_NSG_NAME}
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_TRUSTED_NAME} --address-prefixes ${ARO_SUBNET_TRUSTED_CIDR} --network-security-group ${ARO_SUBNET_TRUSTED_NSG_NAME}
 ```
 
 **_Example Output:_**
@@ -4136,11 +4136,11 @@ env | egrep ARO.*VGW | egrep -ve 'PKI' | sort -V
 **_Example Output:_**
 
 ```bash
-ARO_SUBNET_VGW_ADDRESS_PREFIX=10.11.6.0/25
+ARO_SUBNET_VGW_CIDR=10.11.6.0/25
 ARO_SUBNET_VGW_NAME=GatewaySubnet
 ARO_SUBNET_VGW_NSG_NAME=GatewaySubnet-nsg
 ARO_VGW_NAME=ipm-vpn
-ARO_VGW_POOL_ADDRESS_PREFIX=172.16.11.0/24
+ARO_SUBNET_VGW_POOL_CIDR=172.16.11.0/24
 ARO_VGW_PUBLIC_ADDRESS_NAME=ipm-vpn-public-ip
 ARO_VGW_REDUNDANCY=true
 ARO_VGW_SKU=VpnGw1AZ
@@ -4159,7 +4159,7 @@ ARO_VGW_TYPE=RouteBased
 **_Command(s):_**
 
 ```bash
-az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_VGW_NAME} --address-prefixes ${ARO_SUBNET_VGW_ADDRESS_PREFIX}
+az network vnet subnet create --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet-name ${ARO_VNET_NAME} --name ${ARO_SUBNET_VGW_NAME} --address-prefixes ${ARO_SUBNET_VGW_CIDR}
 ```
 
 **_Example Output:_**
@@ -4313,7 +4313,7 @@ Each virtual network can have only one VPN gateway.
 **_Command(s):_**
 
 ```bash
-az network vnet-gateway create --name ${ARO_VGW_NAME} --location ${ARO_LOCATION_NAME} --public-ip-address ${ARO_VGW_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet ${ARO_VNET_NAME} --gateway-type VPN --sku ${ARO_VGW_SKU} --vpn-type ${ARO_VGW_TYPE} --address-prefixes ${ARO_VGW_POOL_ADDRESS_PREFIX}
+az network vnet-gateway create --name ${ARO_VGW_NAME} --location ${ARO_LOCATION_NAME} --public-ip-address ${ARO_VGW_PUBLIC_ADDRESS_NAME} --resource-group ${ARO_RESOURCE_GROUP_NAME} --vnet ${ARO_VNET_NAME} --gateway-type VPN --sku ${ARO_VGW_SKU} --vpn-type ${ARO_VGW_TYPE} --address-prefixes ${ARO_SUBNET_VGW_POOL_CIDR}
 ```
 
 **_Example Output:_**
@@ -4876,8 +4876,8 @@ export ARO_VGW_PKI_CLIENT_PFX_FILE='${ARO_VGW_PKI_DIR}/${ARO_VGW_PKI_CLIENT_NAME
 **_Command(s):_**
 
 ```bash
-VERIFY_VARIABLES=(ARO_VGW_PKI_CLIENT_NAME ARO_VGW_PKI_CLIENT_EXT_FILE ARO_VGW_PKI_CLIENT_KEY_FILE ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE ARO_VGW_PKI_CLIENT_REQ_FILE ARO_VGW_PKI_CLIENT_CRT_FILE ARO_VGW_PKI_CLIENT_SERIAL_FILE ARO_VGW_PKI_CLIENT_PFX_FILE ARO_VGW_NAME ARO_VGW_PKI_BITS ARO_VGW_PKI_DIR ARO_VGW_PKI_ROOT_KEY_FILE ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE)
-for VERIFY_VARIABLE in ${VERIFY_VARIABLES[@]}; do if [ "${!VERIFY_VARIABLE}" == "" ]; then echo "ERROR! Environment Variable ${VERIFY_VARIABLE} is NOT set"; else echo "${VERIFY_VARIABLE}=${!VERIFY_VARIABLE}"; fi; done; unset VERIFY_VARIABLE
+ARO_VERIFY_VARIABLES=(ARO_VGW_PKI_CLIENT_NAME ARO_VGW_PKI_CLIENT_EXT_FILE ARO_VGW_PKI_CLIENT_KEY_FILE ARO_VGW_PKI_CLIENT_KEY_FILE_PASSPHRASE ARO_VGW_PKI_CLIENT_REQ_FILE ARO_VGW_PKI_CLIENT_CRT_FILE ARO_VGW_PKI_CLIENT_SERIAL_FILE ARO_VGW_PKI_CLIENT_PFX_FILE ARO_VGW_NAME ARO_VGW_PKI_BITS ARO_VGW_PKI_DIR ARO_VGW_PKI_ROOT_KEY_FILE ARO_VGW_PKI_ROOT_KEY_FILE_PASSPHRASE)
+for ARO_VERIFY_VARIABLE in ${ARO_VERIFY_VARIABLES[@]}; do if [ "${!ARO_VERIFY_VARIABLE}" == "" ]; then echo "ERROR! Environment Variable ${ARO_VERIFY_VARIABLE} is NOT set"; else echo "${ARO_VERIFY_VARIABLE}=${!ARO_VERIFY_VARIABLE}"; fi; done; unset ARO_VERIFY_VARIABLE
 ```
 
 **_Example Output:_**
